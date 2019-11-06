@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.boardofdirectorsServer.model.Entry;
 
-@RequestMapping
+@RequestMapping("api/v1/calculation")
 @RestController
 public class CalculationController {
 	
