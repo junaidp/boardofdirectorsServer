@@ -32,8 +32,9 @@ public class PersonController {
 	
 	@PostMapping
 	@CrossOrigin(origins = "*", maxAge = 3600)
-	public void addPerson(@RequestBody Person person){
+	public String addPerson(@RequestBody Person person){
 		personService.addPerson(person);
+		return "Hello";
 	}
 	
 	@GetMapping
