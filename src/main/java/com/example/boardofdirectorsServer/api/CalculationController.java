@@ -14,6 +14,7 @@ public class CalculationController {
 	@PostMapping
 	public String calculate(@RequestBody Entry entry)
 	{
-		return "Ans : "+ entry.getA() + entry.getB();
+		int ans =entry.getA() + entry.getB();
+		return "Ans : "+ ans;
 	}
 }
