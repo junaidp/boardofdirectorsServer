@@ -46,36 +46,40 @@ public class Calculation {
 							System.out.println(ex);
 						}
 
-						switch(c.getCachedFormulaResultType()) {
-						case NUMERIC:
-							if (HSSFDateUtil.isCellDateFormatted(c)) {
-								mapSheet.put(""+c.getRow().getRowNum()+"/"+c.getColumnIndex()+"", c.getColumnIndex()==9?  month(c.getDateCellValue().getMonth())+"": c.getDateCellValue()+"");
-							}
-							else {
-								mapSheet.put(""+c.getRow().getRowNum()+"/"+c.getColumnIndex()+"", c.getNumericCellValue()+"");
-								map.put(sheet.getSheetName(), mapSheet);
-							}
-							break;
-						case STRING:
-							mapSheet.put(""+c.getRow().getRowNum()+"/"+c.getColumnIndex()+"", c.getRichStringCellValue()+"");
-							map.put(sheet.getSheetName(), mapSheet);
-							break;
-						case BOOLEAN:
-							mapSheet.put(""+c.getRow().getRowNum()+"/"+c.getColumnIndex()+"", c.getBooleanCellValue()+"");
-							map.put(sheet.getSheetName(), mapSheet);
-						default:
-							mapSheet.put(""+c.getRow().getRowNum()+"/"+c.getColumnIndex()+"", "-"+"");
-							map.put(sheet.getSheetName(), mapSheet);
-							break;
 						}
-
-					}
+					putinMap(map, sheet, mapSheet, c);
 				}
 			}
 		}
 
 		System.out.println("RESULT>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
 		System.out.println(map);
+	}
+
+	private void putinMap(HashMap<String, HashMap<String, String>> map, Sheet sheet, HashMap<String, String> mapSheet,
+			Cell c) {
+		switch(c.getCachedFormulaResultType()) {
+		case NUMERIC:
+			if (HSSFDateUtil.isCellDateFormatted(c)) {
+				mapSheet.put(""+c.getRow().getRowNum()+"/"+c.getColumnIndex()+"", c.getColumnIndex()==9?  month(c.getDateCellValue().getMonth())+"": c.getDateCellValue()+"");
+			}
+			else {
+				mapSheet.put(""+c.getRow().getRowNum()+"/"+c.getColumnIndex()+"", c.getNumericCellValue()+"");
+				map.put(sheet.getSheetName(), mapSheet);
+			}
+			break;
+		case STRING:
+			mapSheet.put(""+c.getRow().getRowNum()+"/"+c.getColumnIndex()+"", c.getRichStringCellValue()+"");
+			map.put(sheet.getSheetName(), mapSheet);
+			break;
+		case BOOLEAN:
+			mapSheet.put(""+c.getRow().getRowNum()+"/"+c.getColumnIndex()+"", c.getBooleanCellValue()+"");
+			map.put(sheet.getSheetName(), mapSheet);
+		default:
+			mapSheet.put(""+c.getRow().getRowNum()+"/"+c.getColumnIndex()+"", "-"+"");
+			map.put(sheet.getSheetName(), mapSheet);
+			break;
+		}
 	}
 
 	private String month(int num)
