@@ -9,6 +9,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 @Repository
 public interface EntryRepository extends JpaRepository<EntryEntity, Integer> {
 	
-	List<EntryEntity> find(String text, String textahao);
 
 }
