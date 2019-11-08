@@ -1,11 +1,9 @@
 package com.example.boardofdirectorsServer.api;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
-import org.json.JSONObject;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -13,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.boardofdirectorsServer.model.Entry;
+import com.google.gson.Gson;
 
 @RequestMapping("calculation")
 @RestController
@@ -21,13 +20,14 @@ public class CalculationController {
 	public  LinkedHashMap<String, LinkedHashMap<String, String>> mapAnswer ;
 	
 	@PostMapping
-	public JSONObject calculate(@RequestBody Entry entry)
+	public String calculate(@RequestBody Entry entry)
 	{
 		
 		try {
 			Calculation c = new Calculation();
-			LinkedHashMap map = c.entry(entry);
-			JSONObject json = new JSONObject(map);
+			LinkedHashMap<String, LinkedHashMap<String, String>> map = c.entry(entry);
+			Gson gson = new Gson(); 
+			String json = gson.toJson(map);
 			return json;
 			
 		} catch (InvalidFormatException e) {
