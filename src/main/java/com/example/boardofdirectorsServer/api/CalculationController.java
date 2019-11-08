@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.json.JSONObject;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -20,14 +21,14 @@ public class CalculationController {
 	public  LinkedHashMap<String, LinkedHashMap<String, String>> mapAnswer ;
 	
 	@PostMapping
-	public LinkedHashMap<String, LinkedHashMap<String, String>> calculate(@RequestBody Entry entry)
+	public JSONObject calculate(@RequestBody Entry entry)
 	{
 		
 		try {
 			Calculation c = new Calculation();
 			LinkedHashMap map = c.entry(entry);
-			mapAnswer = map;
-			return map;
+			JSONObject json = new JSONObject(map);
+			return json;
 			
 		} catch (InvalidFormatException e) {
 			 e.printStackTrace();
