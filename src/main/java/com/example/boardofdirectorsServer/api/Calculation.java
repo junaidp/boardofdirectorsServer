@@ -25,8 +25,12 @@ public class Calculation {
 
 	public Calculation() throws IOException, InvalidFormatException
 	{
-		//OPCPackage pkg = OPCPackage.open(new File("/Users/junaidparacha/Downloads/ifrs.xlsx"));
-		OPCPackage pkg = OPCPackage.open(new File("C:\\Users\\jparacha\\git\\boardofdirectorsServer\\src\\main\\resources\\static\\ifrs.xlsx"));
+		calculate();
+	}
+
+	public HashMap<String, HashMap<String, String>> calculate() throws InvalidFormatException, IOException {
+		OPCPackage pkg = OPCPackage.open(new File("/Users/junaidparacha/Downloads/ifrs.xlsx"));
+		//OPCPackage pkg = OPCPackage.open(new File("C:\\Users\\jparacha\\git\\boardofdirectorsServer\\src\\main\\resources\\static\\ifrs.xlsx"));
 		//	Workbook wb = new XSS(fis); //or new XSSFWorkbook("/somepath/test.xls")
 		XSSFWorkbook wb = new XSSFWorkbook(pkg);
 
@@ -37,47 +41,54 @@ public class Calculation {
 
 			for (Row r : sheet) {
 				for (Cell c : r) {
+					CellType cellType = null;
 					if (c.getCellType() == CellType.FORMULA) {
 						try{
 							evaluator.evaluateFormulaCell(c);
 						}catch(Exception ex){
 							mapSheet.put(""+c.getRow().getRowNum()+"/"+c.getColumnIndex()+"", ":"+"");
-							map.put(sheet.getSheetName(), mapSheet);
 							System.out.println(ex);
 						}
-
+						cellType = c.getCachedFormulaResultType();
 						}
-					putinMap(map, sheet, mapSheet, c);
+					else
+					{
+						cellType = c.getCellType();
+					}
+					putinMap(map, sheet, mapSheet, c, cellType);
 				}
 			}
+			map.put(sheet.getSheetName(), mapSheet);
+			
 		}
 
-		System.out.println("RESULT>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
-		System.out.println(map);
+		return map;
 	}
 
 	private void putinMap(HashMap<String, HashMap<String, String>> map, Sheet sheet, HashMap<String, String> mapSheet,
-			Cell c) {
-		switch(c.getCachedFormulaResultType()) {
+			Cell c, CellType cellType) {
+		
+		int rowNum = c.getRow().getRowNum();
+		String cellLocation = rowNum+1 +"/"+c.getColumnIndex();
+		
+		switch(cellType) {
+		
+		
 		case NUMERIC:
 			if (HSSFDateUtil.isCellDateFormatted(c)) {
-				mapSheet.put(""+c.getRow().getRowNum()+"/"+c.getColumnIndex()+"", c.getColumnIndex()==9?  month(c.getDateCellValue().getMonth())+"": c.getDateCellValue()+"");
+				mapSheet.put(""+cellLocation+"", c.getColumnIndex()==9?  month(c.getDateCellValue().getMonth())+"": c.getDateCellValue()+"");
 			}
 			else {
-				mapSheet.put(""+c.getRow().getRowNum()+"/"+c.getColumnIndex()+"", c.getNumericCellValue()+"");
-				map.put(sheet.getSheetName(), mapSheet);
+				mapSheet.put(""+cellLocation+"", c.getNumericCellValue()+"");
 			}
 			break;
 		case STRING:
-			mapSheet.put(""+c.getRow().getRowNum()+"/"+c.getColumnIndex()+"", c.getRichStringCellValue()+"");
-			map.put(sheet.getSheetName(), mapSheet);
+			mapSheet.put(""+cellLocation+"", c.getRichStringCellValue()+"");
 			break;
 		case BOOLEAN:
-			mapSheet.put(""+c.getRow().getRowNum()+"/"+c.getColumnIndex()+"", c.getBooleanCellValue()+"");
-			map.put(sheet.getSheetName(), mapSheet);
+			mapSheet.put(""+cellLocation+"", c.getBooleanCellValue()+"");
 		default:
-			mapSheet.put(""+c.getRow().getRowNum()+"/"+c.getColumnIndex()+"", "-"+"");
-			map.put(sheet.getSheetName(), mapSheet);
+			mapSheet.put(""+cellLocation+"", "-"+"");
 			break;
 		}
 	}
