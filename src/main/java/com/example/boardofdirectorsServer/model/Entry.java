@@ -22,7 +22,7 @@ public class Entry {
 	private	float escalation;	
 	private	int escalationAfterEvery;
 
-	public Entry(@JsonProperty("leaseContractNo")String leaseContractNo,/* @JsonProperty("commencementDate")Date commencementDate,*/
+	public Entry(@JsonProperty("leaseContractNo")String leaseContractNo, @JsonProperty("commencementDate")Date commencementDate,
 			@JsonProperty("paymentsAt")String paymentsAt, @JsonProperty("annualDiscountRate")float annualDiscountRate,@JsonProperty("leaseTerm")int leaseTerm,
 			@JsonProperty("expectedPeriod")int expectedPeriod,@JsonProperty("leasePayment")double leasePayment,@JsonProperty("paymentIntervals")String paymentIntervals,
 			@JsonProperty("initialDirectCost")int initialDirectCost,@JsonProperty("guaranteedResidualValue")double guaranteedResidualValue,
@@ -30,7 +30,7 @@ public class Entry {
 			@JsonProperty("escalation")float escalation,	@JsonProperty("escalationAfterEvery")int escalationAfterEvery) {
 
 		this.leaseContractNo = leaseContractNo;
-		//this.commencementDate = commencementDate;
+		this.commencementDate = commencementDate;
 		this.paymentsAt = paymentsAt;
 		this.annualDiscountRate = annualDiscountRate/100;
 		
@@ -109,8 +109,5 @@ public class Entry {
 	    return bd.doubleValue();
 	}
 
-	public void setCommencementDate(Date commencementDate) {
-		this.commencementDate = commencementDate;
-	}
 
 }
