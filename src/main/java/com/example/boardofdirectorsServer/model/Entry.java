@@ -1,5 +1,7 @@
 package com.example.boardofdirectorsServer.model;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Date;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -9,7 +11,7 @@ public class Entry {
 	private String leaseContractNo;
 	private	Date commencementDate;	
 	private	String paymentsAt; 	
-	private	int annualDiscountRate;
+	private	float annualDiscountRate;
 	private	int leaseTerm;	
 	private	int expectedPeriod;	
 	private	double leasePayment;	
@@ -17,20 +19,21 @@ public class Entry {
 	private	int initialDirectCost;	
 	private	double guaranteedResidualValue;	
 	private	int usefulLifeOfTheAsset;	
-	private	int escalation;	
+	private	float escalation;	
 	private	int escalationAfterEvery;
 
 	public Entry(@JsonProperty("leaseContractNo")String leaseContractNo, @JsonProperty("commencementDate")Date commencementDate,
-			@JsonProperty("paymentsAt")String paymentsAt, @JsonProperty("annualDiscountRate")int annualDiscountRate,@JsonProperty("leaseTerm")int leaseTerm,
+			@JsonProperty("paymentsAt")String paymentsAt, @JsonProperty("annualDiscountRate")float annualDiscountRate,@JsonProperty("leaseTerm")int leaseTerm,
 			@JsonProperty("expectedPeriod")int expectedPeriod,@JsonProperty("leasePayment")double leasePayment,@JsonProperty("paymentIntervals")String paymentIntervals,
 			@JsonProperty("initialDirectCost")int initialDirectCost,@JsonProperty("guaranteedResidualValue")double guaranteedResidualValue,
 			@JsonProperty("usefulLifeOfTheAsset")int usefulLifeOfTheAsset,
-			@JsonProperty("escalation")int escalation,	@JsonProperty("escalationAfterEvery")int escalationAfterEvery) {
+			@JsonProperty("escalation")float escalation,	@JsonProperty("escalationAfterEvery")int escalationAfterEvery) {
 
 		this.leaseContractNo = leaseContractNo;
 		this.commencementDate = commencementDate;
 		this.paymentsAt = paymentsAt;
-		this.annualDiscountRate = annualDiscountRate;
+		this.annualDiscountRate = annualDiscountRate/100;
+		
 		this.leaseTerm = leaseTerm;
 		this.expectedPeriod = expectedPeriod;
 		this.leasePayment = leasePayment;
@@ -38,9 +41,12 @@ public class Entry {
 		this.initialDirectCost = initialDirectCost;
 		this.guaranteedResidualValue = guaranteedResidualValue;
 		this.usefulLifeOfTheAsset = usefulLifeOfTheAsset;
-		this.escalation = escalation;
+		this.escalation = escalation/100;
 		this.escalationAfterEvery = escalationAfterEvery;
 
+		round(this.escalation, 2);
+		round(this.annualDiscountRate, 2);
+		
 	}
 
 	public String getLeaseContractNo() {
@@ -55,7 +61,7 @@ public class Entry {
 		return paymentsAt;
 	}
 
-	public int getAnnualDiscountRate() {
+	public float getAnnualDiscountRate() {
 		return annualDiscountRate;
 	}
 
@@ -87,12 +93,24 @@ public class Entry {
 		return usefulLifeOfTheAsset;
 	}
 
-	public int getEscalation() {
+	public float getEscalation() {
 		return escalation;
 	}
 
 	public int getEscalationAfterEvery() {
 		return escalationAfterEvery;
+	}
+	
+	public static double round(double value, int places) {
+	    if (places < 0) throw new IllegalArgumentException();
+
+	    BigDecimal bd = BigDecimal.valueOf(value);
+	    bd = bd.setScale(places, RoundingMode.HALF_UP);
+	    return bd.doubleValue();
+	}
+
+	public void setCommencementDate(Date commencementDate) {
+		this.commencementDate = commencementDate;
 	}
 
 }

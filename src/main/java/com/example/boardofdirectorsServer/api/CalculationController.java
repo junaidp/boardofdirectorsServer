@@ -19,10 +19,9 @@ public class CalculationController {
 	public HashMap<String, HashMap<String, String>> calculate(@RequestBody Entry entry)
 	{
 		
-		Calculation c;
 		try {
-			c = new Calculation();
-			//return c.calculate();
+			Calculation c = new Calculation();
+			c.entry(entry);
 			
 		} catch (InvalidFormatException e) {
 			// TODO Auto-generated catch block

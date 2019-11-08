@@ -17,10 +17,10 @@ public class BoardofdirectorsServerApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(BoardofdirectorsServerApplication.class, args);
-		try {
+		/*try {
 			try {
 				Calculation c = new Calculation();
-				Entry entry = new Entry("Lease No. 1", new Date("15/03/2017"), "Beginning", 5, 16, 16, 0, "Yearly", 100, 100.00, 0, 10, 2);
+				Entry entry = new Entry("Lease No. 1", new Date("03/15/2017"), "Beginning", 5, 2, 16, 100000, "Yearly", 0, 0.00, 10, 10, 2);
 				c.entry(entry);
 				
 			} catch (InvalidFormatException e) {
@@ -30,7 +30,7 @@ public class BoardofdirectorsServerApplication {
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
+		}*/
 	}
 
 }

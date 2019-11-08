@@ -2,7 +2,9 @@ package com.example.boardofdirectorsServer.api;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 
 import org.apache.poi.hssf.usermodel.HSSFDateUtil;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
@@ -24,45 +26,61 @@ public class Calculation {
 
 	public Calculation() throws IOException, InvalidFormatException
 	{
-		
+
 	}
-	
+
 	public void entry(Entry entry){
 		OPCPackage pkg;
 		try {
-			 pkg = OPCPackage.open(new File("C:\\Users\\jparacha\\git\\boardofdirectorsServer\\src\\main\\resources\\static\\ifrs.xlsx"));
-		
-		XSSFWorkbook wb = new XSSFWorkbook(pkg);
-		Sheet sheetLease = wb.getSheetAt(0);
-		
-		System.out.println(sheetLease.getRow(3).getCell(0).getCellType());
-		System.out.println(sheetLease.getRow(3).getCell(1).getCellType());
-		System.out.println(sheetLease.getRow(3).getCell(2).getCellType());
-		System.out.println(sheetLease.getRow(3).getCell(3).getCellType());
-		System.out.println(sheetLease.getRow(3).getCell(4).getCellType());
-		System.out.println(sheetLease.getRow(3).getCell(5).getCellType());
-		System.out.println(sheetLease.getRow(3).getCell(6).getCellType());
-		System.out.println(sheetLease.getRow(3).getCell(7).getCellType());
-		System.out.println(sheetLease.getRow(3).getCell(8).getCellType());
-		System.out.println(sheetLease.getRow(3).getCell(9).getCellType());
-		System.out.println(sheetLease.getRow(3).getCell(10).getCellType());
-		System.out.println(sheetLease.getRow(3).getCell(11).getCellType());
-		System.out.println(sheetLease.getRow(3).getCell(12).getCellType());
-		System.out.println(sheetLease.getRow(3).getCell(13).getCellType());
-	
-		printValues(sheetLease);
-		updateValues(entry, sheetLease);	
-		System.out.println("updating");
-		printValues(sheetLease);
-		
-		calculate(wb);
-		wb.close();
-		
+			File file = getFile();
+			//pkg = OPCPackage.open(new File("/Users/junaidparacha/Downloads/ifrs.xlsx"));
+			pkg = OPCPackage.open(file);
+
+			XSSFWorkbook wb = new XSSFWorkbook(pkg);
+			Sheet sheetLease = wb.getSheetAt(0);
+			System.out.println(sheetLease.getRow(3).getCell(0).getCellType());
+			System.out.println(sheetLease.getRow(3).getCell(1).getCellType());
+			System.out.println(sheetLease.getRow(3).getCell(2).getCellType());
+			System.out.println(sheetLease.getRow(3).getCell(3).getCellType());
+			System.out.println(sheetLease.getRow(3).getCell(4).getCellType());
+			System.out.println(sheetLease.getRow(3).getCell(5).getCellType());
+			System.out.println(sheetLease.getRow(3).getCell(6).getCellType());
+			System.out.println(sheetLease.getRow(3).getCell(7).getCellType());
+			System.out.println(sheetLease.getRow(3).getCell(8).getCellType());
+			System.out.println(sheetLease.getRow(3).getCell(9).getCellType());
+			System.out.println(sheetLease.getRow(3).getCell(10).getCellType());
+			System.out.println(sheetLease.getRow(3).getCell(11).getCellType());
+			System.out.println(sheetLease.getRow(3).getCell(12).getCellType());
+			System.out.println(sheetLease.getRow(3).getCell(13).getCellType());
+
+			printValues(sheetLease);
+			updateValues(entry, sheetLease);	
+			System.out.println("updating");
+			printValues(sheetLease);
+
+			calculate(wb);
+			wb.close();
+
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
+	}
+
+	private File getFile() throws Exception {
+		String fileName = "static/ifrs.xlsx";
+        ClassLoader classLoader = new Calculation().getClass().getClassLoader();
+ 
+        File file = new File(classLoader.getResource(fileName).getFile());
+         
+        //File is found
+        System.out.println("File Found : " + file.exists());
+         
+        //Read File Content
+        String content = new String(Files.readAllBytes(file.toPath()));
+        System.out.println(content);
+        return file;
 	}
 
 	private void updateValues(Entry entry, Sheet sheetLease) {
@@ -99,24 +117,24 @@ public class Calculation {
 		System.out.println(sheetLease.getRow(3).getCell(13).getNumericCellValue());
 	}
 
-	public HashMap<String, HashMap<String, String>> calculate(XSSFWorkbook wb) throws InvalidFormatException, IOException {
-		
-	//	ClassPathResource res = new ClassPathResource("ifrs.xlsx");
+	public LinkedHashMap<String, LinkedHashMap<String, String>> calculate(XSSFWorkbook wb) throws InvalidFormatException, IOException {
+
+		//	ClassPathResource res = new ClassPathResource("ifrs.xlsx");
 		//File file = new File(res.getPath());
-		
-	
+
+
 		//OPCPackage pkg = OPCPackage.open(new File("/Users/junaidparacha/Downloads/ifrs.xlsx"));
 		//OPCPackage pkg = OPCPackage.open(file);
 		//OPCPackage pkg = OPCPackage.open(new File("C:\\Users\\jparacha\\git\\boardofdirectorsServer\\src\\main\\resources\\static\\ifrs.xlsx"));
 		//	Workbook wb = new XSS(fis); //or new XSSFWorkbook("/somepath/test.xls")
-		
-		
+
+
 		//XSSFWorkbook wb = new XSSFWorkbook(pkg);
 
 		FormulaEvaluator evaluator = wb.getCreationHelper().createFormulaEvaluator();
-		HashMap<String, HashMap<String, String>> map = new HashMap<String, HashMap<String, String>>();
+		LinkedHashMap<String, LinkedHashMap<String, String>> map = new LinkedHashMap<String, LinkedHashMap<String, String>>();
 		for (Sheet sheet : wb) {
-			HashMap<String, String> mapSheet = new HashMap<String, String>();
+			LinkedHashMap<String, String> mapSheet = new LinkedHashMap<String, String>();
 
 			for (Row r : sheet) {
 				for (Cell c : r) {
@@ -129,7 +147,7 @@ public class Calculation {
 							System.out.println(ex);
 						}
 						cellType = c.getCachedFormulaResultType();
-						}
+					}
 					else
 					{
 						cellType = c.getCellType();
@@ -138,21 +156,21 @@ public class Calculation {
 				}
 			}
 			map.put(sheet.getSheetName(), mapSheet);
-			
+
 		}
-System.out.println(map);
+		System.out.println(map);
 		return map;
 	}
 
-	private void putinMap(HashMap<String, HashMap<String, String>> map, Sheet sheet, HashMap<String, String> mapSheet,
+	private void putinMap(LinkedHashMap<String, LinkedHashMap<String, String>> map, Sheet sheet, LinkedHashMap<String, String> mapSheet,
 			Cell c, CellType cellType) {
-		
+
 		int rowNum = c.getRow().getRowNum();
 		String cellLocation = rowNum+1 +"/"+c.getColumnIndex();
-		
+
 		switch(cellType) {
-		
-		
+
+
 		case NUMERIC:
 			if (HSSFDateUtil.isCellDateFormatted(c)) {
 				mapSheet.put(""+cellLocation+"", c.getColumnIndex()==9?  month(c.getDateCellValue().getMonth())+"": c.getDateCellValue()+"");
@@ -202,6 +220,6 @@ System.out.println(map);
 			return "Dec";
 		}
 		return null;
-		
+
 	}
-	}
+}
