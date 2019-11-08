@@ -17,7 +17,7 @@ import com.google.gson.Gson;
 @RestController
 public class CalculationController {
 	
-	public  LinkedHashMap<String, LinkedHashMap<String, String>> mapAnswer ;
+	String json;
 	
 	@PostMapping
 	public String calculate(@RequestBody Entry entry)
@@ -41,10 +41,9 @@ public class CalculationController {
 	}
 	
 	@GetMapping
-	public LinkedHashMap<String, LinkedHashMap<String, String>> getCalculation(){
-		if(mapAnswer != null)
-		return mapAnswer;
-		return null;
+	public String getCalculation(){
+		
+		return json;
 	}
 	
 //	@Autowired
