@@ -6,34 +6,93 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class Entry {
 
-	private final int a;
-	private final int b;
-	private int leaseContractNo;
+	private String leaseContractNo;
 	private	Date commencementDate;	
 	private	String paymentsAt; 	
 	private	int annualDiscountRate;
 	private	int leaseTerm;	
 	private	int expectedPeriod;	
-	private	float leasePayment;	
+	private	double leasePayment;	
 	private	String paymentIntervals;	
 	private	int initialDirectCost;	
-	private	float guaranteedResidualValue;	
-	private	float rightOfUseAssetAtInitialRecognition;	
+	private	double guaranteedResidualValue;	
 	private	int usefulLifeOfTheAsset;	
 	private	int escalation;	
 	private	int escalationAfterEvery;
-	
-	public int getA() {
-		return a;
+
+	public Entry(@JsonProperty("leaseContractNo")String leaseContractNo, @JsonProperty("commencementDate")Date commencementDate,
+			@JsonProperty("paymentsAt")String paymentsAt, @JsonProperty("annualDiscountRate")int annualDiscountRate,@JsonProperty("leaseTerm")int leaseTerm,
+			@JsonProperty("expectedPeriod")int expectedPeriod,@JsonProperty("leasePayment")double leasePayment,@JsonProperty("paymentIntervals")String paymentIntervals,
+			@JsonProperty("initialDirectCost")int initialDirectCost,@JsonProperty("guaranteedResidualValue")double guaranteedResidualValue,
+			@JsonProperty("usefulLifeOfTheAsset")int usefulLifeOfTheAsset,
+			@JsonProperty("escalation")int escalation,	@JsonProperty("escalationAfterEvery")int escalationAfterEvery) {
+
+		this.leaseContractNo = leaseContractNo;
+		this.commencementDate = commencementDate;
+		this.paymentsAt = paymentsAt;
+		this.annualDiscountRate = annualDiscountRate;
+		this.leaseTerm = leaseTerm;
+		this.expectedPeriod = expectedPeriod;
+		this.leasePayment = leasePayment;
+		this.paymentIntervals = paymentIntervals;
+		this.initialDirectCost = initialDirectCost;
+		this.guaranteedResidualValue = guaranteedResidualValue;
+		this.usefulLifeOfTheAsset = usefulLifeOfTheAsset;
+		this.escalation = escalation;
+		this.escalationAfterEvery = escalationAfterEvery;
+
 	}
 
-	public int getB() {
-		return b;
+	public String getLeaseContractNo() {
+		return leaseContractNo;
 	}
 
-	public Entry(@JsonProperty("a")int a, @JsonProperty("b")int b) {
-		this.a = a;
-		this.b = b;
+	public Date getCommencementDate() {
+		return commencementDate;
 	}
-	
+
+	public String getPaymentsAt() {
+		return paymentsAt;
+	}
+
+	public int getAnnualDiscountRate() {
+		return annualDiscountRate;
+	}
+
+	public int getLeaseTerm() {
+		return leaseTerm;
+	}
+
+	public int getExpectedPeriod() {
+		return expectedPeriod;
+	}
+
+	public double getLeasePayment() {
+		return leasePayment;
+	}
+
+	public String getPaymentIntervals() {
+		return paymentIntervals;
+	}
+
+	public int getInitialDirectCost() {
+		return initialDirectCost;
+	}
+
+	public double getGuaranteedResidualValue() {
+		return guaranteedResidualValue;
+	}
+
+	public int getUsefulLifeOfTheAsset() {
+		return usefulLifeOfTheAsset;
+	}
+
+	public int getEscalation() {
+		return escalation;
+	}
+
+	public int getEscalationAfterEvery() {
+		return escalationAfterEvery;
+	}
+
 }

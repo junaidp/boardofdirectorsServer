@@ -18,7 +18,7 @@ public class CalculationController {
 	@PostMapping
 	public HashMap<String, HashMap<String, String>> calculate(@RequestBody Entry entry)
 	{
-		int ans =entry.getA() + entry.getB();
+		
 		Calculation c;
 		try {
 			c = new Calculation();

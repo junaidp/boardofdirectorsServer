@@ -1,8 +1,6 @@
 package com.example.boardofdirectorsServer.api;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.HashMap;
 
@@ -15,8 +13,6 @@ import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.springframework.core.io.ClassPathResource;
-
 import com.example.boardofdirectorsServer.model.Entry;
 
 
@@ -34,16 +30,31 @@ public class Calculation {
 	public void entry(Entry entry){
 		OPCPackage pkg;
 		try {
-			pkg = OPCPackage.open(new File("/Users/junaidparacha/Downloads/ifrs.xlsx"));
+			 pkg = OPCPackage.open(new File("C:\\Users\\jparacha\\git\\boardofdirectorsServer\\src\\main\\resources\\static\\ifrs.xlsx"));
 		
 		XSSFWorkbook wb = new XSSFWorkbook(pkg);
 		Sheet sheetLease = wb.getSheetAt(0);
-		System.out.println(sheetLease.getRow(3).getCell(4).getNumericCellValue());
 		
-		sheetLease.getRow(3).getCell(4).setCellValue(5);	
+		System.out.println(sheetLease.getRow(3).getCell(0).getCellType());
+		System.out.println(sheetLease.getRow(3).getCell(1).getCellType());
+		System.out.println(sheetLease.getRow(3).getCell(2).getCellType());
+		System.out.println(sheetLease.getRow(3).getCell(3).getCellType());
+		System.out.println(sheetLease.getRow(3).getCell(4).getCellType());
+		System.out.println(sheetLease.getRow(3).getCell(5).getCellType());
+		System.out.println(sheetLease.getRow(3).getCell(6).getCellType());
+		System.out.println(sheetLease.getRow(3).getCell(7).getCellType());
+		System.out.println(sheetLease.getRow(3).getCell(8).getCellType());
+		System.out.println(sheetLease.getRow(3).getCell(9).getCellType());
+		System.out.println(sheetLease.getRow(3).getCell(10).getCellType());
+		System.out.println(sheetLease.getRow(3).getCell(11).getCellType());
+		System.out.println(sheetLease.getRow(3).getCell(12).getCellType());
+		System.out.println(sheetLease.getRow(3).getCell(13).getCellType());
+	
+		printValues(sheetLease);
+		updateValues(entry, sheetLease);	
 		System.out.println("updating");
+		printValues(sheetLease);
 		
-		System.out.println(sheetLease.getRow(3).getCell(4).getNumericCellValue());
 		calculate(wb);
 		wb.close();
 		
@@ -52,6 +63,40 @@ public class Calculation {
 			e.printStackTrace();
 		}
 		
+	}
+
+	private void updateValues(Entry entry, Sheet sheetLease) {
+		sheetLease.getRow(3).getCell(0).setCellValue(entry.getLeaseContractNo());	
+		sheetLease.getRow(3).getCell(1).setCellValue(entry.getCommencementDate());	
+		sheetLease.getRow(3).getCell(2).setCellValue(entry.getPaymentsAt());	
+		sheetLease.getRow(3).getCell(3).setCellValue(entry.getAnnualDiscountRate());	
+		sheetLease.getRow(3).getCell(4).setCellValue(entry.getLeaseTerm());	
+		sheetLease.getRow(3).getCell(5).setCellValue(entry.getExpectedPeriod());	
+		sheetLease.getRow(3).getCell(6).setCellValue(entry.getLeasePayment());	
+		sheetLease.getRow(3).getCell(7).setCellValue(entry.getPaymentIntervals());	
+		sheetLease.getRow(3).getCell(8).setCellValue(entry.getInitialDirectCost());	
+		sheetLease.getRow(3).getCell(9).setCellValue(entry.getGuaranteedResidualValue());	
+		//sheetLease.getRow(3).getCell(10).setCellValue(entry.getLeaseContractNo());	
+		sheetLease.getRow(3).getCell(11).setCellValue(entry.getUsefulLifeOfTheAsset());	
+		sheetLease.getRow(3).getCell(12).setCellValue(entry.getEscalation());	
+		sheetLease.getRow(3).getCell(13).setCellValue(entry.getEscalationAfterEvery());
+	}
+
+	private void printValues(Sheet sheetLease) {
+		System.out.println(sheetLease.getRow(3).getCell(0).getStringCellValue());
+		System.out.println(sheetLease.getRow(3).getCell(1).getDateCellValue());
+		System.out.println(sheetLease.getRow(3).getCell(2).getStringCellValue());
+		System.out.println(sheetLease.getRow(3).getCell(3).getNumericCellValue());
+		System.out.println(sheetLease.getRow(3).getCell(4).getNumericCellValue());
+		System.out.println(sheetLease.getRow(3).getCell(5).getNumericCellValue());
+		System.out.println(sheetLease.getRow(3).getCell(6).getNumericCellValue());
+		System.out.println(sheetLease.getRow(3).getCell(7).getStringCellValue());
+		System.out.println(sheetLease.getRow(3).getCell(8).getNumericCellValue());
+		System.out.println(sheetLease.getRow(3).getCell(9).getNumericCellValue());
+		System.out.println(sheetLease.getRow(3).getCell(10).getNumericCellValue());
+		System.out.println(sheetLease.getRow(3).getCell(11).getNumericCellValue());
+		System.out.println(sheetLease.getRow(3).getCell(12).getNumericCellValue());
+		System.out.println(sheetLease.getRow(3).getCell(13).getNumericCellValue());
 	}
 
 	public HashMap<String, HashMap<String, String>> calculate(XSSFWorkbook wb) throws InvalidFormatException, IOException {
