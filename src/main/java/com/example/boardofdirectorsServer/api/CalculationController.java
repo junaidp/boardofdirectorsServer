@@ -28,7 +28,7 @@ public class CalculationController {
 			LinkedHashMap<String, LinkedHashMap<String, String>> map = c.entry(entry);
 			Gson gson = new Gson(); 
 			 json = gson.toJson(map);
-			return "json";
+			return map.size()+"";
 			
 		} catch (InvalidFormatException e) {
 			 e.printStackTrace();
