@@ -22,7 +22,7 @@ public class CalculationController {
 		Calculation c;
 		try {
 			c = new Calculation();
-			return c.calculate();
+			//return c.calculate();
 			
 		} catch (InvalidFormatException e) {
 			// TODO Auto-generated catch block

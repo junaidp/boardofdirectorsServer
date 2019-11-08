@@ -15,7 +15,19 @@ public class BoardofdirectorsServerApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(BoardofdirectorsServerApplication.class, args);
-	
+		try {
+			try {
+				Calculation c = new Calculation();
+				c.entry(null);
+				
+			} catch (InvalidFormatException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 }

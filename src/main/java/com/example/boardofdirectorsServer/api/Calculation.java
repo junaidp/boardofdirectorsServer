@@ -15,6 +15,9 @@ import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.springframework.core.io.ClassPathResource;
+
+import com.example.boardofdirectorsServer.model.Entry;
 
 
 
@@ -25,14 +28,45 @@ public class Calculation {
 
 	public Calculation() throws IOException, InvalidFormatException
 	{
-		calculate();
+		
+	}
+	
+	public void entry(Entry entry){
+		OPCPackage pkg;
+		try {
+			pkg = OPCPackage.open(new File("/Users/junaidparacha/Downloads/ifrs.xlsx"));
+		
+		XSSFWorkbook wb = new XSSFWorkbook(pkg);
+		Sheet sheetLease = wb.getSheetAt(0);
+		System.out.println(sheetLease.getRow(3).getCell(4).getNumericCellValue());
+		
+		sheetLease.getRow(3).getCell(4).setCellValue(5);	
+		System.out.println("updating");
+		
+		System.out.println(sheetLease.getRow(3).getCell(4).getNumericCellValue());
+		calculate(wb);
+		wb.close();
+		
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 	}
 
-	public HashMap<String, HashMap<String, String>> calculate() throws InvalidFormatException, IOException {
-		OPCPackage pkg = OPCPackage.open(new File("/Users/junaidparacha/Downloads/ifrs.xlsx"));
+	public HashMap<String, HashMap<String, String>> calculate(XSSFWorkbook wb) throws InvalidFormatException, IOException {
+		
+	//	ClassPathResource res = new ClassPathResource("ifrs.xlsx");
+		//File file = new File(res.getPath());
+		
+	
+		//OPCPackage pkg = OPCPackage.open(new File("/Users/junaidparacha/Downloads/ifrs.xlsx"));
+		//OPCPackage pkg = OPCPackage.open(file);
 		//OPCPackage pkg = OPCPackage.open(new File("C:\\Users\\jparacha\\git\\boardofdirectorsServer\\src\\main\\resources\\static\\ifrs.xlsx"));
 		//	Workbook wb = new XSS(fis); //or new XSSFWorkbook("/somepath/test.xls")
-		XSSFWorkbook wb = new XSSFWorkbook(pkg);
+		
+		
+		//XSSFWorkbook wb = new XSSFWorkbook(pkg);
 
 		FormulaEvaluator evaluator = wb.getCreationHelper().createFormulaEvaluator();
 		HashMap<String, HashMap<String, String>> map = new HashMap<String, HashMap<String, String>>();
@@ -61,7 +95,7 @@ public class Calculation {
 			map.put(sheet.getSheetName(), mapSheet);
 			
 		}
-
+System.out.println(map);
 		return map;
 	}
 
