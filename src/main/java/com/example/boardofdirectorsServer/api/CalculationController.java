@@ -2,6 +2,7 @@ package com.example.boardofdirectorsServer.api;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -21,7 +22,8 @@ public class CalculationController {
 		
 		try {
 			Calculation c = new Calculation();
-			c.entry(entry);
+			LinkedHashMap map = c.entry(entry);
+			return map;
 			
 		} catch (InvalidFormatException e) {
 			// TODO Auto-generated catch block

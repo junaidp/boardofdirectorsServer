@@ -29,7 +29,7 @@ public class Calculation {
 
 	}
 
-	public void entry(Entry entry){
+	public LinkedHashMap entry(Entry entry){
 		OPCPackage pkg;
 		try {
 			File file = getFile();
@@ -58,13 +58,15 @@ public class Calculation {
 			System.out.println("updating");
 			printValues(sheetLease);
 
-			calculate(wb);
+			LinkedHashMap map = calculate(wb);
 			wb.close();
+			return map;
 
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		return null;
 
 	}
 
