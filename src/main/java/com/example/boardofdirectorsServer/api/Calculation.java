@@ -32,13 +32,19 @@ public class Calculation {
 	}
 
 	public String entry(Entry entry){
+		json ="1";
 		OPCPackage pkg;
+		json = json+"2";
 		try {
 			File file = getFile();
+			json = json+"3";
 			//pkg = OPCPackage.open(new File("/Users/junaidparacha/Downloads/ifrs.xlsx"));
 			pkg = OPCPackage.open(file);
+			json = json+"4";
 			Gson gson = new Gson(); 
+			json = json+"5";
 			 json = gson.toJson(entry);
+			 json = json+"6";
 			XSSFWorkbook wb = new XSSFWorkbook(pkg);
 			Sheet sheetLease = wb.getSheetAt(0);
 			System.out.println(sheetLease.getRow(3).getCell(0).getCellType());
