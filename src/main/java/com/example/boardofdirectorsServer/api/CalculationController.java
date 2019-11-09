@@ -24,17 +24,15 @@ public class CalculationController {
 		
 		try {
 			Calculation c = new Calculation();
-			String json = c.entry(entry);
+			 json = c.entry(entry);
 			
 			return json;
 			
 		} catch (InvalidFormatException e) {
-			 e.printStackTrace();
+			throw e;
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw e;
 		}
-		return  null;
 		
 	}
 	
