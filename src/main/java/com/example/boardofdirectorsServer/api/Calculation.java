@@ -31,7 +31,7 @@ public class Calculation {
 
 	}
 
-	public String entry(Entry entry){
+	public String entry(Entry entry) throws Exception{
 		json ="1";
 		OPCPackage pkg;
 		json = json+"2";
@@ -75,9 +75,9 @@ public class Calculation {
 
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			json = json +e;
+			throw e;
 		}
-		return null;
 
 	}
 

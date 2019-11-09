@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.boardofdirectorsServer.model.Entry;
-import com.google.gson.Gson;
 
 @RequestMapping("calculation")
 @RestController
@@ -20,7 +19,7 @@ public class CalculationController {
 	String json;
 	
 	@PostMapping
-	public String calculate(@RequestBody Entry entry)
+	public String calculate(@RequestBody Entry entry) throws Exception
 	{
 		
 		try {
