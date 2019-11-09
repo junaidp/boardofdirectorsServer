@@ -32,10 +32,11 @@ public class Calculation {
 	}
 
 	public String entry(Entry entry) throws Exception{
+		try {
 		json ="1";
 		OPCPackage pkg;
 		json = json+"2";
-		try {
+		
 			File file = getFile();
 			json = json+"3";
 			//pkg = OPCPackage.open(new File("/Users/junaidparacha/Downloads/ifrs.xlsx"));
