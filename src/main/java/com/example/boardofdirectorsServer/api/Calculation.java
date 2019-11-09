@@ -32,8 +32,10 @@ public class Calculation {
 	}
 
 	public String entry(Entry entry) throws Exception{
+		Gson gson;
 		try {
-		json ="1";
+			 gson = new Gson(); 
+		json =  gson.toJson(entry);
 		OPCPackage pkg;
 		json = json+"2";
 		
@@ -42,7 +44,7 @@ public class Calculation {
 			//pkg = OPCPackage.open(new File("/Users/junaidparacha/Downloads/ifrs.xlsx"));
 			pkg = OPCPackage.open(file);
 			json = json+"4";
-			Gson gson = new Gson(); 
+			
 			json = json+"5";
 			 json = gson.toJson(entry);
 			 json = json+"6";
