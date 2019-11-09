@@ -16,11 +16,13 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import com.example.boardofdirectorsServer.model.Entry;
+import com.google.gson.Gson;
 
 
 
 public class Calculation {
 
+	private String json="";
 
 	///ifrs.xls
 
@@ -29,13 +31,14 @@ public class Calculation {
 
 	}
 
-	public LinkedHashMap entry(Entry entry){
+	public String entry(Entry entry){
 		OPCPackage pkg;
 		try {
 			File file = getFile();
 			//pkg = OPCPackage.open(new File("/Users/junaidparacha/Downloads/ifrs.xlsx"));
 			pkg = OPCPackage.open(file);
-
+			Gson gson = new Gson(); 
+			 json = gson.toJson(entry);
 			XSSFWorkbook wb = new XSSFWorkbook(pkg);
 			Sheet sheetLease = wb.getSheetAt(0);
 			System.out.println(sheetLease.getRow(3).getCell(0).getCellType());
@@ -58,9 +61,11 @@ public class Calculation {
 			System.out.println("updating");
 			printValues(sheetLease);
 
-			LinkedHashMap map = calculate(wb);
+			LinkedHashMap<String, LinkedHashMap<String, String>> map = calculate(wb);
+			json = json+"1"+map;
+					
 			wb.close();
-			return map;
+			return json;
 
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
