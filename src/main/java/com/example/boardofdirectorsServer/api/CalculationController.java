@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.LinkedHashMap;
 
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -14,6 +15,7 @@ import com.example.boardofdirectorsServer.model.Entry;
 
 @RequestMapping("calculation")
 @RestController
+@CrossOrigin(origins = "*", maxAge = 3600)
 public class CalculationController {
 	
 	String json;

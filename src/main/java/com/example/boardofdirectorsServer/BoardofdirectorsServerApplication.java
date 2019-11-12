@@ -17,19 +17,19 @@ import com.google.gson.Gson;
 @CrossOrigin(origins = "*")
 public class BoardofdirectorsServerApplication {
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws Exception {
 		SpringApplication.run(BoardofdirectorsServerApplication.class, args);
-		/*try {
+		try {
 			try {
 			//	Calculation c = new Calculation();
-				Entry entry = new Entry("Lease No. 1", new Date("03/15/2017"), "Beginning", 5, 2, 16, 100000, "Yearly", 0, 0.00, 10, 10, 2);
+				Entry entry = new Entry("Lease No. 1", new Date("05/10/2019"), "Ending", 7, 60, 60, 250000, "Monthly", 0, 200000, 10, 15, 3);
 			//	c.entry(entry);
 				
 				Calculation c = new Calculation();
-				LinkedHashMap<String, LinkedHashMap<String, String>> map = c.entry(entry);
+				String map = c.entry(entry);
 				Gson gson = new Gson(); 
 				String json = gson.toJson(map);
-				System.out.println(json);
+			//	System.out.println(json);
 				
 			} catch (InvalidFormatException e) {
 				// TODO Auto-generated catch block
@@ -38,7 +38,7 @@ public class BoardofdirectorsServerApplication {
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}*/
+		}
 	}
 
 }
