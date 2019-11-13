@@ -2,6 +2,7 @@ package com.example.boardofdirectorsServer.api;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -39,7 +40,7 @@ public class Calculation {
 		OPCPackage pkg;
 		json = json+"2";
 		
-			File file = getFile();
+			InputStream file = getFile();
 			json = json+"3";
 			//pkg = OPCPackage.open(new File("/Users/junaidparacha/Downloads/ifrs.xlsx"));
 			pkg = OPCPackage.open(file);
@@ -84,18 +85,18 @@ public class Calculation {
 
 	}
 
-	private File getFile() throws Exception {
+	private InputStream getFile() throws Exception {
 		String fileName = "static/ifrs.xlsx";
-        ClassLoader classLoader = new Calculation().getClass().getClassLoader();
+        ClassLoader classLoader =  this.getClass().getClassLoader();
  
-        File file = new File(classLoader.getResource(fileName).getFile());
-         
+       // File file = new File(classLoader.getResource(fileName).getFile());
+        InputStream file = classLoader.getResourceAsStream(fileName);
         //File is found
-        System.out.println("File Found : " + file.exists());
+       // System.out.println("File Found : " + file.exists());
          
         //Read File Content
-        String content = new String(Files.readAllBytes(file.toPath()));
-        System.out.println(content);
+      ////  String content = new String(Files.readAllBytes(file.toPath()));
+       // System.out.println(content);
         return file;
 	}
 
