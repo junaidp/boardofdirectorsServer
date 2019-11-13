@@ -19,7 +19,7 @@ public class BoardofdirectorsServerApplication {
 
 	public static void main(String[] args) throws Exception {
 		SpringApplication.run(BoardofdirectorsServerApplication.class, args);
-		try {
+		/*try {
 			try {
 			//	Calculation c = new Calculation();
 				Entry entry = new Entry("Lease No. 1", new Date("05/10/2019"), "Ending", 7, 60, 60, 250000, "Monthly", 0, 200000, 10, 15, 3);
@@ -38,7 +38,7 @@ public class BoardofdirectorsServerApplication {
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
+		}*/
 	}
 
 }
