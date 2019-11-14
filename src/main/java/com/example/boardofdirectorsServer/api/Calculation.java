@@ -152,6 +152,7 @@ public class Calculation {
 			LinkedHashMap<String, String> mapSheet = new LinkedHashMap<String, String>();
 			System.out.println("In sheet" +sheet.getSheetName());
 			for (Row r : sheet) {
+				///ONLY PUT COLUMN No in map id
 				System.out.println("In Row" +r.getRowNum());
 				for (Cell c : r) {
 					CellType cellType = null;
@@ -182,7 +183,7 @@ public class Calculation {
 
 	private void putinMap(LinkedHashMap<String, LinkedHashMap<String, String>> map, Sheet sheet, LinkedHashMap<String, String> mapSheet,
 			Cell c, CellType cellType) {
-
+		
 		int rowNum = c.getRow().getRowNum();
 		String cellLocation = rowNum+1 +"/"+c.getColumnIndex();
 
