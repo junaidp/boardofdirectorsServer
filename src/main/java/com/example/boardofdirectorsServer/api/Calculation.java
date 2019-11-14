@@ -33,53 +33,52 @@ public class Calculation {
 		Gson gson;
 		try {
 			 gson = new Gson(); 
-		json =  gson.toJson(entry);
-		OPCPackage pkg;
-		json = json+"2";
 		
+		OPCPackage pkg;
 			InputStream file = getFile();
-			json = json+"3";
-			//pkg = OPCPackage.open(new File("/Users/junaidparacha/Downloads/ifrs.xlsx"));
 			pkg = OPCPackage.open(file);
-			json = json+"4";
 			
-			json = json+"5";
-			 json = gson.toJson(entry);
-			 json = json+"6";
 			XSSFWorkbook wb = new XSSFWorkbook(pkg);
 			Sheet sheetLease = wb.getSheetAt(0);
-			System.out.println(sheetLease.getRow(3).getCell(0).getCellType());
-			System.out.println(sheetLease.getRow(3).getCell(1).getCellType());
-			System.out.println(sheetLease.getRow(3).getCell(2).getCellType());
-			System.out.println(sheetLease.getRow(3).getCell(3).getCellType());
-			System.out.println(sheetLease.getRow(3).getCell(4).getCellType());
-			System.out.println(sheetLease.getRow(3).getCell(5).getCellType());
-			System.out.println(sheetLease.getRow(3).getCell(6).getCellType());
-			System.out.println(sheetLease.getRow(3).getCell(7).getCellType());
-			System.out.println(sheetLease.getRow(3).getCell(8).getCellType());
-			System.out.println(sheetLease.getRow(3).getCell(9).getCellType());
-			System.out.println(sheetLease.getRow(3).getCell(10).getCellType());
-			System.out.println(sheetLease.getRow(3).getCell(11).getCellType());
-			System.out.println(sheetLease.getRow(3).getCell(12).getCellType());
-			System.out.println(sheetLease.getRow(3).getCell(13).getCellType());
+			
+		//	printTypes(sheetLease);
 
-			printValues(sheetLease);
+		//	printValues(sheetLease);
 			updateValues(entry, sheetLease);	
 			System.out.println("updating");
-			printValues(sheetLease);
+		//	printValues(sheetLease);
 
 			LinkedHashMap<String, LinkedHashMap<String, String>> map = calculate(wb);
-			json = json+"1"+map;
-					
+			System.out.println("calculation done ");
+			json =  gson.toJson(map);
+			System.out.println("converted to json");
 			wb.close();
+			System.out.println("returning json");
 			return json;
 
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
-			json = json +e;
+			System.out.println("In exception" + e);
 			throw e;
 		}
 
+	}
+
+	private void printTypes(Sheet sheetLease) {
+		System.out.println(sheetLease.getRow(3).getCell(0).getCellType());
+		System.out.println(sheetLease.getRow(3).getCell(1).getCellType());
+		System.out.println(sheetLease.getRow(3).getCell(2).getCellType());
+		System.out.println(sheetLease.getRow(3).getCell(3).getCellType());
+		System.out.println(sheetLease.getRow(3).getCell(4).getCellType());
+		System.out.println(sheetLease.getRow(3).getCell(5).getCellType());
+		System.out.println(sheetLease.getRow(3).getCell(6).getCellType());
+		System.out.println(sheetLease.getRow(3).getCell(7).getCellType());
+		System.out.println(sheetLease.getRow(3).getCell(8).getCellType());
+		System.out.println(sheetLease.getRow(3).getCell(9).getCellType());
+		System.out.println(sheetLease.getRow(3).getCell(10).getCellType());
+		System.out.println(sheetLease.getRow(3).getCell(11).getCellType());
+		System.out.println(sheetLease.getRow(3).getCell(12).getCellType());
+		System.out.println(sheetLease.getRow(3).getCell(13).getCellType());
 	}
 
 	private InputStream getFile() throws Exception {
@@ -144,12 +143,14 @@ public class Calculation {
 
 
 		//XSSFWorkbook wb = new XSSFWorkbook(pkg);
-
+		System.out.println("going to update");
 		FormulaEvaluator evaluator = wb.getCreationHelper().createFormulaEvaluator();
+		System.out.println("154");
 		LinkedHashMap<String, LinkedHashMap<String, String>> map = new LinkedHashMap<String, LinkedHashMap<String, String>>();
+		System.out.println("starting loop");
 		for (Sheet sheet : wb) {
 			LinkedHashMap<String, String> mapSheet = new LinkedHashMap<String, String>();
-
+			System.out.println("In sheet" +sheet.getSheetName());
 			for (Row r : sheet) {
 				for (Cell c : r) {
 					CellType cellType = null;
@@ -172,7 +173,8 @@ public class Calculation {
 			map.put(sheet.getSheetName(), mapSheet);
 
 		}
-		System.out.println(map);
+		//System.out.println(map);
+		System.out.println("returning map");
 		return map;
 	}
 
