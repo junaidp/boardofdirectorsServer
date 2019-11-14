@@ -152,14 +152,16 @@ public class Calculation {
 			LinkedHashMap<String, String> mapSheet = new LinkedHashMap<String, String>();
 			System.out.println("In sheet" +sheet.getSheetName());
 			for (Row r : sheet) {
+				System.out.println("In Row" +r.getRowNum());
 				for (Cell c : r) {
 					CellType cellType = null;
 					if (c.getCellType() == CellType.FORMULA) {
 						try{
 							evaluator.evaluateFormulaCell(c);
 						}catch(Exception ex){
+							System.out.println("In Exception in loop" + ex);
 							mapSheet.put(""+c.getRow().getRowNum()+"/"+c.getColumnIndex()+"", ":"+"");
-							System.out.println(ex);
+							System.out.println("In error" + ex);
 						}
 						cellType = c.getCachedFormulaResultType();
 					}
