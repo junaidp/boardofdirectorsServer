@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.boardofdirectorsServer.model.Entry;
 import com.example.boardofdirectorsServer.model.User;
 import com.example.boardofdirectorsServer.model.UserRepository;
+import com.google.gson.Gson;
 
 @RequestMapping("calculation")
 @RestController
@@ -73,10 +74,12 @@ public class CalculationController {
 	}
 	
 	@GetMapping("/getUser")
-	public User singIn(@RequestBody String userName, String password)
+	public String singIn(@RequestBody String userName, String password)
 	{
 		User user = userRepository.findUserByName(userName);
-		return user;
+		Gson gson = new Gson();
+		json = gson.toJson(user);
+		return json;
 	}
 	
 }
