@@ -3,6 +3,7 @@ package com.example.boardofdirectorsServer.api;
 import java.io.IOException;
 
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -11,6 +12,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.boardofdirectorsServer.model.Entry;
+import com.example.boardofdirectorsServer.model.User;
+import com.example.boardofdirectorsServer.model.UserRepository;
 
 @RequestMapping("calculation")
 @RestController
@@ -55,14 +58,14 @@ public class CalculationController {
 		return json;
 	}
 	
-//	@Autowired
-//	EntryRepository entryRepository;
-//	
-//	@PostMapping("/saveEntry")
-//	public String saveEntry(@RequestBody EntryEntity entry)
-//	{
-//		int ans =entry.getA() - entry.getB();
-//		entryRepository.save(entry);
-//		return "Ans : "+ ans;		
-//	}
+	@Autowired
+	UserRepository userRepository;
+	
+	@PostMapping("/saveUser")
+	public String saveEntry(@RequestBody User user)
+	{
+		
+		userRepository.save(user);
+		return "user saved";		
+}
 }
