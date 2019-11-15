@@ -261,26 +261,26 @@ public class Calculation {
 			Cell c, CellType cellType) {
 
 	
-		String cellLocation = c.getColumnIndex()+"";
+		String cellLocation = c.getRow().getRowNum()+":"+ c.getColumnIndex()+"";
 
 		switch(cellType) {
 
 
 		case NUMERIC:
 			if (HSSFDateUtil.isCellDateFormatted(c)) {
-				mapSheet.put(""+cellLocation+"", c.getColumnIndex()==9?  month(c.getDateCellValue().getMonth())+"": c.getDateCellValue()+"");
+				mapSheet.put(c.getColumnIndex()+"", c.getColumnIndex()==9?  month(c.getDateCellValue().getMonth())+"": c.getDateCellValue()+"");
 			}
 			else {
-				mapSheet.put(""+cellLocation+"", c.getNumericCellValue()+"");
+				mapSheet.put(c.getColumnIndex()+"", c.getNumericCellValue()+"");
 			}
 			break;
 		case STRING:
-			mapSheet.put(""+cellLocation+"", c.getRichStringCellValue()+"");
+			mapSheet.put(c.getColumnIndex()+"", c.getRichStringCellValue()+"");
 			break;
 		case BOOLEAN:
-			mapSheet.put(""+cellLocation+"", c.getBooleanCellValue()+"");
+			mapSheet.put(c.getColumnIndex()+"", c.getBooleanCellValue()+"");
 		default:
-			mapSheet.put(""+cellLocation+"", "-"+"");
+			mapSheet.put(c.getColumnIndex()+"", "-"+"");
 			break;
 		}
 	}
