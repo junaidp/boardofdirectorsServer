@@ -271,7 +271,8 @@ public class Calculation {
 				mapSheet.put(c.getRow().getRowNum()+":"+ c.getColumnIndex()+"", c.getColumnIndex()==9?  month(c.getDateCellValue().getMonth())+"": c.getDateCellValue()+"");
 			}
 			else {
-				mapSheet.put(c.getRow().getRowNum()+":"+ c.getColumnIndex()+"", c.getNumericCellValue()+"");
+				c.getRow().getRowNum();
+				mapSheet.put(1+":"+ c.getColumnIndex()+"", c.getNumericCellValue()+"");
 			}
 			break;
 		case STRING:
