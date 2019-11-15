@@ -266,7 +266,7 @@ public class Calculation {
 			Cell c, CellType cellType) {
 
 	
-		String cellLocation = c.getRow().getRowNum()+":"+ c.getColumnIndex()+"";
+		String cellLocation =  c.getColumnIndex()+"";
 
 		switch(cellType) {
 
@@ -277,16 +277,16 @@ public class Calculation {
 			}
 			else {
 				c.getRow().getRowNum();
-				mapSheet.put(1+":"+ c.getColumnIndex()+"", c.getNumericCellValue()+"");
+				mapSheet.put(cellLocation, c.getNumericCellValue()+"");
 			}
 			break;
 		case STRING:
-			mapSheet.put(c.getRow().getRowNum()+":"+ c.getColumnIndex()+"", c.getRichStringCellValue()+"");
+			mapSheet.put(cellLocation, c.getRichStringCellValue()+"");
 			break;
 		case BOOLEAN:
-			mapSheet.put(c.getRow().getRowNum()+":"+ c.getColumnIndex()+"", c.getBooleanCellValue()+"");
+			mapSheet.put(cellLocation, c.getBooleanCellValue()+"");
 		default:
-			mapSheet.put(c.getRow().getRowNum()+":"+ c.getColumnIndex()+"", "-"+"");
+			mapSheet.put(cellLocation, "-"+"");
 			break;
 		}
 	}
