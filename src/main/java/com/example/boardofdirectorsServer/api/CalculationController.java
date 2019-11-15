@@ -37,6 +37,18 @@ public class CalculationController {
 		
 	}
 	
+	@PostMapping("/lease")
+	public String calculateLease(@RequestBody Entry entry) throws Exception
+	{
+		try {
+			Calculation c = new Calculation();
+			 json = c.entryLease(entry);
+			 return json;
+		} catch (Exception e) {
+			throw e;
+		}
+	}
+	
 	@GetMapping
 	public String getCalculation(){
 		

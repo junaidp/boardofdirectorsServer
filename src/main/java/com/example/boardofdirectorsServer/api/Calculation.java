@@ -12,6 +12,7 @@ import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import com.example.boardofdirectorsServer.model.Entry;
 import com.google.gson.Gson;
@@ -49,6 +50,37 @@ public class Calculation {
 		//	printValues(sheetLease);
 
 			LinkedHashMap<String, LinkedHashMap<String, String>> map = calculate(wb);
+			System.out.println("calculation done ");
+			json =  gson.toJson(map);
+			System.out.println("converted to json");
+			wb.close();
+			System.out.println("returning json");
+			return json;
+
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			System.out.println("In exception" + e);
+			throw e;
+		}
+
+	}
+	
+	public String entryLease(Entry entry) throws Exception{
+		Gson gson;
+		try {
+			 gson = new Gson(); 
+		
+		OPCPackage pkg;
+			InputStream file = getFile();
+			pkg = OPCPackage.open(file);
+			
+			XSSFWorkbook wb = new XSSFWorkbook(pkg);
+			Sheet sheetLease = wb.getSheetAt(0);
+			
+			updateValues(entry, sheetLease);	
+			System.out.println("updating");
+	
+			LinkedHashMap<String, String> map = calculateLease(wb);
 			System.out.println("calculation done ");
 			json =  gson.toJson(map);
 			System.out.println("converted to json");
@@ -170,7 +202,7 @@ public class Calculation {
 					{
 						cellType = c.getCellType();
 					}
-					putinMap(map, sheet, mapSheet, c, cellType);
+					putinMap(sheet, mapSheet, c, cellType);
 				}
 			}
 			map.put(sheet.getSheetName(), mapSheet);
@@ -180,8 +212,49 @@ public class Calculation {
 		System.out.println("returning map");
 		return map;
 	}
+	
+	public LinkedHashMap<String, String> calculateLease(XSSFWorkbook wb) throws InvalidFormatException, IOException {
 
-	private void putinMap(LinkedHashMap<String, LinkedHashMap<String, String>> map, Sheet sheet, LinkedHashMap<String, String> mapSheet,
+	
+		System.out.println("calculating Lease");
+		FormulaEvaluator evaluator = wb.getCreationHelper().createFormulaEvaluator();
+		System.out.println("154");
+	
+		System.out.println("starting loop");
+		XSSFSheet sheet = wb.getSheet("Lease");
+		
+			LinkedHashMap<String, String> mapSheet = new LinkedHashMap<String, String>();
+			System.out.println("In sheet" +sheet.getSheetName());
+			for (Row r : sheet) {
+				///ONLY PUT COLUMN No in map id
+				System.out.println("In Row" +r.getRowNum());
+				for (Cell c : r) {
+					CellType cellType = null;
+					if (c.getCellType() == CellType.FORMULA) {
+						try{
+							evaluator.evaluateFormulaCell(c);
+						}catch(Exception ex){
+							System.out.println("In Exception in loop" + ex);
+							mapSheet.put(""+c.getRow().getRowNum()+"/"+c.getColumnIndex()+"", ":"+"");
+							System.out.println("In error" + ex);
+						}
+						cellType = c.getCachedFormulaResultType();
+					}
+					else
+					{
+						cellType = c.getCellType();
+					}
+					putinMap( sheet, mapSheet, c, cellType);
+				}
+			}
+		
+		
+		//System.out.println(map);
+		System.out.println("returning Lease map");
+		return mapSheet;
+	}
+
+	private void putinMap(Sheet sheet, LinkedHashMap<String, String> mapSheet,
 			Cell c, CellType cellType) {
 		
 		int rowNum = c.getRow().getRowNum();
