@@ -273,7 +273,7 @@ public class Calculation {
 
 		case NUMERIC:
 			if (HSSFDateUtil.isCellDateFormatted(c)) {
-				mapSheet.put(c.getRow().getRowNum()+":"+ c.getColumnIndex()+"", c.getColumnIndex()==9?  month(c.getDateCellValue().getMonth())+"": c.getDateCellValue()+"");
+				mapSheet.put(cellLocation, c.getColumnIndex()==9?  month(c.getDateCellValue().getMonth())+"": c.getDateCellValue()+"");
 			}
 			else {
 				c.getRow().getRowNum();
