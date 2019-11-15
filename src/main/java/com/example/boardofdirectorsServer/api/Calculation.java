@@ -202,7 +202,7 @@ public class Calculation {
 					{
 						cellType = c.getCellType();
 					}
-					putinMap(sheet, mapSheet, c, cellType);
+					putinMap(mapSheet, c, cellType);
 				}
 			}
 			map.put(sheet.getSheetName(), mapSheet);
@@ -246,7 +246,7 @@ public class Calculation {
 					{
 						cellType = c.getCellType();
 					}
-					putinMap( sheet, mapSheet, c, cellType);
+					putinMap(mapSheet, c, cellType);
 				}
 			}
 		}
@@ -257,7 +257,7 @@ public class Calculation {
 		return mapSheet;
 	}
 
-	private void putinMap(Sheet sheet, LinkedHashMap<String, String> mapSheet,
+	private void putinMap(LinkedHashMap<String, String> mapSheet,
 			Cell c, CellType cellType) {
 
 	
@@ -268,19 +268,19 @@ public class Calculation {
 
 		case NUMERIC:
 			if (HSSFDateUtil.isCellDateFormatted(c)) {
-				mapSheet.put(c.getColumnIndex()+"", c.getColumnIndex()==9?  month(c.getDateCellValue().getMonth())+"": c.getDateCellValue()+"");
+				mapSheet.put(cellLocation, c.getColumnIndex()==9?  month(c.getDateCellValue().getMonth())+"": c.getDateCellValue()+"");
 			}
 			else {
-				mapSheet.put(c.getColumnIndex()+"", c.getNumericCellValue()+"");
+				mapSheet.put(cellLocation, c.getNumericCellValue()+"");
 			}
 			break;
 		case STRING:
-			mapSheet.put(c.getColumnIndex()+"", c.getRichStringCellValue()+"");
+			mapSheet.put(cellLocation, c.getRichStringCellValue()+"");
 			break;
 		case BOOLEAN:
-			mapSheet.put(c.getColumnIndex()+"", c.getBooleanCellValue()+"");
+			mapSheet.put(cellLocation, c.getBooleanCellValue()+"");
 		default:
-			mapSheet.put(c.getColumnIndex()+"", "-"+"");
+			mapSheet.put(cellLocation, "-"+"");
 			break;
 		}
 	}
