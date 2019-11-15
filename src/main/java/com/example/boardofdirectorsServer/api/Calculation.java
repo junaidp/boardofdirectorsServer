@@ -80,7 +80,7 @@ public class Calculation {
 			updateValues(entry, sheetLease);	
 			System.out.println("updating");
 
-			LinkedHashMap<String, String> map = calculateLease(wb);
+			LinkedHashMap<String, LinkedHashMap<String, String>> map = calculateLease(wb);
 			System.out.println("calculation done ");
 			json =  gson.toJson(map);
 			System.out.println("converted to json");
@@ -213,7 +213,7 @@ public class Calculation {
 		return map;
 	}
 
-	public LinkedHashMap<String, String> calculateLease(XSSFWorkbook wb) throws InvalidFormatException, IOException {
+	public LinkedHashMap<String, LinkedHashMap<String, String>> calculateLease(XSSFWorkbook wb) throws InvalidFormatException, IOException {
 
 
 		System.out.println("calculating Lease");
@@ -223,12 +223,15 @@ public class Calculation {
 		System.out.println("starting loop");
 		XSSFSheet sheet = wb.getSheet("Lease");
 
-		LinkedHashMap<String, String> mapSheet = new LinkedHashMap<String, String>();
+		LinkedHashMap<String, LinkedHashMap<String, String>> mapSheet = new LinkedHashMap<String, LinkedHashMap<String, String>>();
 		System.out.println("In sheet" +sheet.getSheetName());
 		for (Row r : sheet) {
 			///ONLY PUT COLUMN No in map id
+
 			if(r.getRowNum()>= 17)
 			{
+				LinkedHashMap<String, String> mapRow = new LinkedHashMap<String, String>();
+			
 				System.out.println("In Row" +r.getRowNum());
 				for (Cell c : r) {
 					CellType cellType = null;
@@ -237,7 +240,7 @@ public class Calculation {
 							evaluator.evaluateFormulaCell(c);
 						}catch(Exception ex){
 							System.out.println("In Exception in loop" + ex);
-							mapSheet.put(c.getColumnIndex()+"", ":"+"");
+							mapRow.put(c.getColumnIndex()+"", ":"+"");
 							System.out.println("In error" + ex);
 						}
 						cellType = c.getCachedFormulaResultType();
@@ -246,9 +249,11 @@ public class Calculation {
 					{
 						cellType = c.getCellType();
 					}
-					putinMap(mapSheet, c, cellType);
+					putinMap(mapRow, c, cellType);
 				}
+				mapSheet.put(r.getRowNum()+"", mapRow);
 			}
+			
 		}
 
 
