@@ -261,7 +261,7 @@ public class Calculation {
 			Cell c, CellType cellType) {
 
 		int rowNum = c.getRow().getRowNum();
-		String cellLocation = c.getColumnIndex()+"";
+		String cellLocation = c.getRow().getRowNum()+":"+ c.getColumnIndex()+"";
 
 		switch(cellType) {
 
