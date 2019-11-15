@@ -33,21 +33,21 @@ public class Calculation {
 	public String entry(Entry entry) throws Exception{
 		Gson gson;
 		try {
-			 gson = new Gson(); 
-		
-		OPCPackage pkg;
+			gson = new Gson(); 
+
+			OPCPackage pkg;
 			InputStream file = getFile();
 			pkg = OPCPackage.open(file);
-			
+
 			XSSFWorkbook wb = new XSSFWorkbook(pkg);
 			Sheet sheetLease = wb.getSheetAt(0);
-			
-		//	printTypes(sheetLease);
 
-		//	printValues(sheetLease);
+			//	printTypes(sheetLease);
+
+			//	printValues(sheetLease);
 			updateValues(entry, sheetLease);	
 			System.out.println("updating");
-		//	printValues(sheetLease);
+			//	printValues(sheetLease);
 
 			LinkedHashMap<String, LinkedHashMap<String, String>> map = calculate(wb);
 			System.out.println("calculation done ");
@@ -64,22 +64,22 @@ public class Calculation {
 		}
 
 	}
-	
+
 	public String entryLease(Entry entry) throws Exception{
 		Gson gson;
 		try {
-			 gson = new Gson(); 
-		
-		OPCPackage pkg;
+			gson = new Gson(); 
+
+			OPCPackage pkg;
 			InputStream file = getFile();
 			pkg = OPCPackage.open(file);
-			
+
 			XSSFWorkbook wb = new XSSFWorkbook(pkg);
 			Sheet sheetLease = wb.getSheetAt(0);
-			
+
 			updateValues(entry, sheetLease);	
 			System.out.println("updating");
-	
+
 			LinkedHashMap<String, String> map = calculateLease(wb);
 			System.out.println("calculation done ");
 			json =  gson.toJson(map);
@@ -115,17 +115,17 @@ public class Calculation {
 
 	private InputStream getFile() throws Exception {
 		String fileName = "static/ifrs.xlsx";
-        ClassLoader classLoader =  this.getClass().getClassLoader();
- 
-       // File file = new File(classLoader.getResource(fileName).getFile());
-        InputStream file = classLoader.getResourceAsStream(fileName);
-        //File is found
-       // System.out.println("File Found : " + file.exists());
-         
-        //Read File Content
-      ////  String content = new String(Files.readAllBytes(file.toPath()));
-       // System.out.println(content);
-        return file;
+		ClassLoader classLoader =  this.getClass().getClassLoader();
+
+		// File file = new File(classLoader.getResource(fileName).getFile());
+		InputStream file = classLoader.getResourceAsStream(fileName);
+		//File is found
+		// System.out.println("File Found : " + file.exists());
+
+		//Read File Content
+		////  String content = new String(Files.readAllBytes(file.toPath()));
+		// System.out.println(content);
+		return file;
 	}
 
 	private void updateValues(Entry entry, Sheet sheetLease) {
@@ -212,21 +212,23 @@ public class Calculation {
 		System.out.println("returning map");
 		return map;
 	}
-	
+
 	public LinkedHashMap<String, String> calculateLease(XSSFWorkbook wb) throws InvalidFormatException, IOException {
 
-	
+
 		System.out.println("calculating Lease");
 		FormulaEvaluator evaluator = wb.getCreationHelper().createFormulaEvaluator();
 		System.out.println("154");
-	
+
 		System.out.println("starting loop");
 		XSSFSheet sheet = wb.getSheet("Lease");
-		
-			LinkedHashMap<String, String> mapSheet = new LinkedHashMap<String, String>();
-			System.out.println("In sheet" +sheet.getSheetName());
-			for (Row r : sheet) {
-				///ONLY PUT COLUMN No in map id
+
+		LinkedHashMap<String, String> mapSheet = new LinkedHashMap<String, String>();
+		System.out.println("In sheet" +sheet.getSheetName());
+		for (Row r : sheet) {
+			///ONLY PUT COLUMN No in map id
+			if(r.getRowNum()>= 17)
+			{
 				System.out.println("In Row" +r.getRowNum());
 				for (Cell c : r) {
 					CellType cellType = null;
@@ -235,7 +237,7 @@ public class Calculation {
 							evaluator.evaluateFormulaCell(c);
 						}catch(Exception ex){
 							System.out.println("In Exception in loop" + ex);
-							mapSheet.put(""+c.getRow().getRowNum()+"/"+c.getColumnIndex()+"", ":"+"");
+							mapSheet.put(c.getColumnIndex()+"", ":"+"");
 							System.out.println("In error" + ex);
 						}
 						cellType = c.getCachedFormulaResultType();
@@ -247,8 +249,9 @@ public class Calculation {
 					putinMap( sheet, mapSheet, c, cellType);
 				}
 			}
-		
-		
+		}
+
+
 		//System.out.println(map);
 		System.out.println("returning Lease map");
 		return mapSheet;
@@ -256,9 +259,9 @@ public class Calculation {
 
 	private void putinMap(Sheet sheet, LinkedHashMap<String, String> mapSheet,
 			Cell c, CellType cellType) {
-		
+
 		int rowNum = c.getRow().getRowNum();
-		String cellLocation = rowNum+1 +"/"+c.getColumnIndex();
+		String cellLocation = c.getColumnIndex()+"";
 
 		switch(cellType) {
 
