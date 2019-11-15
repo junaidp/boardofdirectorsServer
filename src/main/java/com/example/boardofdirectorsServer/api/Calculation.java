@@ -260,8 +260,8 @@ public class Calculation {
 	private void putinMap(Sheet sheet, LinkedHashMap<String, String> mapSheet,
 			Cell c, CellType cellType) {
 
-		int rowNum = c.getRow().getRowNum();
-		String cellLocation = c.getRow().getRowNum()+":"+ c.getColumnIndex()+"";
+	
+		String cellLocation = c.getColumnIndex()+"";
 
 		switch(cellType) {
 
