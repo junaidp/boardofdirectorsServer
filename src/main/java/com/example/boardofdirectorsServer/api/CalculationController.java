@@ -77,6 +77,7 @@ public class CalculationController {
 	public String singIn(@RequestBody String userName, String password)
 	{
 		User user = userRepository.findUserByName(userName);
+		System.out.println(user);
 		Gson gson = new Gson();
 		json = gson.toJson(user);
 		return json;
