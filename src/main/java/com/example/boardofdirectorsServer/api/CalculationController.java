@@ -78,6 +78,10 @@ public class CalculationController {
 		System.out.println(user);
 		Gson gson = new Gson();
 		json = gson.toJson(user);
+		System.out.println(user.getName());
+		System.out.println(user.getUserId());
+		System.out.println(user.getCreationDate());
+		
 		return json;
 		}catch(Exception ex)
 		{
