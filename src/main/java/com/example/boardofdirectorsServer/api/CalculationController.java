@@ -72,11 +72,18 @@ public class CalculationController {
 	@GetMapping("/getUser")
 	public String singIn(@RequestBody String userName, String password) throws Exception
 	{
+		try {
 		User user = userRepository.findById("1").orElse(new User());
+		
 		System.out.println(user);
 		Gson gson = new Gson();
 		json = gson.toJson(user);
 		return json;
+		}catch(Exception ex)
+		{
+			throw ex;
+		}
+		
 	}
 	
 }
