@@ -1,12 +1,8 @@
 package com.example.boardofdirectorsServer.api;
 
 import java.io.IOException;
-import java.util.List;
-
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.repository.Query;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -74,9 +70,9 @@ public class CalculationController {
 	}
 	
 	@GetMapping("/getUser")
-	public String singIn(@RequestBody String userName, String password)
+	public String singIn(@RequestBody String userName, String password) throws Exception
 	{
-		User user = userRepository.findUserByName(userName);
+		User user = userRepository.findById("1").orElse(new User());
 		System.out.println(user);
 		Gson gson = new Gson();
 		json = gson.toJson(user);
