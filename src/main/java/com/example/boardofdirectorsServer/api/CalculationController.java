@@ -73,7 +73,8 @@ public class CalculationController {
 	public String singIn(@RequestBody String userName, String password) throws Exception
 	{
 		try {
-		User user = userRepository.findById("1").orElse(new User());
+	//	User user = userRepository.findById("1").orElse(new User());
+		User user = userRepository.findUserByName(userName);
 		
 		System.out.println(user);
 		Gson gson = new Gson();
@@ -85,6 +86,7 @@ public class CalculationController {
 		return json;
 		}catch(Exception ex)
 		{
+			System.out.println("Error is :"+ ex.getMessage());
 			throw ex;
 		}
 		
