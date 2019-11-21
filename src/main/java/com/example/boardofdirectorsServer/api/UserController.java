@@ -22,7 +22,7 @@ public class UserController {
 	public String saveUser(@RequestBody User userEntity)
 	{
 
-		return "user.saveUser(userEntity)";
+		return user.saveUser(userEntity);
 	}
 	
 	@GetMapping("/getUser")
@@ -35,7 +35,7 @@ public class UserController {
 	@GetMapping("/getAllUsers")
 	public String getAllUsers()
 	{
-		return "user.getAllUsers()";
+		return user.getAllUsers();
 	}
 
 }
