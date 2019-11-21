@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RestController;
 //@RequestMapping("/users")
 //@RestController
 //@CrossOrigin(origins = "*", maxAge = 3600)
-public class UserController {
+//public class UserController {
 	
 	//@Autowired
 	//UserHelper user;
@@ -32,4 +32,4 @@ public class UserController {
 		return "user.getAllUsers()";
 	}
 */
-}
+//}
