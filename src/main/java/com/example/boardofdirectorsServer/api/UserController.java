@@ -37,5 +37,11 @@ public class UserController {
 	{
 		return user.getAllUsers();
 	}
+	
+	@GetMapping("/getUserWithId")
+	public String getUserWithId(@RequestBody String userId)
+	{
+		return user.getUserWithId(userId);
+	}
 
 }

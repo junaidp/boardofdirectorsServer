@@ -1,6 +1,7 @@
 package com.example.boardofdirectorsServer.api;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -54,6 +55,13 @@ public class UserHelper {
 			System.out.println(ex);
 		}
 		return jsonUsers;
+	}
+
+	public String getUserWithId(String userId) {
+		
+		Optional<User> user =  userRepository.findById(userId);
+		String userJson = gson.toJson(user);
+		return userJson;
 	}
 
 }
