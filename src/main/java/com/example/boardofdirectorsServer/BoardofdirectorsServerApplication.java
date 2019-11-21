@@ -18,8 +18,9 @@ import com.google.gson.Gson;
 public class BoardofdirectorsServerApplication {
 
 	public static void main(String[] args) throws Exception {
-		/*
+		
 		SpringApplication.run(BoardofdirectorsServerApplication.class, args);
+		/*
 		try {
 			try {
 			//	Calculation c = new Calculation();
