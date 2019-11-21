@@ -29,12 +29,12 @@ public class UserHelper {
 		return "user saved";	
 	}
 	
-	public String getUser(String userName, String password)
+	public String getUser(String name, String password)
 	{
 		try {
 			
-				System.out.println();
-				BasicQuery query1 = new BasicQuery("{ name : '"+userName+"'}");
+			      System.out.println("{ name : '"+name+"'}");
+				BasicQuery query1 = new BasicQuery("{ name : '"+name+"'}");
 				User user = mongoOperation.findOne(query1, User.class);
 				System.out.println(user);
 				
