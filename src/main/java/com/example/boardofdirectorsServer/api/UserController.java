@@ -1,4 +1,4 @@
-package com.example.boardofdirectorsServer.api;
+/*package com.example.boardofdirectorsServer.api;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.boardofdirectorsServer.model.User;
 
-@RequestMapping("User")
+@RequestMapping("Users")
 @RestController
 @CrossOrigin(origins = "*", maxAge = 3600)
 public class UserController {
@@ -38,4 +38,4 @@ public class UserController {
 		return user.getAllUsers();
 	}
 
-}
+}*/

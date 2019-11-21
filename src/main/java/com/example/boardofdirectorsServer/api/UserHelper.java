@@ -1,4 +1,4 @@
-package com.example.boardofdirectorsServer.api;
+/*package com.example.boardofdirectorsServer.api;
 
 import java.util.List;
 
@@ -6,13 +6,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.example.boardofdirectorsServer.model.User;
 import com.example.boardofdirectorsServer.model.UserRepository;
+import com.google.gson.Gson;
 
 
-public class UserHelper extends Helper{
+public class UserHelper {
 	
 	@Autowired
 	UserRepository userRepository;
-	
+	Gson gson = new Gson();
 	
 	public String saveUser(User user)
 	{
@@ -49,4 +50,4 @@ public class UserHelper extends Helper{
 		return jsonUsers;
 	}
 
-}
+}*/
