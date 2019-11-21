@@ -44,9 +44,15 @@ public class UserHelper {
 	}
 
 	public String getAllUsers() {
-		
+		System.out.println("in get all users");
+		String jsonUsers = null;
+		try {
 		List<User> users = userRepository.findAll();
-		String jsonUsers = gson.toJson(users);
+		 jsonUsers = gson.toJson(users);
+		}catch(Exception ex)
+		{
+			System.out.println(ex);
+		}
 		return jsonUsers;
 	}
 
