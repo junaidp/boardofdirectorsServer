@@ -29,7 +29,7 @@ public class UserController {
 	@GetMapping("/getUser")
 	public String singIn(@RequestBody String userName, String password) throws Exception
 	{
-		return "user.getUser(userName, password)";
+		return user.getUser(userName, password);
 		
 	}
 	
