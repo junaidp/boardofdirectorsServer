@@ -58,9 +58,14 @@ public class UserHelper {
 	}
 
 	public String getUserWithId(String userId) {
-		
+		String userJson;
+		try {
 		Optional<User> user =  userRepository.findById(userId);
-		String userJson = gson.toJson(user);
+		userJson = gson.toJson(user);
+		}catch(Exception ex)
+		{
+			throw ex;
+		}
 		return userJson;
 	}
 

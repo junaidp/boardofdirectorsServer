@@ -39,7 +39,7 @@ public class UserController {
 	}
 	
 	@GetMapping("/getUserWithId")
-	public String getUserWithId(@RequestBody String userId)
+	public String getUserWithId(@RequestBody String userId) throws Exception
 	{
 		return user.getUserWithId(userId);
 	}
