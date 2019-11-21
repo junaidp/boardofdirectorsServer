@@ -15,8 +15,8 @@ import com.example.boardofdirectorsServer.model.User;
 @CrossOrigin(origins = "*", maxAge = 3600)
 public class UserController {
 	
-	@Autowired
-	UserHelper user;
+//	@Autowired
+//	UserHelper user;
 	
 	@PostMapping("/saveUser")
 	public String saveUser(@RequestBody User userEntity)
@@ -35,7 +35,7 @@ public class UserController {
 	@GetMapping("/getAllUsers")
 	public String getAllUsers()
 	{
-		return user.getAllUsers();
+		return "user.getAllUsers()";
 	}
 
 }
