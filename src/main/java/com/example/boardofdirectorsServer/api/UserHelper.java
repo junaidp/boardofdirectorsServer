@@ -1,4 +1,4 @@
-/*package com.example.boardofdirectorsServer.api;
+package com.example.boardofdirectorsServer.api;
 
 import java.util.List;
 
@@ -50,4 +50,4 @@ public class UserHelper {
 		return jsonUsers;
 	}
 
-}*/
+}
