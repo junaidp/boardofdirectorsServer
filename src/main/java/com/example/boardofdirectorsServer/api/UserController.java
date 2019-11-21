@@ -1,4 +1,4 @@
-/*package com.example.boardofdirectorsServer.api;
+package com.example.boardofdirectorsServer.api;
 
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -7,11 +7,11 @@ import org.springframework.web.bind.annotation.RestController;
 //@RequestMapping("/users")
 //@RestController
 //@CrossOrigin(origins = "*", maxAge = 3600)
-//public class UserController {
+public class UserController {
 	
 	//@Autowired
 	//UserHelper user;
-	
+	/*
 	@PostMapping("/saveUser")
 	public String saveUser(@RequestBody User userEntity)
 	{
@@ -32,4 +32,4 @@ import org.springframework.web.bind.annotation.RestController;
 		return "user.getAllUsers()";
 	}
 */
-//}
+}
