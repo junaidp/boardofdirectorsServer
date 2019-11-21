@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.boardofdirectorsServer.model.Entry;
-import com.example.boardofdirectorsServer.model.User;
+import com.example.boardofdirectorsServer.model.UserEntity;
 import com.example.boardofdirectorsServer.model.UserRepository;
 import com.google.gson.Gson;
 
@@ -58,38 +58,4 @@ public class CalculationController {
 		return json;
 	}
 
-	@Autowired
-	UserRepository userRepository;
-
-	@PostMapping("/saveUser")
-	public String saveUser(@RequestBody User user)
-	{
-
-		userRepository.save(user);
-		return "user saved";		
-	}
-	
-	@GetMapping("/getUser")
-	public String singIn(@RequestBody String userName, String password) throws Exception
-	{
-		try {
-	//	User user = userRepository.findById("1").orElse(new User());
-		User user = userRepository.findUserByName(userName);
-		
-		System.out.println(user);
-		Gson gson = new Gson();
-		json = gson.toJson(user);
-		System.out.println(user.getName());
-		System.out.println(user.getUserId());
-		System.out.println(user.getCreationDate());
-		
-		return json;
-		}catch(Exception ex)
-		{
-			System.out.println("Error is :"+ ex.getMessage());
-			throw ex;
-		}
-		
-	}
-	
 }
