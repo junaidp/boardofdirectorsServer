@@ -1,6 +1,5 @@
 package com.example.boardofdirectorsServer.api;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -15,7 +14,7 @@ import com.example.boardofdirectorsServer.model.User;
 @CrossOrigin(origins = "*", maxAge = 3600)
 public class UserController {
 	
-	@Autowired
+	//@Autowired
 	//UserHelper user;
 	
 	@PostMapping("/saveUser")
