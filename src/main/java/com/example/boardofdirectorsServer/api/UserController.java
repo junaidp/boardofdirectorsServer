@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.boardofdirectorsServer.model.User;
 
-@RequestMapping("users")
+@RequestMapping("/users")
 @RestController
 @CrossOrigin(origins = "*", maxAge = 3600)
 public class UserController {
