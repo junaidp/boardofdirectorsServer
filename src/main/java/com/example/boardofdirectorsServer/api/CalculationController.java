@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.boardofdirectorsServer.model.Entry;
-import com.example.boardofdirectorsServer.model.UserEntity;
+import com.example.boardofdirectorsServer.model.User;
 import com.example.boardofdirectorsServer.model.UserRepository;
 import com.google.gson.Gson;
 

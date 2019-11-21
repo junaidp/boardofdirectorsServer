@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.boardofdirectorsServer.model.UserEntity;
+import com.example.boardofdirectorsServer.model.User;
 
 @RequestMapping("User")
 @RestController
@@ -16,10 +16,10 @@ import com.example.boardofdirectorsServer.model.UserEntity;
 public class UserController {
 	
 	@Autowired
-	User user;
+	UserHelper user;
 	
 	@PostMapping("/saveUser")
-	public String saveUser(@RequestBody UserEntity userEntity)
+	public String saveUser(@RequestBody User userEntity)
 	{
 
 		return user.saveUser(userEntity);

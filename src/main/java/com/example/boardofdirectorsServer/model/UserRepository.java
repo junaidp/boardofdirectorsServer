@@ -5,9 +5,9 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.Query;
 
 
-public interface UserRepository extends MongoRepository<UserEntity, String>{
+public interface UserRepository extends MongoRepository<User, String>{
 	
 	@Query("{'name : ?0'}")
-	UserEntity findUserByName(String name);
+	User findUserByName(String name);
 
 }

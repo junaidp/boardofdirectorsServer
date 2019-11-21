@@ -4,17 +4,17 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.example.boardofdirectorsServer.model.UserEntity;
+import com.example.boardofdirectorsServer.model.User;
 import com.example.boardofdirectorsServer.model.UserRepository;
 
 
-public class User extends Helper{
+public class UserHelper extends Helper{
 	
 	@Autowired
 	UserRepository userRepository;
 	
 	
-	public String saveUser(UserEntity user)
+	public String saveUser(User user)
 	{
 		userRepository.save(user);
 		return "user saved";	
@@ -25,7 +25,7 @@ public class User extends Helper{
 		try {
 			//	User user = userRepository.findById("1").orElse(new User());
 				System.out.println();
-				UserEntity user = userRepository.findUserByName(userName);
+				User user = userRepository.findUserByName(userName);
 				
 				System.out.println(user);
 				
@@ -44,7 +44,7 @@ public class User extends Helper{
 
 	public String getAllUsers() {
 		
-		List<UserEntity> users = userRepository.findAll();
+		List<User> users = userRepository.findAll();
 		String jsonUsers = gson.toJson(users);
 		return jsonUsers;
 	}
