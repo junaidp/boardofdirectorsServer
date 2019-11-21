@@ -34,7 +34,7 @@ public class UserHelper {
 		try {
 			
 			      System.out.println("{ name : '"+name+"'}");
-				BasicQuery query1 = new BasicQuery("{ name : '"+name+"'}");
+				BasicQuery query1 = new BasicQuery("{ name : '"+name+"'} , { password: '"+password+"'}");
 				User user = mongoOperation.findOne(query1, User.class);
 				System.out.println(user);
 				
