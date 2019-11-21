@@ -27,9 +27,9 @@ public class UserController {
 	}
 	
 	@GetMapping("/getUser")
-	public String singIn(@RequestBody String userName, String password) throws Exception
+	public String singIn(@RequestBody String name, String password) throws Exception
 	{
-		return user.getUser(userName, password);
+		return user.getUser(name, password);
 		
 	}
 	
