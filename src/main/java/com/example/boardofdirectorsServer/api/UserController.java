@@ -27,10 +27,10 @@ public class UserController {
 	}
 	
 	@GetMapping("/getUser")
-	public String singIn(String name, String password) throws Exception
+	public String singIn(@RequestBody User users) throws Exception
 	{
-		System.out.println(name +","+ password);
-		return user.getUser(name, password);
+		System.out.println(users.getName() +","+ users);
+		return user.getUser(users.getName(), users.getPassword());
 		
 	}
 	
