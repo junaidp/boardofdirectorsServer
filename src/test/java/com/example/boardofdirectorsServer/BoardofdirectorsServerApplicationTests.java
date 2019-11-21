@@ -1,22 +1,31 @@
 package com.example.boardofdirectorsServer;
 
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import com.example.boardofdirectorsServer.api.UserHelper;
 
 @SpringBootTest
 class BoardofdirectorsServerApplicationTests {
+	
+	@Autowired UserHelper user;
 
 	@Test
 	void contextLoads() {
 	}
 	
 	@Test
-	void testGetUser() {
-		UserHelper  user = new UserHelper();
+	void testGetUserById() {
+		
 		String j = user.getUserWithId("11");
 		System.out.println(j);
 	}
 
+	
+	@Test
+	void testGetUser() {
+		String j = user.getUser("jpp", "password");
+		
+	}
 }

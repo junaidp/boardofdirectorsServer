@@ -4,6 +4,10 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.MongoOperations;
+import org.springframework.data.mongodb.core.query.BasicQuery;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -16,6 +20,7 @@ public class UserHelper {
 	
 	@Autowired
 	UserRepository userRepository ;
+	@Autowired MongoOperations mongoOperation;
 	Gson gson = new Gson();
 	
 	public String saveUser(User user)
@@ -27,16 +32,15 @@ public class UserHelper {
 	public String getUser(String userName, String password)
 	{
 		try {
-			//	User user = userRepository.findById("1").orElse(new User());
+			
 				System.out.println();
-				User user = userRepository.findUserByName(userName);
-				
+				Query query = new Query();
+				query.addCriteria(Criteria.where("name").regex("r$"));
+				BasicQuery query1 = new BasicQuery("{ name : '"+userName+"', passsword : '"+password+"' }");
+				User user = mongoOperation.findOne(query1, User.class);
 				System.out.println(user);
 				
 				String json = gson.toJson(user);
-				System.out.println(user.getName());
-				System.out.println(user.getUserId());
-				System.out.println(user.getCreationDate());
 				
 				return json;
 				}catch(Exception ex)
