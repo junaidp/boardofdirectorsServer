@@ -12,7 +12,7 @@ import com.google.gson.Gson;
 public class UserHelper {
 	
 	@Autowired
-	UserRepository userRepository;
+	UserRepository userRepository ;
 	Gson gson = new Gson();
 	
 	public String saveUser(User user)

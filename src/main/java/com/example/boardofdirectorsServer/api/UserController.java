@@ -15,8 +15,8 @@ import com.example.boardofdirectorsServer.model.User;
 @CrossOrigin(origins = "*", maxAge = 3600)
 public class UserController {
 	
-//	@Autowired
-//	UserHelper user;
+
+	UserHelper user = new UserHelper();
 	
 	@PostMapping("/saveUser")
 	public String saveUser(@RequestBody User userEntity)
