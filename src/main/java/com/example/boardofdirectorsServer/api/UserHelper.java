@@ -34,9 +34,7 @@ public class UserHelper {
 		try {
 			
 				System.out.println();
-				Query query = new Query();
-				query.addCriteria(Criteria.where("name").regex("r$"));
-				BasicQuery query1 = new BasicQuery("{ name : '"+userName+"', passsword : '"+password+"' }");
+				BasicQuery query1 = new BasicQuery("{ name : '"+userName+"'}");
 				User user = mongoOperation.findOne(query1, User.class);
 				System.out.println(user);
 				
