@@ -16,7 +16,8 @@ import com.example.boardofdirectorsServer.model.User;
 public class UserController {
 	
 
-	UserHelper user = new UserHelper();
+	@Autowired
+	UserHelper user;
 	
 	@PostMapping("/saveUser")
 	public String saveUser(@RequestBody User userEntity)

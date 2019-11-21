@@ -3,6 +3,8 @@ package com.example.boardofdirectorsServer;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import com.example.boardofdirectorsServer.api.UserHelper;
+
 @SpringBootTest
 class BoardofdirectorsServerApplicationTests {
 
@@ -12,8 +14,9 @@ class BoardofdirectorsServerApplicationTests {
 	
 	@Test
 	void testGetUser() {
-	//	User user = new User();
-		//user.getUser("hello", "test");
+		UserHelper  user = new UserHelper();
+		String j = user.getUserWithId("11");
+		System.out.println(j);
 	}
 
 }
