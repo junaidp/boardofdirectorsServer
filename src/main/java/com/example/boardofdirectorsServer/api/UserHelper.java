@@ -34,8 +34,10 @@ public class UserHelper {
 		try {
 			
 			      System.out.println("{ name : '"+name+"'}");
-				BasicQuery query1 = new BasicQuery("{ name : '"+name+"'} , { password: '"+password+"'}");
-				User user = mongoOperation.findOne(query1, User.class);
+			      Query query = new Query();
+			      query.addCriteria(Criteria.where("name").is(name).and("password").is(password));
+			//	BasicQuery query1 = new BasicQuery("{ name : '"+name+"'} , { password: '"+password+"'}");
+				User user = mongoOperation.findOne(query, User.class);
 				System.out.println(user);
 				
 				String json = gson.toJson(user);
