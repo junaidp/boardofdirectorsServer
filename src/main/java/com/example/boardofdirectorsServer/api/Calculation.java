@@ -80,7 +80,7 @@ public class Calculation {
 			updateValues(entry, sheetLease);	
 			System.out.println("updating");
 
-			LinkedHashMap<String, LinkedHashMap<String, String>> map = calculateLease(wb);
+			LinkedHashMap<String, LinkedHashMap<String, String>> map = calculateLease(wb, entry);
 			System.out.println("calculation done ");
 			json =  gson.toJson(map);
 			System.out.println("converted to json");
@@ -213,7 +213,7 @@ public class Calculation {
 		return map;
 	}
 
-	public LinkedHashMap<String, LinkedHashMap<String, String>> calculateLease(XSSFWorkbook wb) throws InvalidFormatException, IOException {
+	public LinkedHashMap<String, LinkedHashMap<String, String>> calculateLease(XSSFWorkbook wb, Entry entry) throws InvalidFormatException, IOException {
 
 
 		System.out.println("calculating Lease");
@@ -225,11 +225,14 @@ public class Calculation {
 
 		LinkedHashMap<String, LinkedHashMap<String, String>> mapSheet = new LinkedHashMap<String, LinkedHashMap<String, String>>();
 		System.out.println("In sheet" +sheet.getSheetName());
+		int leaseTerms = entry.getLeaseTerm();
+		int count = 0;
 		for (Row r : sheet) {
 			///ONLY PUT COLUMN No in map id
 
-			if(r.getRowNum()>= 17)
+			if(r.getRowNum()>= 17 && count <= leaseTerms)
 			{
+				
 				LinkedHashMap<String, String> mapRow = new LinkedHashMap<String, String>();
 			
 				System.out.println("In Row" +r.getRowNum());
@@ -252,12 +255,13 @@ public class Calculation {
 					putinMap(mapRow, c, cellType);
 				}
 				mapSheet.put(r.getRowNum()+"", mapRow);
+				count ++;
 			}
 			
 		}
 
 
-		//System.out.println(map);
+		System.out.println(mapSheet);
 		System.out.println("returning Lease map");
 		return mapSheet;
 	}
