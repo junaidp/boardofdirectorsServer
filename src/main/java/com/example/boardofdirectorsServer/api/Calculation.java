@@ -227,10 +227,12 @@ public class Calculation {
 		System.out.println("In sheet" +sheet.getSheetName());
 		int leaseTerms = entry.getLeaseTerm();
 		int count = 0;
+		
 		for (Row r : sheet) {
 			///ONLY PUT COLUMN No in map id
-
-			if(r.getRowNum()>= 17 && count <= leaseTerms)
+			int row = r.getRowNum();
+			
+			if(r.getRowNum()>= 16 && count < leaseTerms)
 			{
 				
 				LinkedHashMap<String, String> mapRow = new LinkedHashMap<String, String>();
@@ -254,14 +256,13 @@ public class Calculation {
 					}
 					putinMap(mapRow, c, cellType);
 				}
-				mapSheet.put(r.getRowNum()+"", mapRow);
+				mapSheet.put(row+1+"", mapRow);
 				count ++;
 			}
 			
 		}
 
 
-		System.out.println(mapSheet);
 		System.out.println("returning Lease map");
 		return mapSheet;
 	}
