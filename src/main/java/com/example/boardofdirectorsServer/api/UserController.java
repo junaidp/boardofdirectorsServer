@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.boardofdirectorsServer.model.User;
 import com.example.boardofdirectorsServer.model.UserTest;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 @RequestMapping("/users")
 @RestController
@@ -28,11 +29,11 @@ public class UserController {
 	}
 	
 	@GetMapping("/getUser")
-	public String singIn(@RequestBody UserTest users) throws Exception
+	public String singIn(@JsonProperty("name")String name, @JsonProperty("password")String password ) throws Exception
 	{
-		System.out.println(users.getName() +","+ users);
+		System.out.println(name +","+ password);
 		UserHelper user = new UserHelper();
-		return user.getUser(users.getName(), users.getPassword());
+		return user.getUser(name, password);
 		
 	}
 	
