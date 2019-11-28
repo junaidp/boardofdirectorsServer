@@ -8,7 +8,7 @@ import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Component;
-import org.springframework.web.bind.annotation.RestController;
+
 
 import com.example.boardofdirectorsServer.model.User;
 import com.example.boardofdirectorsServer.model.UserRepository;

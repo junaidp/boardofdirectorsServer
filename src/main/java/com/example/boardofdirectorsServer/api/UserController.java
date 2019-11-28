@@ -3,6 +3,7 @@ package com.example.boardofdirectorsServer.api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,10 +28,11 @@ public class UserController {
 	}
 	
 	@GetMapping("/getUser")
-	public String singIn(@RequestBody User users) throws Exception
+	public String singIn(@PathVariable("name") String name, @PathVariable("password") String password) throws Exception
 	{
-		System.out.println(users.getName() +","+ users);
-		return user.getUser(users.getName(), users.getPassword());
+		System.out.println(name);
+		UserHelper user = new UserHelper();
+		return user.getUser(name, password);
 		
 	}
 	
