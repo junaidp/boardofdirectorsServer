@@ -1,9 +1,11 @@
 package com.example.boardofdirectorsServer.api;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -28,11 +30,11 @@ public class UserController {
 	}
 	
 	@GetMapping("/getUser")
-	public String singIn(@PathVariable("name") String name, @PathVariable("password") String password) throws Exception
+	public String singIn(@RequestBody HashMap<String, String> userInput) throws Exception
 	{
-		System.out.println(name);
+		System.out.println(userInput.get("name"));
 		UserHelper user = new UserHelper();
-		return user.getUser(name, password);
+		return user.getUser(userInput.get("name"), userInput.get("password"));
 		
 	}
 	
