@@ -33,9 +33,11 @@ public class UserHelper {
 		try {
 
 			System.out.println("{ name : '"+name+"'}");
+			System.out.println("{ password : '"+password+"'}");
 			Query query = new Query();
 			query.addCriteria(Criteria.where("name").is(name).and("password").is(password));
 			//	BasicQuery query1 = new BasicQuery("{ name : '"+name+"'} , { password: '"+password+"'}");
+			System.out.println("ff");
 			User user = mongoOperation.findOne(query, User.class);
 			System.out.println(user);
 

@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.boardofdirectorsServer.model.Entry;
 import com.example.boardofdirectorsServer.model.User;
 import com.example.boardofdirectorsServer.model.UserTest;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -29,11 +30,11 @@ public class UserController {
 	}
 	
 	@PostMapping("/signIn")
-	public String singIn(@JsonProperty("name")String name, @JsonProperty("password")String password ) throws Exception
+	public String singIn(@RequestBody UserTest userTest) throws Exception
 	{
-		System.out.println(name +","+ password);
+		System.out.println(userTest.getName() +","+ userTest.getPassword());
 		UserHelper user = new UserHelper();
-		return user.getUser(name, password);
+		return user.getUser(userTest.getName(), userTest.getPassword());
 		
 	}
 	
