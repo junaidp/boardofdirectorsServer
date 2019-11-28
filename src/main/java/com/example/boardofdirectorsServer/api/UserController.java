@@ -1,8 +1,5 @@
 package com.example.boardofdirectorsServer.api;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.boardofdirectorsServer.model.User;
+import com.example.boardofdirectorsServer.model.UserTest;
 
 @RequestMapping("/users")
 @RestController
@@ -30,11 +28,11 @@ public class UserController {
 	}
 	
 	@GetMapping("/getUser")
-	public String singIn(@RequestBody HashMap<String, String> userInput) throws Exception
+	public String singIn(@RequestBody UserTest users) throws Exception
 	{
-		System.out.println(userInput.get("name"));
+		System.out.println(users.getName() +","+ users);
 		UserHelper user = new UserHelper();
-		return user.getUser(userInput.get("name"), userInput.get("password"));
+		return user.getUser(users.getName(), users.getPassword());
 		
 	}
 	
