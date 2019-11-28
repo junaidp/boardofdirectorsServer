@@ -28,7 +28,7 @@ public class UserController {
 		return user.saveUser(userEntity);
 	}
 	
-	@GetMapping("/getUser")
+	@PostMapping("/signIn")
 	public String singIn(@JsonProperty("name")String name, @JsonProperty("password")String password ) throws Exception
 	{
 		System.out.println(name +","+ password);
