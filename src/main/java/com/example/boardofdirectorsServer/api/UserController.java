@@ -33,7 +33,6 @@ public class UserController {
 	public String singIn(@RequestBody UserTest userTest) throws Exception
 	{
 		System.out.println(userTest.getName() +","+ userTest.getPassword());
-		UserHelper user = new UserHelper();
 		return user.getUser(userTest.getName(), userTest.getPassword());
 		
 	}
