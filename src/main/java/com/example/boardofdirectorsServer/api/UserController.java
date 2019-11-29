@@ -29,7 +29,7 @@ public class UserController {
 		return user.saveUser(userEntity);
 	}
 	
-	@GetMapping("/signIn")
+	@PostMapping("/signIn")
 	public String singIn(@RequestBody UserTest userTest) throws Exception
 	{
 		System.out.println(userTest.getName() +","+ userTest.getPassword());
