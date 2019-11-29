@@ -36,7 +36,7 @@ public class CalculationController {
 
 	}
 
-	/*@PostMapping("/lease")
+	@PostMapping("/lease")
 	public String calculateLease(@RequestBody Entry entry) throws Exception
 	{
 		try {
@@ -47,7 +47,7 @@ public class CalculationController {
 			throw e;
 		}
 	}
-	*/
+	
 	@PostMapping("/journal")
 	public String calculateJournal(@RequestBody Entry entry) throws Exception
 	{
