@@ -42,9 +42,6 @@ public class Calculation {
 			XSSFWorkbook wb = new XSSFWorkbook(pkg);
 			Sheet sheetLease = wb.getSheetAt(0);
 
-			//	printTypes(sheetLease);
-
-			//	printValues(sheetLease);
 			updateValues(entry, sheetLease);	
 			System.out.println("updating");
 			//	printValues(sheetLease);
