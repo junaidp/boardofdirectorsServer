@@ -108,7 +108,7 @@ public class Calculation {
 			updateValues(entry, sheetLease);	
 			System.out.println("updating");
 
-			LinkedHashMap<String, LinkedHashMap<String, String>> map = calculateLease(wb, entry);
+			LinkedHashMap<String, LinkedHashMap<String, String>> map = calculateJournal(wb, entry);
 			System.out.println("calculation done ");
 			json =  gson.toJson(map);
 			System.out.println("converted to json");
