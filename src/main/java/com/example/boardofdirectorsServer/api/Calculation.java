@@ -95,6 +95,37 @@ public class Calculation {
 		}
 
 	}
+	
+	public String entryJournal(Entry entry) throws Exception{
+		Gson gson;
+		try {
+			gson = new Gson(); 
+
+			OPCPackage pkg;
+			InputStream file = getFile();
+			pkg = OPCPackage.open(file);
+
+			XSSFWorkbook wb = new XSSFWorkbook(pkg);
+			Sheet sheetLease = wb.getSheetAt(0);
+
+			updateValues(entry, sheetLease);	
+			System.out.println("updating");
+
+			LinkedHashMap<String, LinkedHashMap<String, String>> map = calculateLease(wb, entry);
+			System.out.println("calculation done ");
+			json =  gson.toJson(map);
+			System.out.println("converted to json");
+			wb.close();
+			System.out.println("returning json");
+			return json;
+
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			System.out.println("In exception" + e);
+			throw e;
+		}
+
+	}
 
 	private void printTypes(Sheet sheetLease) {
 		System.out.println(sheetLease.getRow(3).getCell(0).getCellType());
@@ -221,7 +252,7 @@ public class Calculation {
 		System.out.println("154");
 
 		System.out.println("starting loop");
-		XSSFSheet sheet = wb.getSheet("Lease");
+		XSSFSheet sheet = wb.getSheet("Lease Yearly");
 
 		LinkedHashMap<String, LinkedHashMap<String, String>> mapSheet = new LinkedHashMap<String, LinkedHashMap<String, String>>();
 		System.out.println("In sheet" +sheet.getSheetName());
@@ -233,6 +264,59 @@ public class Calculation {
 			int row = r.getRowNum();
 			
 			if(r.getRowNum()>= 16 && count < leaseTerms)
+			{
+				
+				LinkedHashMap<String, String> mapRow = new LinkedHashMap<String, String>();
+			
+				System.out.println("In Row" +r.getRowNum());
+				for (Cell c : r) {
+					CellType cellType = null;
+					if (c.getCellType() == CellType.FORMULA) {
+						try{
+							evaluator.evaluateFormulaCell(c);
+						}catch(Exception ex){
+							System.out.println("In Exception in loop" + ex);
+							mapRow.put(c.getColumnIndex()+"", ":"+"");
+							System.out.println("In error" + ex);
+						}
+						cellType = c.getCachedFormulaResultType();
+					}
+					else
+					{
+						cellType = c.getCellType();
+					}
+					putinMap(mapRow, c, cellType);
+				}
+				mapSheet.put(row+1+"", mapRow);
+				count ++;
+			}
+			
+		}
+
+
+		System.out.println("returning Lease map");
+		return mapSheet;
+	}
+	
+	public LinkedHashMap<String, LinkedHashMap<String, String>> calculateJournal(XSSFWorkbook wb, Entry entry) throws InvalidFormatException, IOException {
+
+
+		System.out.println("calculating Journal");
+		FormulaEvaluator evaluator = wb.getCreationHelper().createFormulaEvaluator();
+	
+		System.out.println("starting loop");
+		XSSFSheet sheet = wb.getSheet("Yearly Journal entry");
+
+		LinkedHashMap<String, LinkedHashMap<String, String>> mapSheet = new LinkedHashMap<String, LinkedHashMap<String, String>>();
+		System.out.println("In sheet" +sheet.getSheetName());
+		int leaseTerms = entry.getLeaseTerm();
+		int count = 0;
+		
+		for (Row r : sheet) {
+			///ONLY PUT COLUMN No in map id
+			int row = r.getRowNum();
+			
+			if(r.getRowNum()>= 5 && count < leaseTerms)
 			{
 				
 				LinkedHashMap<String, String> mapRow = new LinkedHashMap<String, String>();

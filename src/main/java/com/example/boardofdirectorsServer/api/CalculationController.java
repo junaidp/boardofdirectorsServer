@@ -47,6 +47,18 @@ public class CalculationController {
 			throw e;
 		}
 	}
+	
+	@PostMapping("/journal")
+	public String calculateJournal(@RequestBody Entry entry) throws Exception
+	{
+		try {
+			Calculation c = new Calculation();
+			json = c.entryJournal(entry);
+			return json;
+		} catch (Exception e) {
+			throw e;
+		}
+	}
 
 	@GetMapping
 	public String getCalculation(){
