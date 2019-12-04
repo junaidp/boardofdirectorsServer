@@ -24,8 +24,14 @@ public class UserHelper {
 
 	public String saveUser(User user)
 	{
+		try {
 		userRepository.save(user);
 		return "user saved";	
+		}
+		catch(Exception ex)
+		{
+			throw ex;
+		}
 	}
 
 	public String getUser(String name, String password)
