@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.util.LinkedHashMap;
 
 import org.apache.poi.hssf.usermodel.HSSFDateUtil;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.ss.usermodel.Cell;
@@ -92,7 +93,7 @@ public class Calculation {
 		}
 
 	}
-	
+
 	public String entryJournal(Entry entry) throws Exception{
 		Gson gson;
 		try {
@@ -255,16 +256,16 @@ public class Calculation {
 		System.out.println("In sheet" +sheet.getSheetName());
 		int leaseTerms = entry.getLeaseTerm();
 		int count = 0;
-		
+
 		for (Row r : sheet) {
 			///ONLY PUT COLUMN No in map id
 			int row = r.getRowNum();
-			
+
 			if(r.getRowNum()>= 16 && count < leaseTerms)
 			{
-				
+
 				LinkedHashMap<String, String> mapRow = new LinkedHashMap<String, String>();
-			
+
 				System.out.println("In Row" +r.getRowNum());
 				for (Cell c : r) {
 					CellType cellType = null;
@@ -287,20 +288,20 @@ public class Calculation {
 				mapSheet.put(row+1+"", mapRow);
 				count ++;
 			}
-			
+
 		}
 
 
 		System.out.println("returning Lease map");
 		return mapSheet;
 	}
-	
+
 	public LinkedHashMap<String, LinkedHashMap<String, String>> calculateJournal(XSSFWorkbook wb, Entry entry) throws InvalidFormatException, IOException {
 
 
 		System.out.println("calculating Journal");
 		FormulaEvaluator evaluator = wb.getCreationHelper().createFormulaEvaluator();
-	
+
 		System.out.println("starting loop");
 		XSSFSheet sheet = wb.getSheet("Yearly Journal entry");
 
@@ -308,50 +309,75 @@ public class Calculation {
 		System.out.println("In sheet" +sheet.getSheetName());
 		int leaseTerms = entry.getLeaseTerm();
 		int count = 0;
+		int year = 2020;
+		String month = "Novemeber";
 		
+		int yearRowNum = findYearRow(sheet, year+"");
+		int nextYearRowNum = findYearRow(sheet, year+1+"");
+		
+		
+
 		for (Row r : sheet) {
 			///ONLY PUT COLUMN No in map id
 			int row = r.getRowNum();
-			
-			if(r.getRowNum()>= 5 && count < leaseTerms)
+
+			if(r.getRowNum()> yearRowNum && r.getRowNum() <= nextYearRowNum)
 			{
-				
+
 				LinkedHashMap<String, String> mapRow = new LinkedHashMap<String, String>();
-			
+
 				System.out.println("In Row" +r.getRowNum());
+				
 				for (Cell c : r) {
-					CellType cellType = null;
-					if (c.getCellType() == CellType.FORMULA) {
-						try{
-							evaluator.evaluateFormulaCell(c);
-						}catch(Exception ex){
-							System.out.println("In Exception in loop" + ex);
-							mapRow.put(c.getColumnIndex()+"", ":"+"");
-							System.out.println("In error" + ex);
-						}
-						cellType = c.getCachedFormulaResultType();
-					}
-					else
+					if(c.getColumnIndex() >=19 && c.getStringCellValue().equals(month))
 					{
-						cellType = c.getCellType();
+						
+						CellType cellType = null;
+						if (c.getCellType() == CellType.FORMULA) {
+							try{
+								evaluator.evaluateFormulaCell(c);
+							}catch(Exception ex){
+								System.out.println("In Exception in loop" + ex);
+								mapRow.put(c.getColumnIndex()+"", ":"+"");
+								System.out.println("In error" + ex);
+							}
+							cellType = c.getCachedFormulaResultType();
+						}
+						else
+						{
+							cellType = c.getCellType();
+						}
+						putinMap(mapRow, c, cellType);
 					}
-					putinMap(mapRow, c, cellType);
 				}
 				mapSheet.put(row+1+"", mapRow);
 				count ++;
 			}
-			
+
 		}
 
 
 		System.out.println("returning Lease map");
 		return mapSheet;
 	}
+	
+	private static int findYearRow(XSSFSheet sheet, String cellContent) {
+	    for (Row row : sheet) {
+	        for (Cell cell : row) {
+	            if (cell.getCellType() == CellType.STRING) {
+	                if (cell.getRichStringCellValue().getString().trim().equals(cellContent)) {
+	                    return row.getRowNum();  
+	                }
+	            }
+	        }
+	    }               
+	    return 0;
+	}
 
 	private void putinMap(LinkedHashMap<String, String> mapSheet,
 			Cell c, CellType cellType) {
 
-	
+
 		String cellLocation =  c.getColumnIndex()+"";
 
 		switch(cellType) {

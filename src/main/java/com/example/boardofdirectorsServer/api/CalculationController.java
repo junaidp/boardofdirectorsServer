@@ -41,7 +41,7 @@ public class CalculationController {
 	{
 		try {
 			Calculation c = new Calculation();
-			json = c.entryJournal(entry);
+			json = c.entryLease(entry);
 			return json;
 		} catch (Exception e) {
 			throw e;
