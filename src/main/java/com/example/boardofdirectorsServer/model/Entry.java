@@ -27,7 +27,8 @@ public class Entry {
 			@JsonProperty("expectedPeriod")int expectedPeriod,@JsonProperty("leasePayment")double leasePayment,@JsonProperty("paymentIntervals")String paymentIntervals,
 			@JsonProperty("initialDirectCost")int initialDirectCost,@JsonProperty("guaranteedResidualValue")double guaranteedResidualValue,
 			@JsonProperty("usefulLifeOfTheAsset")int usefulLifeOfTheAsset,
-			@JsonProperty("escalation")float escalation,	@JsonProperty("escalationAfterEvery")int escalationAfterEvery) {
+			@JsonProperty("escalation")float escalation,	@JsonProperty("escalationAfterEvery")int escalationAfterEvery, 
+			@JsonProperty("year")int year) {
 
 		this.leaseContractNo = leaseContractNo;
 		this.commencementDate = commencementDate;

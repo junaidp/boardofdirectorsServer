@@ -13,6 +13,7 @@ import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import com.example.boardofdirectorsServer.model.Entry;
@@ -309,19 +310,19 @@ public class Calculation {
 		System.out.println("In sheet" +sheet.getSheetName());
 		int leaseTerms = entry.getLeaseTerm();
 		int count = 0;
-		int year = 2020;
-		String month = "Novemeber";
+		int year = 2019;
 		
-		int yearRowNum = findYearRow(sheet, year+"");
-		int nextYearRowNum = findYearRow(sheet, year+1+"");
 		
+		int yearRowNum = findYearRow(sheet, year);
+		int nextYearRowNum = findYearRow(sheet, year+1);
+		if(nextYearRowNum == 0) nextYearRowNum = sheet.getLastRowNum(); else nextYearRowNum = nextYearRowNum-1 ;
 		
 
 		for (Row r : sheet) {
 			///ONLY PUT COLUMN No in map id
 			int row = r.getRowNum();
 
-			if(r.getRowNum()> yearRowNum && r.getRowNum() <= nextYearRowNum)
+			if(r.getRowNum()>= yearRowNum && r.getRowNum() < nextYearRowNum)
 			{
 
 				LinkedHashMap<String, String> mapRow = new LinkedHashMap<String, String>();
@@ -329,9 +330,8 @@ public class Calculation {
 				System.out.println("In Row" +r.getRowNum());
 				
 				for (Cell c : r) {
-					if(c.getColumnIndex() >=19 && c.getStringCellValue().equals(month))
+					if(c.getColumnIndex() >=19)
 					{
-						
 						CellType cellType = null;
 						if (c.getCellType() == CellType.FORMULA) {
 							try{
@@ -348,6 +348,7 @@ public class Calculation {
 							cellType = c.getCellType();
 						}
 						putinMap(mapRow, c, cellType);
+					
 					}
 				}
 				mapSheet.put(row+1+"", mapRow);
@@ -361,11 +362,28 @@ public class Calculation {
 		return mapSheet;
 	}
 	
-	private static int findYearRow(XSSFSheet sheet, String cellContent) {
+	private boolean isSameMonth(String month, Cell c, FormulaEvaluator evaluator)
+	{
+		evaluator.evaluateFormulaCell(c);
+		String cellValue = c.getNumericCellValue()+"";
+		if(cellValue.equals(month)) {
+			return true;
+		}
+		return false;
+	}
+	
+	private static int findYearRow(XSSFSheet sheet, int cellContent) {
+		
+	XSSFCell s = 	sheet.getRow(4).getCell(19);
+	 if (s.getCellType() == CellType.NUMERIC) {
+         if (s.getNumericCellValue() == cellContent) {
+        	 System.out.println("dd");
+         	} 
+         }
 	    for (Row row : sheet) {
 	        for (Cell cell : row) {
-	            if (cell.getCellType() == CellType.STRING) {
-	                if (cell.getRichStringCellValue().getString().trim().equals(cellContent)) {
+	            if (cell.getCellType() == CellType.NUMERIC) {
+	                if (cell.getNumericCellValue() == cellContent) {
 	                    return row.getRowNum();  
 	                }
 	            }
