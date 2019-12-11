@@ -310,7 +310,7 @@ public class Calculation {
 		System.out.println("In sheet" +sheet.getSheetName());
 		int leaseTerms = entry.getLeaseTerm();
 		int count = 0;
-		int year = 2019;
+		int year = entry.getYear();
 		
 		
 		int yearRowNum = findYearRow(sheet, year);

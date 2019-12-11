@@ -21,6 +21,7 @@ public class Entry {
 	private	int usefulLifeOfTheAsset;	
 	private	float escalation;	
 	private	int escalationAfterEvery;
+	private int year;
 
 	public Entry(@JsonProperty("leaseContractNo")String leaseContractNo, @JsonProperty("commencementDate")Date commencementDate,
 			@JsonProperty("paymentsAt")String paymentsAt, @JsonProperty("annualDiscountRate")float annualDiscountRate,@JsonProperty("leaseTerm")int leaseTerm,
@@ -44,7 +45,8 @@ public class Entry {
 		this.usefulLifeOfTheAsset = usefulLifeOfTheAsset;
 		this.escalation = escalation/100;
 		this.escalationAfterEvery = escalationAfterEvery;
-
+		this.year = year;
+		
 		round(this.escalation, 2);
 		round(this.annualDiscountRate, 2);
 		
@@ -108,6 +110,10 @@ public class Entry {
 	    BigDecimal bd = BigDecimal.valueOf(value);
 	    bd = bd.setScale(places, RoundingMode.HALF_UP);
 	    return bd.doubleValue();
+	}
+
+	public int getYear() {
+		return year;
 	}
 
 
