@@ -310,19 +310,19 @@ public class Calculation {
 		System.out.println("In sheet" +sheet.getSheetName());
 		int leaseTerms = entry.getLeaseTerm();
 		int count = 0;
-		int year = entry.getYear();
+//		int year = entry.getYear();
 		
 		
-		int yearRowNum = findYearRow(sheet, year);
-		int nextYearRowNum = findYearRow(sheet, year+1);
-		if(nextYearRowNum == 0) nextYearRowNum = sheet.getLastRowNum(); else nextYearRowNum = nextYearRowNum-1 ;
+//		int yearRowNum = findYearRow(sheet, year);
+//		int nextYearRowNum = findYearRow(sheet, year+1);
+//		if(nextYearRowNum == 0) nextYearRowNum = sheet.getLastRowNum(); else nextYearRowNum = nextYearRowNum-1 ;
 		
 
 		for (Row r : sheet) {
 			///ONLY PUT COLUMN No in map id
 			int row = r.getRowNum();
 
-			if(r.getRowNum()>= yearRowNum && r.getRowNum() < nextYearRowNum)
+			if(r.getRowNum()>= 5)
 			{
 
 				LinkedHashMap<String, String> mapRow = new LinkedHashMap<String, String>();
