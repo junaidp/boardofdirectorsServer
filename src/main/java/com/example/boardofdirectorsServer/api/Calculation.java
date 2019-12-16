@@ -310,19 +310,23 @@ public class Calculation {
 		System.out.println("In sheet" +sheet.getSheetName());
 		int leaseTerms = entry.getLeaseTerm();
 		int count = 0;
-//		int year = entry.getYear();
+		int year = entry.getYear();
+		//int year = 2019;
 		
 		
-//		int yearRowNum = findYearRow(sheet, year);
-//		int nextYearRowNum = findYearRow(sheet, year+1);
-//		if(nextYearRowNum == 0) nextYearRowNum = sheet.getLastRowNum(); else nextYearRowNum = nextYearRowNum-1 ;
+	//	int yearRowNum = findRow(sheet, year);
+	//	int nextYearRowNum = findRow(sheet, year+1);
+	//	int lastRow = findRow(sheet, "Logic will be the same for next periods");
+		
+		//if(nextYearRowNum == 0) nextYearRowNum = sheet.getLastRowNum(); else nextYearRowNum = nextYearRowNum-1 ;
+	//	if(nextYearRowNum == 0) nextYearRowNum = lastRow; else nextYearRowNum = nextYearRowNum-1 ;
 		
 
 		for (Row r : sheet) {
 			///ONLY PUT COLUMN No in map id
 			int row = r.getRowNum();
 
-			if(r.getRowNum()>= 5)
+			if(r.getRowNum()>= 0)
 			{
 
 				LinkedHashMap<String, String> mapRow = new LinkedHashMap<String, String>();
@@ -372,7 +376,7 @@ public class Calculation {
 		return false;
 	}
 	
-	private static int findYearRow(XSSFSheet sheet, int cellContent) {
+	private static int findRow(XSSFSheet sheet, int cellContent) {
 		
 	XSSFCell s = 	sheet.getRow(4).getCell(19);
 	 if (s.getCellType() == CellType.NUMERIC) {
@@ -391,6 +395,26 @@ public class Calculation {
 	    }               
 	    return 0;
 	}
+	
+	private static int findRow(XSSFSheet sheet, String cellContent) {
+		
+		XSSFCell s = 	sheet.getRow(4).getCell(19);
+		 if (s.getCellType() == CellType.STRING) {
+	         if (s.getStringCellValue().equals(cellContent)) {
+	        	 System.out.println("end row content");
+	         	} 
+	         }
+		    for (Row row : sheet) {
+		        for (Cell cell : row) {
+		            if (s.getCellType() == CellType.STRING) {
+		                if (s.getStringCellValue().equals(cellContent)) {
+		                    return row.getRowNum();  
+		                }
+		            }
+		        }
+		    }               
+		    return 0;
+		}
 
 	private void putinMap(LinkedHashMap<String, String> mapSheet,
 			Cell c, CellType cellType) {
