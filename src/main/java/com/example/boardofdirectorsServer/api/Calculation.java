@@ -38,7 +38,7 @@ public class Calculation {
 			gson = new Gson(); 
 
 			OPCPackage pkg;
-			InputStream file = getFile();
+			InputStream file = getFileLease();
 			pkg = OPCPackage.open(file);
 
 			XSSFWorkbook wb = new XSSFWorkbook(pkg);
@@ -70,7 +70,7 @@ public class Calculation {
 			gson = new Gson(); 
 
 			OPCPackage pkg;
-			InputStream file = getFile();
+			InputStream file = getFileLease();
 			pkg = OPCPackage.open(file);
 
 			XSSFWorkbook wb = new XSSFWorkbook(pkg);
@@ -101,7 +101,7 @@ public class Calculation {
 			gson = new Gson(); 
 
 			OPCPackage pkg;
-			InputStream file = getFile();
+			InputStream file = getFileJournal();
 			pkg = OPCPackage.open(file);
 
 			XSSFWorkbook wb = new XSSFWorkbook(pkg);
@@ -143,8 +143,23 @@ public class Calculation {
 		System.out.println(sheetLease.getRow(3).getCell(13).getCellType());
 	}
 
-	private InputStream getFile() throws Exception {
-		String fileName = "static/ifrs.xlsx";
+	private InputStream getFileLease() throws Exception {
+		String fileName = "static/lease.xlsx";
+		ClassLoader classLoader =  this.getClass().getClassLoader();
+
+		// File file = new File(classLoader.getResource(fileName).getFile());
+		InputStream file = classLoader.getResourceAsStream(fileName);
+		//File is found
+		// System.out.println("File Found : " + file.exists());
+
+		//Read File Content
+		////  String content = new String(Files.readAllBytes(file.toPath()));
+		// System.out.println(content);
+		return file;
+	}
+	
+	private InputStream getFileJournal() throws Exception {
+		String fileName = "static/journal.xlsx";
 		ClassLoader classLoader =  this.getClass().getClassLoader();
 
 		// File file = new File(classLoader.getResource(fileName).getFile());
@@ -251,7 +266,7 @@ public class Calculation {
 		System.out.println("154");
 
 		System.out.println("starting loop");
-		XSSFSheet sheet = wb.getSheet("New Lease Yearly");
+		XSSFSheet sheet = wb.getSheet("Lease");
 
 		LinkedHashMap<String, LinkedHashMap<String, String>> mapSheet = new LinkedHashMap<String, LinkedHashMap<String, String>>();
 		System.out.println("In sheet" +sheet.getSheetName());
