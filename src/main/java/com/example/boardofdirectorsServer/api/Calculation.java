@@ -326,7 +326,7 @@ public class Calculation {
 			///ONLY PUT COLUMN No in map id
 			int row = r.getRowNum();
 
-			if(r.getRowNum()>= 0)
+			if(r.getRowNum()>= 0 && r.getRowNum()< 100)
 			{
 
 				LinkedHashMap<String, String> mapRow = new LinkedHashMap<String, String>();
