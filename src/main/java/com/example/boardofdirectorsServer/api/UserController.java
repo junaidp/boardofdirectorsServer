@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.boardofdirectorsServer.helper.UserHelper;
 import com.example.boardofdirectorsServer.model.Entry;
 import com.example.boardofdirectorsServer.model.User;
 import com.example.boardofdirectorsServer.model.UserTest;

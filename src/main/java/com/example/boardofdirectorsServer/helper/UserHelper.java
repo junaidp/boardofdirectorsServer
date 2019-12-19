@@ -1,4 +1,4 @@
-package com.example.boardofdirectorsServer.api;
+package com.example.boardofdirectorsServer.helper;
 
 import java.util.List;
 import java.util.Optional;
@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 
 
 import com.example.boardofdirectorsServer.model.User;
-import com.example.boardofdirectorsServer.model.UserRepository;
+import com.example.boardofdirectorsServer.repository.UserRepository;
 import com.google.gson.Gson;
 
 @Component

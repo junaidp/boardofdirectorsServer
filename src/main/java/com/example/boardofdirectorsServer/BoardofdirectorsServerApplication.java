@@ -27,7 +27,7 @@ public class BoardofdirectorsServerApplication {
 //			//	c.entry(entry);
 //				
 //				Calculation c = new Calculation();
-//				String map = c.entryJournal(entry);
+//				String map = c.entryLease(entry);
 //				Gson gson = new Gson(); 
 //				String json = gson.toJson(map);
 //			//	System.out.println(json);
