@@ -103,7 +103,9 @@ public class Calculation {
 			OPCPackage pkg;
 			System.out.println("opening file");
 			InputStream file = getFileJournal();
+			System.out.println("back from return");
 			pkg = OPCPackage.open(file);
+			
 
 			XSSFWorkbook wb = new XSSFWorkbook(pkg);
 			Sheet sheetLease = wb.getSheetAt(0);
@@ -145,7 +147,7 @@ public class Calculation {
 	}
 
 	private InputStream getFileLease() throws Exception {
-		String fileName = "static/ifrs16.xlsx";
+		String fileName = "static/ifrs.xlsx";
 		ClassLoader classLoader =  this.getClass().getClassLoader();
 
 		// File file = new File(classLoader.getResource(fileName).getFile());
@@ -160,7 +162,7 @@ public class Calculation {
 	}
 	
 	private InputStream getFileJournal() throws Exception {
-		String fileName = "static/ifrs16.xlsx";
+		String fileName = "static/ifrs.xlsx";
 		System.out.println("opening file"+ fileName);
 		ClassLoader classLoader =  this.getClass().getClassLoader();
 		System.out.println("here");
@@ -262,7 +264,7 @@ public class Calculation {
 		System.out.println("154");
 
 		System.out.println("starting loop");
-		XSSFSheet sheet = wb.getSheet("Lease Yearly");
+		XSSFSheet sheet = wb.getSheet("New Lease Yearly");
 
 		LinkedHashMap<String, LinkedHashMap<String, String>> mapSheet = new LinkedHashMap<String, LinkedHashMap<String, String>>();
 		System.out.println("In sheet" +sheet.getSheetName());
