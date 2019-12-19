@@ -159,7 +159,7 @@ public class Calculation {
 	}
 	
 	private InputStream getFileJournal() throws Exception {
-		String fileName = "static/journal.xlsx";
+		String fileName = "static/ifrs16.xlsx";
 		ClassLoader classLoader =  this.getClass().getClassLoader();
 
 		// File file = new File(classLoader.getResource(fileName).getFile());
@@ -311,8 +311,61 @@ public class Calculation {
 		System.out.println("returning Lease map");
 		return mapSheet;
 	}
-
+	
 	public LinkedHashMap<String, LinkedHashMap<String, String>> calculateJournal(XSSFWorkbook wb, Entry entry) throws InvalidFormatException, IOException {
+
+
+		System.out.println("calculating Journal");
+		FormulaEvaluator evaluator = wb.getCreationHelper().createFormulaEvaluator();
+	
+		System.out.println("starting loop");
+		XSSFSheet sheet = wb.getSheet("Yearly Journal entry");
+
+		LinkedHashMap<String, LinkedHashMap<String, String>> mapSheet = new LinkedHashMap<String, LinkedHashMap<String, String>>();
+		System.out.println("In sheet" +sheet.getSheetName());
+		int totalRows = sheet.getLastRowNum();
+		int count = 0;
+
+		for (Row r : sheet) {
+			///ONLY PUT COLUMN No in map id
+			int row = r.getRowNum();
+
+			if(r.getRowNum()>= 5 && count < totalRows)
+			{
+
+				LinkedHashMap<String, String> mapRow = new LinkedHashMap<String, String>();
+
+				System.out.println("In Row" +r.getRowNum());
+				for (Cell c : r) {
+					CellType cellType = null;
+					if (c.getCellType() == CellType.FORMULA) {
+						try{
+							evaluator.evaluateFormulaCell(c);
+						}catch(Exception ex){
+							System.out.println("In Exception in loop" + ex);
+							mapRow.put(c.getColumnIndex()+"", ":"+"");
+							System.out.println("In error" + ex);
+						}
+						cellType = c.getCachedFormulaResultType();
+					}
+					else
+					{
+						cellType = c.getCellType();
+					}
+					putinMap(mapRow, c, cellType);
+				}
+				mapSheet.put(row+1+"", mapRow);
+				count ++;
+			}
+
+		}
+
+
+		System.out.println("returning Journal map");
+		return mapSheet;
+	}
+
+	public LinkedHashMap<String, LinkedHashMap<String, String>> calculateJournalRightSide(XSSFWorkbook wb, Entry entry) throws InvalidFormatException, IOException {
 
 
 		System.out.println("calculating Journal");
