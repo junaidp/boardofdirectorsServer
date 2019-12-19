@@ -144,7 +144,7 @@ public class Calculation {
 	}
 
 	private InputStream getFileLease() throws Exception {
-		String fileName = "static/ifrs.xlsx";
+		String fileName = "static/ifrs16.xlsx";
 		ClassLoader classLoader =  this.getClass().getClassLoader();
 
 		// File file = new File(classLoader.getResource(fileName).getFile());
