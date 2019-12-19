@@ -101,6 +101,7 @@ public class Calculation {
 			gson = new Gson(); 
 
 			OPCPackage pkg;
+			System.out.println("opening file");
 			InputStream file = getFileJournal();
 			pkg = OPCPackage.open(file);
 
@@ -160,16 +161,11 @@ public class Calculation {
 	
 	private InputStream getFileJournal() throws Exception {
 		String fileName = "static/ifrs16.xlsx";
+		System.out.println("opening file"+ fileName);
 		ClassLoader classLoader =  this.getClass().getClassLoader();
-
-		// File file = new File(classLoader.getResource(fileName).getFile());
+		System.out.println("here");
 		InputStream file = classLoader.getResourceAsStream(fileName);
-		//File is found
-		// System.out.println("File Found : " + file.exists());
-
-		//Read File Content
-		////  String content = new String(Files.readAllBytes(file.toPath()));
-		// System.out.println(content);
+		System.out.println("returning file");
 		return file;
 	}
 
