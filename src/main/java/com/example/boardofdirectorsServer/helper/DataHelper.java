@@ -40,11 +40,11 @@ public class DataHelper {
 			query.addCriteria(Criteria.where("userId").is(userId));
 			//	BasicQuery query1 = new BasicQuery("{ name : '"+name+"'} , { password: '"+password+"'}");
 			System.out.println("ff");
-			UserData user = mongoOperation.findOne(query, UserData.class);
-			System.out.println(user);
-
-			String json = gson.toJson(user);
-
+			UserData userdata = mongoOperation.findOne(query, UserData.class);
+			System.out.println(userdata);
+			if(userdata == null)
+				return "Data not found";
+			String json = gson.toJson(userdata);
 			return json;
 		}catch(Exception ex)
 		{
