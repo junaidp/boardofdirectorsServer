@@ -7,7 +7,6 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Component;
 
 
-import com.example.boardofdirectorsServer.model.User;
 import com.example.boardofdirectorsServer.model.UserData;
 import com.example.boardofdirectorsServer.repository.UserDataRepository;
 import com.google.gson.Gson;
@@ -32,17 +31,16 @@ public class DataHelper {
 		}
 	}
 
-	public String getUser(String name, String password)
+	public String getUserData(String userId)
 	{
 		try {
 
-			System.out.println("{ name : '"+name+"'}");
-			System.out.println("{ password : '"+password+"'}");
+			System.out.println("{ userId : '"+userId+"'}");
 			Query query = new Query();
-			query.addCriteria(Criteria.where("name").is(name).and("password").is(password));
+			query.addCriteria(Criteria.where("userId").is(userId));
 			//	BasicQuery query1 = new BasicQuery("{ name : '"+name+"'} , { password: '"+password+"'}");
 			System.out.println("ff");
-			User user = mongoOperation.findOne(query, User.class);
+			UserData user = mongoOperation.findOne(query, UserData.class);
 			System.out.println(user);
 
 			String json = gson.toJson(user);
