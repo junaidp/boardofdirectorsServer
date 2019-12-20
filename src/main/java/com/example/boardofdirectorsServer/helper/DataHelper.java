@@ -37,7 +37,7 @@ public class DataHelper {
 
 			System.out.println("{ userId : '"+userId+"'}");
 			Query query = new Query();
-			//query.addCriteria(Criteria.where("userId").is(userId));
+			query.addCriteria(Criteria.where("userId").is(Integer.parseInt(userId)));
 			//	BasicQuery query1 = new BasicQuery("{ name : '"+name+"'} , { password: '"+password+"'}");
 			System.out.println("ff");
 			UserData userdata = mongoOperation.findOne(query, UserData.class);
