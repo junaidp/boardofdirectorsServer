@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.boardofdirectorsServer.helper.DataHelper;
 import com.example.boardofdirectorsServer.model.UserData;
+import com.example.boardofdirectorsServer.model.UserTest;
 
 @RequestMapping("/data")
 @RestController
@@ -23,6 +24,14 @@ public class DataController {
 	public String saveUser(@RequestBody UserData userEntity)
 	{
 		return userData.saveData(userEntity);
+	}
+	
+	@PostMapping("/getData")
+	public String getData(@RequestBody String userId) throws Exception
+	{
+		System.out.println(userId);
+		return userData.getUserData(userId);
+		
 	}
 	
 }
