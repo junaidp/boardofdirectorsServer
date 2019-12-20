@@ -29,7 +29,7 @@ public class DataController {
 		return userData.saveData(userEntity);
 	}
 	
-	@GetMapping("/getData/{userId}")
+	@GetMapping("/getData")
 	public String getData(@PathParam("userId") String userId) throws Exception
 	{
 		System.out.println(userId);
