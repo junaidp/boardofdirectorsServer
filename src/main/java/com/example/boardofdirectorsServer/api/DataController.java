@@ -1,5 +1,7 @@
 package com.example.boardofdirectorsServer.api;
 
+import javax.websocket.server.PathParam;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -27,8 +29,8 @@ public class DataController {
 		return userData.saveData(userEntity);
 	}
 	
-	@GetMapping("/getData")
-	public String getData(@RequestBody String userId) throws Exception
+	@GetMapping("/getData/{userId}")
+	public String getData(@PathParam("userId") String userId) throws Exception
 	{
 		System.out.println(userId);
 		return userData.getUserData(userId);
