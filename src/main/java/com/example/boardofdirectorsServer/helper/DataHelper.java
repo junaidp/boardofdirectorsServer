@@ -1,5 +1,7 @@
 package com.example.boardofdirectorsServer.helper;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -40,7 +42,7 @@ public class DataHelper {
 			query.addCriteria(Criteria.where("userId").is(userId));
 			//	BasicQuery query1 = new BasicQuery("{ name : '"+name+"'} , { password: '"+password+"'}");
 			System.out.println("ff");
-			UserData userdata = mongoOperation.findOne(query, UserData.class);
+			List<UserData> userdata = mongoOperation.find(query, UserData.class);
 			System.out.println(userdata);
 			if(userdata == null)
 				return "Data not found";
