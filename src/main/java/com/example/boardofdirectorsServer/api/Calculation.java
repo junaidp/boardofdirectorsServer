@@ -321,14 +321,15 @@ public class Calculation {
 
 		LinkedHashMap<String, LinkedHashMap<String, String>> mapSheet = new LinkedHashMap<String, LinkedHashMap<String, String>>();
 		System.out.println("In sheet" +sheet.getSheetName());
-		int totalRows = sheet.getLastRowNum();
+		//int totalRows = sheet.getLastRowNum();
+		int leaseTerms = entry.getLeaseTerm();
 		int count = 0;
 
 		for (Row r : sheet) {
 			///ONLY PUT COLUMN No in map id
 			int row = r.getRowNum();
 
-			if(r.getRowNum()>= 5 && count < totalRows)
+			if(r.getRowNum()>= 5 && count < leaseTerms)
 			{
 
 				LinkedHashMap<String, String> mapRow = new LinkedHashMap<String, String>();
