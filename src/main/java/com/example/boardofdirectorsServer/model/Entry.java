@@ -22,6 +22,7 @@ public class Entry {
 	private	float escalation;	
 	private	int escalationAfterEvery;
 	private int year;
+	private int month;
 
 	public Entry(@JsonProperty("leaseContractNo")String leaseContractNo, @JsonProperty("commencementDate")Date commencementDate,
 			@JsonProperty("paymentsAt")String paymentsAt, @JsonProperty("annualDiscountRate")float annualDiscountRate,@JsonProperty("leaseTerm")int leaseTerm,
@@ -29,7 +30,7 @@ public class Entry {
 			@JsonProperty("initialDirectCost")int initialDirectCost,@JsonProperty("guaranteedResidualValue")double guaranteedResidualValue,
 			@JsonProperty("usefulLifeOfTheAsset")int usefulLifeOfTheAsset,
 			@JsonProperty("escalation")float escalation,	@JsonProperty("escalationAfterEvery")int escalationAfterEvery, 
-			@JsonProperty("year")int year) {
+			@JsonProperty("year")int year, @JsonProperty("month")int month) {
 
 		this.leaseContractNo = leaseContractNo;
 		this.commencementDate = commencementDate;
@@ -46,6 +47,7 @@ public class Entry {
 		this.escalation = escalation/100;
 		this.escalationAfterEvery = escalationAfterEvery;
 		this.year = year;
+		this.month = month;
 		
 		round(this.escalation, 2);
 		round(this.annualDiscountRate, 2);
@@ -114,6 +116,10 @@ public class Entry {
 
 	public int getYear() {
 		return year;
+	}
+
+	public int getMonth() {
+		return month;
 	}
 
 

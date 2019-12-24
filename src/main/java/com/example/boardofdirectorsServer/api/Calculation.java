@@ -2,6 +2,8 @@ package com.example.boardofdirectorsServer.api;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.LinkedHashMap;
 
 import org.apache.poi.hssf.usermodel.HSSFDateUtil;
@@ -113,7 +115,7 @@ public class Calculation {
 			updateValues(entry, sheetLease);	
 			System.out.println("updating");
 
-			LinkedHashMap<String, LinkedHashMap<String, String>> map = calculateJournal(wb, entry);
+			LinkedHashMap<String, String> map = calculateJournal(wb, entry);
 			System.out.println("calculation done ");
 			json =  gson.toJson(map);
 			System.out.println("converted to json");
@@ -310,7 +312,7 @@ public class Calculation {
 		return mapSheet;
 	}
 	
-	public LinkedHashMap<String, LinkedHashMap<String, String>> calculateJournal(XSSFWorkbook wb, Entry entry) throws InvalidFormatException, IOException {
+	public LinkedHashMap<String, LinkedHashMap<String, String>> calculateJournalLeftSide(XSSFWorkbook wb, Entry entry) throws InvalidFormatException, IOException {
 
 
 		System.out.println("calculating Journal");
@@ -363,6 +365,91 @@ public class Calculation {
 		System.out.println("returning Journal map");
 		return mapSheet;
 	}
+	
+	public LinkedHashMap<String, String> calculateJournal(XSSFWorkbook wb, Entry entry) throws InvalidFormatException, IOException {
+
+
+		System.out.println("calculating Journal");
+		FormulaEvaluator evaluator = wb.getCreationHelper().createFormulaEvaluator();
+	
+		System.out.println("starting loop");
+		XSSFSheet sheet = wb.getSheet("Yearly Journal entry");
+
+		//LinkedHashMap<String, LinkedHashMap<String, String>> mapSheet = new LinkedHashMap<String, LinkedHashMap<String, String>>();
+		System.out.println("In sheet" +sheet.getSheetName());
+		//int totalRows = sheet.getLastRowNum();
+		int leaseTerms = entry.getLeaseTerm();
+		int count = 0;
+		LinkedHashMap<String, String> map = new LinkedHashMap<String, String>();
+
+		for (Row r : sheet) {
+			///ONLY PUT COLUMN No in map id
+			int row = r.getRowNum();
+
+			if(r.getRowNum()>= 6 && count < leaseTerms)
+			{
+
+				System.out.println("In Row" +r.getRowNum());
+				for (Cell c : r) {
+					CellType cellType = null;
+					if (c.getCellType() == CellType.FORMULA) {
+						try{
+							evaluator.evaluateFormulaCell(c);
+						}catch(Exception ex){
+							System.out.println("In Exception in loop" + ex);
+							map.put(c.getColumnIndex()+"", ":"+"");
+							System.out.println("In error" + ex);
+						}
+						cellType = c.getCachedFormulaResultType();
+						double a = c.getNumericCellValue();
+						if (HSSFDateUtil.isCellDateFormatted(c)) {
+							LocalDateTime date = c.getLocalDateTimeCellValue();
+							if(date.getYear() == entry.getYear()){
+								Row selectedRow = r;
+								map.put("dr",selectedRow.getCell(5).getNumericCellValue()+"");
+								
+								double total = selectedRow.getCell(5).getNumericCellValue()+
+								selectedRow.getCell(6).getNumericCellValue()+
+								selectedRow.getCell(7).getNumericCellValue()+
+								selectedRow.getCell(8).getNumericCellValue()
+								+selectedRow.getCell(9).getNumericCellValue()+
+								selectedRow.getCell(10).getNumericCellValue()+
+								selectedRow.getCell(11).getNumericCellValue()+
+								selectedRow.getCell(12).getNumericCellValue()+
+								selectedRow.getCell(13).getNumericCellValue()+
+								selectedRow.getCell(14).getNumericCellValue()+
+								selectedRow.getCell(15).getNumericCellValue()+
+								selectedRow.getCell(16).getNumericCellValue();
+								
+								
+								
+								map.put("total", total+"");
+								map.put("repeat", selectedRow.getCell(17).getNumericCellValue()+"");
+								
+								
+							}
+							System.out.println(date.getYear());
+							return map;
+						}
+					}
+					else
+					{
+						cellType = c.getCellType();
+						c.getDateCellValue();
+					}
+					
+				}
+				//mapSheet.put(row+1+"", mapRow);
+				count ++;
+			}
+
+		}
+
+
+		System.out.println("returning Journal map");
+		return null;
+	}
+
 
 	public LinkedHashMap<String, LinkedHashMap<String, String>> calculateJournalRightSide(XSSFWorkbook wb, Entry entry) throws InvalidFormatException, IOException {
 
