@@ -434,7 +434,7 @@ public class Calculation {
 					else
 					{
 						cellType = c.getCellType();
-						c.getDateCellValue();
+					//	c.getDateCellValue();
 					}
 					
 				}
