@@ -386,7 +386,7 @@ public class Calculation {
 			///ONLY PUT COLUMN No in map id
 			int row = r.getRowNum();
 
-			if(r.getRowNum()>= 6 && count < leaseTerms)
+			if(r.getRowNum()>= 5 && count < leaseTerms)
 			{
 
 				System.out.println("In Row" +r.getRowNum());
@@ -402,6 +402,7 @@ public class Calculation {
 						}
 						cellType = c.getCachedFormulaResultType();
 						double a = c.getNumericCellValue();
+						System.out.println(c.getColumnIndex());
 						if (HSSFDateUtil.isCellDateFormatted(c)) {
 							LocalDateTime date = c.getLocalDateTimeCellValue();
 							if(date.getYear() == entry.getYear()){
@@ -411,7 +412,7 @@ public class Calculation {
 								double total = selectedRow.getCell(5).getNumericCellValue()+
 								selectedRow.getCell(6).getNumericCellValue()+
 								selectedRow.getCell(7).getNumericCellValue()+
-								selectedRow.getCell(8).getNumericCellValue()
+								selectedRow.getCell(8).getNumericCellValue()+
 								+selectedRow.getCell(9).getNumericCellValue()+
 								selectedRow.getCell(10).getNumericCellValue()+
 								selectedRow.getCell(11).getNumericCellValue()+
@@ -433,7 +434,7 @@ public class Calculation {
 					}
 					else
 					{
-						cellType = c.getCellType();
+					//	cellType = c.getCellType();
 					//	c.getDateCellValue();
 					}
 					
