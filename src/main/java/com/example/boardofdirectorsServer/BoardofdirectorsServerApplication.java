@@ -23,7 +23,7 @@ public class BoardofdirectorsServerApplication {
 		try {
 			try {
 			//	Calculation c = new Calculation();
-				Entry entry = new Entry("Lease No. 1", new Date("05/10/2019"), "Ending", 7, 60, 60, 250000, "Monthly", 0, 200000, 10, 15, 3, 2020, 1);
+				Entry entry = new Entry("Lease No. 1", new Date("05/10/2019"), "Ending", 7, 60, 60, 250000, "Monthly", 0, 200000, 10, 15, 3, 2021, 1);
 			//	c.entry(entry);
 				
 				Calculation c = new Calculation();

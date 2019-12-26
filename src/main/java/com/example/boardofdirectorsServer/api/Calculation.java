@@ -149,7 +149,7 @@ public class Calculation {
 	}
 
 	private InputStream getFileLease() throws Exception {
-		String fileName = "static/ifrs.xlsx";
+		String fileName = "static/lease.xlsx";
 		ClassLoader classLoader =  this.getClass().getClassLoader();
 
 		// File file = new File(classLoader.getResource(fileName).getFile());
@@ -164,7 +164,7 @@ public class Calculation {
 	}
 	
 	private InputStream getFileJournal() throws Exception {
-		String fileName = "static/ifrs.xlsx";
+		String fileName = "static/Journal.xlsx";
 		System.out.println("opening file"+ fileName);
 		ClassLoader classLoader =  this.getClass().getClassLoader();
 		System.out.println("here");
@@ -266,7 +266,7 @@ public class Calculation {
 		System.out.println("154");
 
 		System.out.println("starting loop");
-		XSSFSheet sheet = wb.getSheet("New Lease Yearly");
+		XSSFSheet sheet = wb.getSheet("Lease");
 
 		LinkedHashMap<String, LinkedHashMap<String, String>> mapSheet = new LinkedHashMap<String, LinkedHashMap<String, String>>();
 		System.out.println("In sheet" +sheet.getSheetName());
@@ -426,10 +426,9 @@ public class Calculation {
 								map.put("total", total+"");
 								map.put("repeat", selectedRow.getCell(17).getNumericCellValue()+"");
 								
-								
+								return map;
 							}
-							System.out.println(date.getYear());
-							return map;
+						
 						}
 					}
 					else
