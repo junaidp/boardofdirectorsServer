@@ -149,7 +149,7 @@ public class Calculation {
 	}
 
 	private InputStream getFileLease() throws Exception {
-		String fileName = "static/lease.xlsx";
+		String fileName = "static/Journal.xlsx";
 		ClassLoader classLoader =  this.getClass().getClassLoader();
 
 		// File file = new File(classLoader.getResource(fileName).getFile());
@@ -266,7 +266,7 @@ public class Calculation {
 		System.out.println("154");
 
 		System.out.println("starting loop");
-		XSSFSheet sheet = wb.getSheet("Lease");
+		XSSFSheet sheet = wb.getSheet("New Lease Yearly");
 
 		LinkedHashMap<String, LinkedHashMap<String, String>> mapSheet = new LinkedHashMap<String, LinkedHashMap<String, String>>();
 		System.out.println("In sheet" +sheet.getSheetName());
