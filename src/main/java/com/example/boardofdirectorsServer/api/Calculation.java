@@ -97,7 +97,7 @@ public class Calculation {
 
 	}
 
-	public String entryJournal(Entry entry, int journalType) throws Exception{
+	public String entryJournal(Entry entry, int journalType, int entryTab) throws Exception{
 		Gson gson;
 		try {
 			gson = new Gson(); 
@@ -110,7 +110,7 @@ public class Calculation {
 			
 
 			XSSFWorkbook wb = new XSSFWorkbook(pkg);
-			Sheet sheetLease = wb.getSheetAt(journalType);
+			Sheet sheetLease = wb.getSheetAt(entryTab);
 
 			updateValues(entry, sheetLease);	
 			System.out.println("updating");

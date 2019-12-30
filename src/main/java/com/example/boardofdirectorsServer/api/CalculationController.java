@@ -77,7 +77,7 @@ public class CalculationController {
 	{
 		try {
 			Calculation c = new Calculation();
-			json = c.entryJournal(entry, Constants.JOURNAL_YEARLY);
+			json = c.entryJournal(entry, Constants.JOURNAL_YEARLY, Constants.LEASE_YEARLY);
 			return json;
 		} catch (Exception e) {
 			throw e;
@@ -89,7 +89,7 @@ public class CalculationController {
 	{
 		try {
 			Calculation c = new Calculation();
-			json = c.entryJournal(entry, Constants.JOURNAL_QUARTERLY);
+			json = c.entryJournal(entry, Constants.JOURNAL_QUARTERLY, Constants.LEASE_QUARTERLY);
 			return json;
 		} catch (Exception e) {
 			throw e;
@@ -101,7 +101,7 @@ public class CalculationController {
 	{
 		try {
 			Calculation c = new Calculation();
-			json = c.entryJournal(entry, Constants.JOURNAL_MONTHLY);
+			json = c.entryJournal(entry, Constants.JOURNAL_MONTHLY, Constants.LEASE_MONTHLY);
 			return json;
 		} catch (Exception e) {
 			throw e;
