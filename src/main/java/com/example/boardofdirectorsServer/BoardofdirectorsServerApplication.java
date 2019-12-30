@@ -9,6 +9,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.web.bind.annotation.CrossOrigin;
 
 import com.example.boardofdirectorsServer.api.Calculation;
+import com.example.boardofdirectorsServer.api.Constants;
+import com.example.boardofdirectorsServer.api.TYPES;
 import com.example.boardofdirectorsServer.model.Entry;
 import com.google.gson.Gson;
 
@@ -19,7 +21,7 @@ public class BoardofdirectorsServerApplication {
 	public static void main(String[] args) throws Exception {
 	
 		SpringApplication.run(BoardofdirectorsServerApplication.class, args);
-//			
+			
 //		try {
 //			try {
 //			//	Calculation c = new Calculation();
@@ -27,7 +29,7 @@ public class BoardofdirectorsServerApplication {
 //			//	c.entry(entry);
 //				
 //				Calculation c = new Calculation();
-//				String map = c.entryLease(entry);
+//				String map = c.entryJournal(entry, TYPES.JOURNAL_MONTHLY, TYPES.LEASE_MONTHLY);
 //				Gson gson = new Gson(); 
 //				String json = gson.toJson(map);
 //			//	System.out.println(json);

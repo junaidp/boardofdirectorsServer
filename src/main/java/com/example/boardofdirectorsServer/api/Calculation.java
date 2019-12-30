@@ -97,10 +97,10 @@ public class Calculation {
 
 	}
 
-	public String entryJournal(Entry entry, int journalType, int entryTab) throws Exception{
-		Gson gson;
+	public String entryJournal(Entry entry, TYPES typeJournal, TYPES typeLease) throws Exception{
+		
 		try {
-			gson = new Gson(); 
+			
 
 			OPCPackage pkg;
 			System.out.println("opening file");
@@ -110,14 +110,28 @@ public class Calculation {
 			
 
 			XSSFWorkbook wb = new XSSFWorkbook(pkg);
-			Sheet sheetLease = wb.getSheetAt(entryTab);
+			Sheet sheetLease = wb.getSheetAt(typeLease.getValue());
 
 			updateValues(entry, sheetLease);	
 			System.out.println("updating");
 
-			LinkedHashMap<String, String> map = calculateJournal(wb, entry, journalType);
+			
+			switch(typeJournal) {
+			case JOURNAL_YEARLY:
+				json = calculateJournal(wb, entry, typeJournal.getValue());
+				break;
+			case JOURNAL_QUARTERLY:
+				json = calculateJournalLeftSide(wb, entry, typeJournal);
+				break;
+			case JOURNAL_MONTHLY:
+				json = calculateJournalLeftSide(wb, entry, typeJournal);
+				break;
+			default:
+				break;
+			}
+			
 			System.out.println("calculation done ");
-			json =  gson.toJson(map);
+		//	json =  gson.toJson(map);
 			System.out.println("converted to json");
 			wb.close();
 			System.out.println("returning json");
@@ -310,14 +324,16 @@ public class Calculation {
 		return mapSheet;
 	}
 	
-	public LinkedHashMap<String, LinkedHashMap<String, String>> calculateJournalLeftSide(XSSFWorkbook wb, Entry entry) throws InvalidFormatException, IOException {
+	public String calculateJournalLeftSide(XSSFWorkbook wb, Entry entry, TYPES typeJournal) throws InvalidFormatException, IOException {
 
 
 		System.out.println("calculating Journal");
 		FormulaEvaluator evaluator = wb.getCreationHelper().createFormulaEvaluator();
 	
 		System.out.println("starting loop");
-		XSSFSheet sheet = wb.getSheet("Yearly Journal entry");
+		//XSSFSheet sheet = wb.getSheet("Yearly Journal entry");
+		XSSFSheet sheet = wb.getSheetAt(typeJournal.getValue());
+		
 
 		LinkedHashMap<String, LinkedHashMap<String, String>> mapSheet = new LinkedHashMap<String, LinkedHashMap<String, String>>();
 		System.out.println("In sheet" +sheet.getSheetName());
@@ -328,8 +344,10 @@ public class Calculation {
 		for (Row r : sheet) {
 			///ONLY PUT COLUMN No in map id
 			int row = r.getRowNum();
+			int startingRow = 5;
+			if(typeJournal == TYPES.JOURNAL_MONTHLY)startingRow = 4;
 
-			if(r.getRowNum()>= 5 && count < leaseTerms)
+			if(r.getRowNum()>= startingRow && count < leaseTerms)
 			{
 
 				LinkedHashMap<String, String> mapRow = new LinkedHashMap<String, String>();
@@ -361,10 +379,12 @@ public class Calculation {
 
 
 		System.out.println("returning Journal map");
-		return mapSheet;
+		Gson gson = new Gson(); 
+		return  gson.toJson(mapSheet);
+		
 	}
 	
-	public LinkedHashMap<String, String> calculateJournal(XSSFWorkbook wb, Entry entry, int journalType) throws InvalidFormatException, IOException {
+	public String calculateJournal(XSSFWorkbook wb, Entry entry, int journalType) throws InvalidFormatException, IOException {
 
 
 		System.out.println("calculating Journal");
@@ -425,7 +445,10 @@ public class Calculation {
 								map.put("total", total+"");
 								map.put("repeat", selectedRow.getCell(17).getNumericCellValue()+"");
 								
-								return map;
+								Gson gson = new Gson(); 
+								return  gson.toJson(map);
+								
+							
 							}
 						
 						}
@@ -445,7 +468,7 @@ public class Calculation {
 
 
 		System.out.println("returning Journal map");
-		return null;
+		return "No data";
 	}
 
 
