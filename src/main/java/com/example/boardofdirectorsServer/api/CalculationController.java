@@ -36,12 +36,36 @@ public class CalculationController {
 
 	}
 
-	@PostMapping("/lease")
-	public String calculateLease(@RequestBody Entry entry) throws Exception
+	@PostMapping("/lease/yearly")
+	public String calculateLeaseYearly(@RequestBody Entry entry) throws Exception
 	{
 		try {
 			Calculation c = new Calculation();
-			json = c.entryLease(entry);
+			json = c.entryLease(entry, Constants.LEASE_YEARLY);
+			return json;
+		} catch (Exception e) {
+			throw e;
+		}
+	}
+	
+	@PostMapping("/lease/quarterly")
+	public String calculateLeaseQuarterly(@RequestBody Entry entry) throws Exception
+	{
+		try {
+			Calculation c = new Calculation();
+			json = c.entryLease(entry, Constants.LEASE_QUARTERLY);
+			return json;
+		} catch (Exception e) {
+			throw e;
+		}
+	}
+	
+	@PostMapping("/lease/monthly")
+	public String calculateLeaseMonthly(@RequestBody Entry entry) throws Exception
+	{
+		try {
+			Calculation c = new Calculation();
+			json = c.entryLease(entry, Constants.LEASE_MONTHLY);
 			return json;
 		} catch (Exception e) {
 			throw e;

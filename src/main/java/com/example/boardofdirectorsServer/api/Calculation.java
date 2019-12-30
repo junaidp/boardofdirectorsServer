@@ -66,7 +66,7 @@ public class Calculation {
 
 	}
 
-	public String entryLease(Entry entry) throws Exception{
+	public String entryLease(Entry entry, int leaseType) throws Exception{
 		Gson gson;
 		try {
 			gson = new Gson(); 
@@ -76,12 +76,12 @@ public class Calculation {
 			pkg = OPCPackage.open(file);
 
 			XSSFWorkbook wb = new XSSFWorkbook(pkg);
-			Sheet sheetLease = wb.getSheetAt(0);
+			Sheet sheetLease = wb.getSheetAt(leaseType);
 
 			updateValues(entry, sheetLease);	
 			System.out.println("updating");
 
-			LinkedHashMap<String, LinkedHashMap<String, String>> map = calculateLease(wb, entry);
+			LinkedHashMap<String, LinkedHashMap<String, String>> map = calculateLease(wb, entry, leaseType);
 			System.out.println("calculation done ");
 			json =  gson.toJson(map);
 			System.out.println("converted to json");
@@ -258,15 +258,13 @@ public class Calculation {
 		return map;
 	}
 
-	public LinkedHashMap<String, LinkedHashMap<String, String>> calculateLease(XSSFWorkbook wb, Entry entry) throws InvalidFormatException, IOException {
+	public LinkedHashMap<String, LinkedHashMap<String, String>> calculateLease(XSSFWorkbook wb, Entry entry, int leaseType) throws InvalidFormatException, IOException {
 
 
 		System.out.println("calculating Lease");
 		FormulaEvaluator evaluator = wb.getCreationHelper().createFormulaEvaluator();
-		System.out.println("154");
-
-		System.out.println("starting loop");
-		XSSFSheet sheet = wb.getSheet("New Lease Yearly");
+	//	XSSFSheet sheet = wb.getSheet("New Lease Yearly");
+		Sheet sheet = wb.getSheetAt(leaseType);
 
 		LinkedHashMap<String, LinkedHashMap<String, String>> mapSheet = new LinkedHashMap<String, LinkedHashMap<String, String>>();
 		System.out.println("In sheet" +sheet.getSheetName());
