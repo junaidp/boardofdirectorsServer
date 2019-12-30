@@ -97,7 +97,7 @@ public class Calculation {
 
 	}
 
-	public String entryJournal(Entry entry) throws Exception{
+	public String entryJournal(Entry entry, int journalType) throws Exception{
 		Gson gson;
 		try {
 			gson = new Gson(); 
@@ -110,12 +110,12 @@ public class Calculation {
 			
 
 			XSSFWorkbook wb = new XSSFWorkbook(pkg);
-			Sheet sheetLease = wb.getSheetAt(0);
+			Sheet sheetLease = wb.getSheetAt(journalType);
 
 			updateValues(entry, sheetLease);	
 			System.out.println("updating");
 
-			LinkedHashMap<String, String> map = calculateJournal(wb, entry);
+			LinkedHashMap<String, String> map = calculateJournal(wb, entry, journalType);
 			System.out.println("calculation done ");
 			json =  gson.toJson(map);
 			System.out.println("converted to json");
@@ -364,14 +364,14 @@ public class Calculation {
 		return mapSheet;
 	}
 	
-	public LinkedHashMap<String, String> calculateJournal(XSSFWorkbook wb, Entry entry) throws InvalidFormatException, IOException {
+	public LinkedHashMap<String, String> calculateJournal(XSSFWorkbook wb, Entry entry, int journalType) throws InvalidFormatException, IOException {
 
 
 		System.out.println("calculating Journal");
 		FormulaEvaluator evaluator = wb.getCreationHelper().createFormulaEvaluator();
 	
 		System.out.println("starting loop");
-		XSSFSheet sheet = wb.getSheet("Yearly Journal entry");
+		XSSFSheet sheet = wb.getSheetAt(journalType);//.getSheet("Yearly Journal entry");
 
 		//LinkedHashMap<String, LinkedHashMap<String, String>> mapSheet = new LinkedHashMap<String, LinkedHashMap<String, String>>();
 		System.out.println("In sheet" +sheet.getSheetName());

@@ -72,18 +72,42 @@ public class CalculationController {
 		}
 	}
 	
-	@PostMapping("/journal")
-	public String calculateJournal(@RequestBody Entry entry) throws Exception
+	@PostMapping("/journal/yearly")
+	public String calculateJournalYearly(@RequestBody Entry entry) throws Exception
 	{
 		try {
 			Calculation c = new Calculation();
-			json = c.entryJournal(entry);
+			json = c.entryJournal(entry, Constants.JOURNAL_YEARLY);
 			return json;
 		} catch (Exception e) {
 			throw e;
 		}
 	}
 
+	@PostMapping("/journal/quarterly")
+	public String calculateJournalQuarterly(@RequestBody Entry entry) throws Exception
+	{
+		try {
+			Calculation c = new Calculation();
+			json = c.entryJournal(entry, Constants.JOURNAL_QUARTERLY);
+			return json;
+		} catch (Exception e) {
+			throw e;
+		}
+	}
+	
+	@PostMapping("/journal/monthly")
+	public String calculateJournalMonthly(@RequestBody Entry entry) throws Exception
+	{
+		try {
+			Calculation c = new Calculation();
+			json = c.entryJournal(entry, Constants.JOURNAL_MONTHLY);
+			return json;
+		} catch (Exception e) {
+			throw e;
+		}
+	}
+	
 	@GetMapping
 	public String getCalculation(){
 
