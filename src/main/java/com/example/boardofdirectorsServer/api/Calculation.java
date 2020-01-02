@@ -472,25 +472,21 @@ public class Calculation {
 			///ONLY PUT COLUMN No in map id
 			int row = r.getRowNum();
 
-			if(r.getRowNum()>= 5 && count < leaseTerms)
+			if(r.getRowNum()>= 16)
 			{
 
 				System.out.println("In Row" +r.getRowNum());
-				for (Cell c : r) {
-					CellType cellType = null;
-					if (c.getCellType() == CellType.FORMULA) {
-						try{
-							evaluator.evaluateFormulaCell(c);
-						}catch(Exception ex){
-							System.out.println("In Exception in loop" + ex);
-							map.put(c.getColumnIndex()+"", ":"+"");
-							System.out.println("In error" + ex);
-						}
-						cellType = c.getCachedFormulaResultType();
-						double a = c.getNumericCellValue();
-						System.out.println(c.getColumnIndex());
+				Cell c = r.getCell(2);
+					
 						if (HSSFDateUtil.isCellDateFormatted(c)) {
-							LocalDateTime date = c.getLocalDateTimeCellValue();
+							LocalDateTime date = null;
+							try{
+							 date = c.getLocalDateTimeCellValue();
+							}
+							catch(Exception ex)
+							{
+								System.out.println(ex);
+							}
 							if(date.getYear() == entry.getYear()){
 								Row selectedRow = r;
 								map.put("financeCharge",selectedRow.getCell(10).getNumericCellValue()+"");
@@ -501,8 +497,8 @@ public class Calculation {
 							}
 						}
 					}
-				}
-			}
+				
+			
 		}
 
 		System.out.println("returning Journal map");
