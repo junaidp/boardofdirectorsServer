@@ -118,7 +118,7 @@ public class Calculation {
 			
 			switch(typeJournal) {
 			case JOURNAL_YEARLY:
-				json = calculateJournal(wb, entry, typeJournal.getValue());
+				json = calculateJournal(wb, entry, typeJournal.getValue(), typeLease.getValue());
 				break;
 			case JOURNAL_QUARTERLY:
 				json = calculateJournalLeftSide(wb, entry, typeJournal);
@@ -384,7 +384,7 @@ public class Calculation {
 		
 	}
 	
-	public String calculateJournal(XSSFWorkbook wb, Entry entry, int journalType) throws InvalidFormatException, IOException {
+	public String calculateJournal(XSSFWorkbook wb, Entry entry, int journalType, int leaseType) throws InvalidFormatException, IOException {
 
 
 		System.out.println("calculating Journal");
@@ -392,6 +392,7 @@ public class Calculation {
 	
 		System.out.println("starting loop");
 		XSSFSheet sheet = wb.getSheetAt(journalType);//.getSheet("Yearly Journal entry");
+		XSSFSheet sheetLease = wb.getSheetAt(leaseType);
 
 		//LinkedHashMap<String, LinkedHashMap<String, String>> mapSheet = new LinkedHashMap<String, LinkedHashMap<String, String>>();
 		System.out.println("In sheet" +sheet.getSheetName());
@@ -465,7 +466,40 @@ public class Calculation {
 			}
 
 		}
+		
+		for (Row r : sheetLease) {
+			///ONLY PUT COLUMN No in map id
+			int row = r.getRowNum();
 
+			if(r.getRowNum()>= 5 && count < leaseTerms)
+			{
+
+				System.out.println("In Row" +r.getRowNum());
+				for (Cell c : r) {
+					CellType cellType = null;
+					if (c.getCellType() == CellType.FORMULA) {
+						try{
+							evaluator.evaluateFormulaCell(c);
+						}catch(Exception ex){
+							System.out.println("In Exception in loop" + ex);
+							map.put(c.getColumnIndex()+"", ":"+"");
+							System.out.println("In error" + ex);
+						}
+						cellType = c.getCachedFormulaResultType();
+						double a = c.getNumericCellValue();
+						System.out.println(c.getColumnIndex());
+						if (HSSFDateUtil.isCellDateFormatted(c)) {
+							LocalDateTime date = c.getLocalDateTimeCellValue();
+							if(date.getYear() == entry.getYear()){
+								Row selectedRow = r;
+								map.put("financeCharge",selectedRow.getCell(10).getNumericCellValue()+"");
+								map.put("payment",selectedRow.getCell(11).getNumericCellValue()+"");
+							}
+						}
+					}
+				}
+			}
+		}
 
 		System.out.println("returning Journal map");
 		return "No data";
