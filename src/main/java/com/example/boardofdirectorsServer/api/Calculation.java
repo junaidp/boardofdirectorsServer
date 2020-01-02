@@ -446,8 +446,9 @@ public class Calculation {
 								map.put("total", total+"");
 								map.put("repeat", selectedRow.getCell(17).getNumericCellValue()+"");
 								
-								Gson gson = new Gson(); 
-								return  gson.toJson(map);
+								//Gson gson = new Gson(); 
+							//	return  gson.toJson(map);
+								break;
 								
 							
 							}
@@ -494,6 +495,9 @@ public class Calculation {
 								Row selectedRow = r;
 								map.put("financeCharge",selectedRow.getCell(10).getNumericCellValue()+"");
 								map.put("payment",selectedRow.getCell(11).getNumericCellValue()+"");
+								
+								Gson gson = new Gson(); 
+								return gson.toJson(map);
 							}
 						}
 					}
