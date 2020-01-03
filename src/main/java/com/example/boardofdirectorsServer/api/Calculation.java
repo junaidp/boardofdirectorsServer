@@ -98,16 +98,16 @@ public class Calculation {
 	}
 
 	public String entryJournal(Entry entry, TYPES typeJournal, TYPES typeLease) throws Exception{
-		
+
 		try {
-			
+
 
 			OPCPackage pkg;
 			System.out.println("opening file");
 			InputStream file = getFileJournal();
 			System.out.println("back from return");
 			pkg = OPCPackage.open(file);
-			
+
 
 			XSSFWorkbook wb = new XSSFWorkbook(pkg);
 			Sheet sheetLease = wb.getSheetAt(typeLease.getValue());
@@ -115,7 +115,7 @@ public class Calculation {
 			updateValues(entry, sheetLease);	
 			System.out.println("updating");
 
-			
+
 			switch(typeJournal) {
 			case JOURNAL_YEARLY:
 				json = calculateJournal(wb, entry, typeJournal.getValue(), typeLease.getValue());
@@ -129,9 +129,9 @@ public class Calculation {
 			default:
 				break;
 			}
-			
+
 			System.out.println("calculation done ");
-		//	json =  gson.toJson(map);
+			//	json =  gson.toJson(map);
 			System.out.println("converted to json");
 			wb.close();
 			System.out.println("returning json");
@@ -176,7 +176,7 @@ public class Calculation {
 		// System.out.println(content);
 		return file;
 	}
-	
+
 	private InputStream getFileJournal() throws Exception {
 		String fileName = "static/Journal.xlsx";
 		System.out.println("opening file"+ fileName);
@@ -277,7 +277,7 @@ public class Calculation {
 
 		System.out.println("calculating Lease");
 		FormulaEvaluator evaluator = wb.getCreationHelper().createFormulaEvaluator();
-	//	XSSFSheet sheet = wb.getSheet("New Lease Yearly");
+		//	XSSFSheet sheet = wb.getSheet("New Lease Yearly");
 		Sheet sheet = wb.getSheetAt(leaseType);
 
 		LinkedHashMap<String, LinkedHashMap<String, String>> mapSheet = new LinkedHashMap<String, LinkedHashMap<String, String>>();
@@ -323,17 +323,17 @@ public class Calculation {
 		System.out.println("returning Lease map");
 		return mapSheet;
 	}
-	
+
 	public String calculateJournalLeftSide(XSSFWorkbook wb, Entry entry, TYPES typeJournal) throws InvalidFormatException, IOException {
 
 
 		System.out.println("calculating Journal");
 		FormulaEvaluator evaluator = wb.getCreationHelper().createFormulaEvaluator();
-	
+
 		System.out.println("starting loop");
 		//XSSFSheet sheet = wb.getSheet("Yearly Journal entry");
 		XSSFSheet sheet = wb.getSheetAt(typeJournal.getValue());
-		
+
 
 		LinkedHashMap<String, LinkedHashMap<String, String>> mapSheet = new LinkedHashMap<String, LinkedHashMap<String, String>>();
 		System.out.println("In sheet" +sheet.getSheetName());
@@ -381,15 +381,15 @@ public class Calculation {
 		System.out.println("returning Journal map");
 		Gson gson = new Gson(); 
 		return  gson.toJson(mapSheet);
-		
+
 	}
-	
+
 	public String calculateJournal(XSSFWorkbook wb, Entry entry, int journalType, int leaseType) throws InvalidFormatException, IOException {
 
 
 		System.out.println("calculating Journal");
 		FormulaEvaluator evaluator = wb.getCreationHelper().createFormulaEvaluator();
-	
+
 		System.out.println("starting loop");
 		XSSFSheet sheet = wb.getSheetAt(journalType);//.getSheet("Yearly Journal entry");
 		XSSFSheet sheetLease = wb.getSheetAt(leaseType);
@@ -410,23 +410,18 @@ public class Calculation {
 
 				System.out.println("In Row" +r.getRowNum());
 				Cell c = r.getCell(0);
-				
-				if (c.getCellType() == CellType.FORMULA) {
-					try{
-						evaluator.evaluateFormulaCell(c);
-					}catch(Exception ex){
-						System.out.println("In Exception in loop" + ex);
-					}
-				}
-					
-						System.out.println(c.getColumnIndex());
-						if (HSSFDateUtil.isCellDateFormatted(c)) {
-							LocalDateTime date = c.getLocalDateTimeCellValue();
-							if(date.getYear() == entry.getYear()){
-								Row selectedRow = r;
-								map.put("dr",selectedRow.getCell(5).getNumericCellValue()+"");
-								
-								double total = selectedRow.getCell(5).getNumericCellValue()+
+
+				evaluateCell(evaluator, c);
+
+				System.out.println(c.getColumnIndex());
+				if (HSSFDateUtil.isCellDateFormatted(c)) {
+					LocalDateTime date = c.getLocalDateTimeCellValue();
+					if(date.getYear() == entry.getYear()){
+						Row selectedRow = r;
+						evaluateCell(evaluator, selectedRow.getCell(5), selectedRow.getCell(6), selectedRow.getCell(7), selectedRow.getCell(8), selectedRow.getCell(9), selectedRow.getCell(10), selectedRow.getCell(11), selectedRow.getCell(12), selectedRow.getCell(13), selectedRow.getCell(14), selectedRow.getCell(15), selectedRow.getCell(16), selectedRow.getCell(17));
+						map.put("dr",selectedRow.getCell(5).getNumericCellValue()+"");
+
+						double total = selectedRow.getCell(5).getNumericCellValue()+
 								selectedRow.getCell(6).getNumericCellValue()+
 								selectedRow.getCell(7).getNumericCellValue()+
 								selectedRow.getCell(8).getNumericCellValue()+
@@ -438,28 +433,28 @@ public class Calculation {
 								selectedRow.getCell(14).getNumericCellValue()+
 								selectedRow.getCell(15).getNumericCellValue()+
 								selectedRow.getCell(16).getNumericCellValue();
-														
-								map.put("total", total+"");
-								map.put("repeat", selectedRow.getCell(17).getNumericCellValue()+"");
-								
-								//Gson gson = new Gson(); 
-							//	return  gson.toJson(map);
-								break;
-								
-							
-							}
-						
-						}
+
+						map.put("total", total+"");
+						map.put("repeat", selectedRow.getCell(17).getNumericCellValue()+"");
+
+						//Gson gson = new Gson(); 
+						//	return  gson.toJson(map);
+						break;
+
+
 					}
-				
-					
-				
-				//mapSheet.put(row+1+"", mapRow);
-				count ++;
-		
+
+				}
+			}
+
+
+
+			//mapSheet.put(row+1+"", mapRow);
+			count ++;
+
 
 		}
-		
+
 		for (Row r : sheetLease) {
 			///ONLY PUT COLUMN No in map id
 			int row = r.getRowNum();
@@ -469,32 +464,53 @@ public class Calculation {
 
 				System.out.println("In Row" +r.getRowNum());
 				Cell c = r.getCell(2);
-					
-						if (HSSFDateUtil.isCellDateFormatted(c)) {
-							LocalDateTime date = null;
-							try{
-							 date = c.getLocalDateTimeCellValue();
-							}
-							catch(Exception ex)
-							{
-								System.out.println(ex);
-							}
-							if(date.getYear() == entry.getYear()){
-								Row selectedRow = r;
-								map.put("financeCharge",selectedRow.getCell(10).getNumericCellValue()+"");
-								map.put("payment",selectedRow.getCell(11).getNumericCellValue()+"");
-								
-								Gson gson = new Gson(); 
-								return gson.toJson(map);
-							}
-						}
+
+				evaluateCell(evaluator, c);
+
+				if (HSSFDateUtil.isCellDateFormatted(c)) {
+					LocalDateTime date = null;
+					try{
+						date = c.getLocalDateTimeCellValue();
 					}
-				
-			
+					catch(Exception ex)
+					{
+						System.out.println(ex);
+					}
+					if(date.getYear() == entry.getYear()){
+						Row selectedRow = r;
+						evaluateCell(evaluator, selectedRow.getCell(10), selectedRow.getCell(11));
+						map.put("financeCharge",selectedRow.getCell(10).getNumericCellValue()+"");
+						map.put("payment",selectedRow.getCell(11).getNumericCellValue()+"");
+
+						Gson gson = new Gson(); 
+						return gson.toJson(map);
+					}
+				}
+			}
+
+
 		}
 
 		System.out.println("returning Journal map");
 		return "No data";
+	}
+
+	private void evaluateCell(FormulaEvaluator evaluator, Cell... cells) {
+		for(Cell c : cells)
+		{
+			evaluateCell(evaluator , c);
+		}
+		
+	}
+
+	private void evaluateCell(FormulaEvaluator evaluator, Cell c) {
+		if (c.getCellType() == CellType.FORMULA) {
+			try{
+				evaluator.evaluateFormulaCell(c);
+			}catch(Exception ex){
+				System.out.println("In Exception in loop" + ex);
+			}
+		}
 	}
 
 
@@ -513,15 +529,15 @@ public class Calculation {
 		int count = 0;
 		int year = entry.getYear();
 		//int year = 2019;
-		
-		
-	//	int yearRowNum = findRow(sheet, year);
-	//	int nextYearRowNum = findRow(sheet, year+1);
-	//	int lastRow = findRow(sheet, "Logic will be the same for next periods");
-		
+
+
+		//	int yearRowNum = findRow(sheet, year);
+		//	int nextYearRowNum = findRow(sheet, year+1);
+		//	int lastRow = findRow(sheet, "Logic will be the same for next periods");
+
 		//if(nextYearRowNum == 0) nextYearRowNum = sheet.getLastRowNum(); else nextYearRowNum = nextYearRowNum-1 ;
-	//	if(nextYearRowNum == 0) nextYearRowNum = lastRow; else nextYearRowNum = nextYearRowNum-1 ;
-		
+		//	if(nextYearRowNum == 0) nextYearRowNum = lastRow; else nextYearRowNum = nextYearRowNum-1 ;
+
 
 		for (Row r : sheet) {
 			///ONLY PUT COLUMN No in map id
@@ -533,7 +549,7 @@ public class Calculation {
 				LinkedHashMap<String, String> mapRow = new LinkedHashMap<String, String>();
 
 				System.out.println("In Row" +r.getRowNum());
-				
+
 				for (Cell c : r) {
 					if(c.getColumnIndex() >=19)
 					{
@@ -553,7 +569,7 @@ public class Calculation {
 							cellType = c.getCellType();
 						}
 						putinMap(mapRow, c, cellType);
-					
+
 					}
 				}
 				mapSheet.put(row+1+"", mapRow);
@@ -566,7 +582,7 @@ public class Calculation {
 		System.out.println("returning Lease map");
 		return mapSheet;
 	}
-	
+
 	private boolean isSameMonth(String month, Cell c, FormulaEvaluator evaluator)
 	{
 		evaluator.evaluateFormulaCell(c);
@@ -576,46 +592,46 @@ public class Calculation {
 		}
 		return false;
 	}
-	
+
 	private static int findRow(XSSFSheet sheet, int cellContent) {
-		
-	XSSFCell s = 	sheet.getRow(4).getCell(19);
-	 if (s.getCellType() == CellType.NUMERIC) {
-         if (s.getNumericCellValue() == cellContent) {
-        	 System.out.println("dd");
-         	} 
-         }
-	    for (Row row : sheet) {
-	        for (Cell cell : row) {
-	            if (cell.getCellType() == CellType.NUMERIC) {
-	                if (cell.getNumericCellValue() == cellContent) {
-	                    return row.getRowNum();  
-	                }
-	            }
-	        }
-	    }               
-	    return 0;
-	}
-	
-	private static int findRow(XSSFSheet sheet, String cellContent) {
-		
+
 		XSSFCell s = 	sheet.getRow(4).getCell(19);
-		 if (s.getCellType() == CellType.STRING) {
-	         if (s.getStringCellValue().equals(cellContent)) {
-	        	 System.out.println("end row content");
-	         	} 
-	         }
-		    for (Row row : sheet) {
-		        for (Cell cell : row) {
-		            if (s.getCellType() == CellType.STRING) {
-		                if (s.getStringCellValue().equals(cellContent)) {
-		                    return row.getRowNum();  
-		                }
-		            }
-		        }
-		    }               
-		    return 0;
+		if (s.getCellType() == CellType.NUMERIC) {
+			if (s.getNumericCellValue() == cellContent) {
+				System.out.println("dd");
+			} 
 		}
+		for (Row row : sheet) {
+			for (Cell cell : row) {
+				if (cell.getCellType() == CellType.NUMERIC) {
+					if (cell.getNumericCellValue() == cellContent) {
+						return row.getRowNum();  
+					}
+				}
+			}
+		}               
+		return 0;
+	}
+
+	private static int findRow(XSSFSheet sheet, String cellContent) {
+
+		XSSFCell s = 	sheet.getRow(4).getCell(19);
+		if (s.getCellType() == CellType.STRING) {
+			if (s.getStringCellValue().equals(cellContent)) {
+				System.out.println("end row content");
+			} 
+		}
+		for (Row row : sheet) {
+			for (Cell cell : row) {
+				if (s.getCellType() == CellType.STRING) {
+					if (s.getStringCellValue().equals(cellContent)) {
+						return row.getRowNum();  
+					}
+				}
+			}
+		}               
+		return 0;
+	}
 
 	private void putinMap(LinkedHashMap<String, String> mapSheet,
 			Cell c, CellType cellType) {
