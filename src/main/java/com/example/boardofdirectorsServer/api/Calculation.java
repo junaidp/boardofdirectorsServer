@@ -16,6 +16,7 @@ import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xssf.usermodel.XSSFCell;
+import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import com.example.boardofdirectorsServer.model.Entry;
@@ -407,7 +408,7 @@ public class Calculation {
 
 			if(r.getRowNum()>= 5 && count < leaseTerms)
 			{
-
+				count ++;
 				System.out.println("In Row" +r.getRowNum());
 				Cell c = r.getCell(0);
 
@@ -418,8 +419,11 @@ public class Calculation {
 					LocalDateTime date = c.getLocalDateTimeCellValue();
 					if(date.getYear() == entry.getYear()){
 						Row selectedRow = r;
-						evaluateCell(evaluator, selectedRow.getCell(5), selectedRow.getCell(6), selectedRow.getCell(7), selectedRow.getCell(8), selectedRow.getCell(9), selectedRow.getCell(10), selectedRow.getCell(11), selectedRow.getCell(12), selectedRow.getCell(13), selectedRow.getCell(14), selectedRow.getCell(15), selectedRow.getCell(16), selectedRow.getCell(17));
-						map.put("dr",selectedRow.getCell(5).getNumericCellValue()+"");
+						//evaluateCell(evaluator, selectedRow.getCell(5), selectedRow.getCell(6), selectedRow.getCell(7), selectedRow.getCell(8), selectedRow.getCell(9), selectedRow.getCell(10), selectedRow.getCell(11), selectedRow.getCell(12), selectedRow.getCell(13), selectedRow.getCell(14), selectedRow.getCell(15), selectedRow.getCell(16), selectedRow.getCell(17));
+						//map.put("dr",selectedRow.getCell(5).getNumericCellValue()+"");
+						entry.getCommencementDate();
+						Cell monthCell =selectedRow.getCell(getMonthCell(entry.getMonth(), sheet.getRow(4), evaluator));
+						map.put("dr", monthCell.getNumericCellValue()+"");
 
 						double total = selectedRow.getCell(5).getNumericCellValue()+
 								selectedRow.getCell(6).getNumericCellValue()+
@@ -445,12 +449,13 @@ public class Calculation {
 					}
 
 				}
+				
 			}
 
 
 
 			//mapSheet.put(row+1+"", mapRow);
-			count ++;
+			
 
 
 		}
@@ -464,8 +469,7 @@ public class Calculation {
 
 				System.out.println("In Row" +r.getRowNum());
 				Cell c = r.getCell(2);
-
-				//evaluateCell(evaluator, c);
+				evaluateCell(evaluator, c);
 
 				if (HSSFDateUtil.isCellDateFormatted(c)) {
 					LocalDateTime date = null;
@@ -493,6 +497,54 @@ public class Calculation {
 		Gson gson = new Gson(); 
 		return gson.toJson(map);
 		
+	}
+
+	private int getMonthCell(int month, XSSFRow headingRow, FormulaEvaluator evaluator) {
+		//String monthSelected = getMonth(month);
+		String text = (month < 10 ? "0" : "") + month;
+		month = Integer.parseInt(text);
+		for(int i =5; i< 17; i++)
+		{
+			Cell c = headingRow.getCell(i);
+			evaluateCell(evaluator, c);
+			
+			Date date = c.getDateCellValue();
+			if(date.getMonth()+1 == month)
+			//if(c.getDateCellValue() == monthSelected))
+				return i;
+		}
+		
+		return 0;
+	}
+
+	private String getMonth(int month) {
+		switch(month){
+		case 0: 
+			return "January";
+		case 1: 
+			return "February";
+		case 2: 
+			return "March";
+		case 3: 
+			return "April";
+		case 4: 
+			return "May";
+		case 5: 
+			return "June";
+		case 6: 
+			return "July";
+		case 7: 
+			return "August";
+		case 8: 
+			return "September";
+		case 9: 
+			return "October";
+		case 10: 
+			return "Novemeber";
+		case 11: 
+			return "December";
+		}
+		return "";
 	}
 
 	private void evaluateCell(FormulaEvaluator evaluator, Cell... cells) {
