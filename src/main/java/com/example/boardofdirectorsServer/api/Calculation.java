@@ -410,6 +410,14 @@ public class Calculation {
 
 				System.out.println("In Row" +r.getRowNum());
 				Cell c = r.getCell(0);
+				
+				if (c.getCellType() == CellType.FORMULA) {
+					try{
+						evaluator.evaluateFormulaCell(c);
+					}catch(Exception ex){
+						System.out.println("In Exception in loop" + ex);
+					}
+				}
 					
 						System.out.println(c.getColumnIndex());
 						if (HSSFDateUtil.isCellDateFormatted(c)) {
