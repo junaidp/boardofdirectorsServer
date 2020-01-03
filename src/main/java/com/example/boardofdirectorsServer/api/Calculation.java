@@ -454,18 +454,18 @@ public class Calculation {
 
 
 		}
-
+		int countLease = 0;
 		for (Row r : sheetLease) {
 			///ONLY PUT COLUMN No in map id
 			int row = r.getRowNum();
 
-			if(r.getRowNum()>= 16)
+			if(r.getRowNum()>= 16 && row < leaseTerms+16)
 			{
 
 				System.out.println("In Row" +r.getRowNum());
 				Cell c = r.getCell(2);
 
-				evaluateCell(evaluator, c);
+				//evaluateCell(evaluator, c);
 
 				if (HSSFDateUtil.isCellDateFormatted(c)) {
 					LocalDateTime date = null;
@@ -478,7 +478,7 @@ public class Calculation {
 					}
 					if(date.getYear() == entry.getYear()){
 						Row selectedRow = r;
-						evaluateCell(evaluator, selectedRow.getCell(10), selectedRow.getCell(11));
+					//	evaluateCell(evaluator, selectedRow.getCell(10), selectedRow.getCell(11));
 						map.put("financeCharge",selectedRow.getCell(10).getNumericCellValue()+"");
 						map.put("payment",selectedRow.getCell(11).getNumericCellValue()+"");
 
@@ -490,9 +490,9 @@ public class Calculation {
 
 
 		}
-
-		System.out.println("returning Journal map");
-		return "No data";
+		Gson gson = new Gson(); 
+		return gson.toJson(map);
+		
 	}
 
 	private void evaluateCell(FormulaEvaluator evaluator, Cell... cells) {
