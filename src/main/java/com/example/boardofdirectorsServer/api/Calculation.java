@@ -409,18 +409,8 @@ public class Calculation {
 			{
 
 				System.out.println("In Row" +r.getRowNum());
-				for (Cell c : r) {
-					CellType cellType = null;
-					if (c.getCellType() == CellType.FORMULA) {
-						try{
-							evaluator.evaluateFormulaCell(c);
-						}catch(Exception ex){
-							System.out.println("In Exception in loop" + ex);
-							map.put(c.getColumnIndex()+"", ":"+"");
-							System.out.println("In error" + ex);
-						}
-						cellType = c.getCachedFormulaResultType();
-						double a = c.getNumericCellValue();
+				Cell c = r.getCell(0);
+					
 						System.out.println(c.getColumnIndex());
 						if (HSSFDateUtil.isCellDateFormatted(c)) {
 							LocalDateTime date = c.getLocalDateTimeCellValue();
@@ -440,9 +430,7 @@ public class Calculation {
 								selectedRow.getCell(14).getNumericCellValue()+
 								selectedRow.getCell(15).getNumericCellValue()+
 								selectedRow.getCell(16).getNumericCellValue();
-								
-								
-								
+														
 								map.put("total", total+"");
 								map.put("repeat", selectedRow.getCell(17).getNumericCellValue()+"");
 								
@@ -455,16 +443,12 @@ public class Calculation {
 						
 						}
 					}
-					else
-					{
-					//	cellType = c.getCellType();
-					//	c.getDateCellValue();
-					}
+				
 					
-				}
+				
 				//mapSheet.put(row+1+"", mapRow);
 				count ++;
-			}
+		
 
 		}
 		
