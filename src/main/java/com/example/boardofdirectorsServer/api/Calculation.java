@@ -535,6 +535,7 @@ public class Calculation {
 				System.out.println(c.getColumnIndex());
 				if (HSSFDateUtil.isCellDateFormatted(c)) {
 					LocalDateTime date = c.getLocalDateTimeCellValue();
+					//Date date = c.getDateCellValue();
 					String text = (entry.getMonth() < 10 ? "0" : "") + entry.getMonth();
 					int month = Integer.parseInt(text);
 					if(date.getYear() == entry.getYear() && date.getMonth().getValue() == month){
