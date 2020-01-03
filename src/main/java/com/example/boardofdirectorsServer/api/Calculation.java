@@ -122,11 +122,12 @@ public class Calculation {
 				json = calculateJournal(wb, entry, typeJournal.getValue(), typeLease.getValue());
 				break;
 			case JOURNAL_QUARTERLY:
-				json = calculateJournalLeftSide(wb, entry, typeJournal);
+				json = calculateJournalMonthly(wb, entry, typeJournal.getValue(), typeLease.getValue());
 				break;
 			case JOURNAL_MONTHLY:
-				json = calculateJournalLeftSide(wb, entry, typeJournal);
+				json = calculateJournalMonthly(wb, entry, typeJournal.getValue(), typeLease.getValue());
 				break;
+			
 			default:
 				break;
 			}
@@ -459,7 +460,109 @@ public class Calculation {
 
 
 		}
-		int countLease = 0;
+		
+		for (Row r : sheetLease) {
+			///ONLY PUT COLUMN No in map id
+			int row = r.getRowNum();
+
+			if(r.getRowNum()>= 16 && row < leaseTerms+16)
+			{
+
+				System.out.println("In Row" +r.getRowNum());
+				Cell c = r.getCell(2);
+				evaluateCell(evaluator, c);
+
+				if (HSSFDateUtil.isCellDateFormatted(c)) {
+					LocalDateTime date = null;
+					try{
+						date = c.getLocalDateTimeCellValue();
+					}
+					catch(Exception ex)
+					{
+						System.out.println(ex);
+					}
+					if(date.getYear() == entry.getYear()){
+						Row selectedRow = r;
+					//	evaluateCell(evaluator, selectedRow.getCell(10), selectedRow.getCell(11));
+						map.put("financeCharge",selectedRow.getCell(10).getNumericCellValue()+"");
+						map.put("payment",selectedRow.getCell(11).getNumericCellValue()+"");
+
+						Gson gson = new Gson(); 
+						return gson.toJson(map);
+					}
+				}
+			}
+
+
+		}
+		Gson gson = new Gson(); 
+		return gson.toJson(map);
+		
+	}
+	
+	
+	public String calculateJournalMonthly(XSSFWorkbook wb, Entry entry, int journalType, int leaseType) throws InvalidFormatException, IOException {
+
+
+		System.out.println("calculating Journal");
+		FormulaEvaluator evaluator = wb.getCreationHelper().createFormulaEvaluator();
+
+		System.out.println("starting loop");
+		XSSFSheet sheet = wb.getSheetAt(journalType);//.getSheet("Yearly Journal entry");
+		XSSFSheet sheetLease = wb.getSheetAt(leaseType);
+
+		//LinkedHashMap<String, LinkedHashMap<String, String>> mapSheet = new LinkedHashMap<String, LinkedHashMap<String, String>>();
+		System.out.println("In sheet" +sheet.getSheetName());
+		//int totalRows = sheet.getLastRowNum();
+		int leaseTerms = entry.getLeaseTerm();
+		int count = 0;
+		LinkedHashMap<String, String> map = new LinkedHashMap<String, String>();
+		int startingRow = 5;
+		if(journalType == TYPES.JOURNAL_MONTHLY.getValue())startingRow = 4;
+
+		for (Row r : sheet) {
+			///ONLY PUT COLUMN No in map id
+			int row = r.getRowNum();
+
+			if(r.getRowNum()>= startingRow )
+			{
+				count ++;
+				System.out.println("In Row" +r.getRowNum());
+				Cell c = r.getCell(0);
+
+				evaluateCell(evaluator, c);
+
+				System.out.println(c.getColumnIndex());
+				if (HSSFDateUtil.isCellDateFormatted(c)) {
+					LocalDateTime date = c.getLocalDateTimeCellValue();
+					String text = (entry.getMonth() < 10 ? "0" : "") + entry.getMonth();
+					int month = Integer.parseInt(text);
+					if(date.getYear() == entry.getYear() && date.getMonth().getValue() == month){
+						Row selectedRow = r;
+						//evaluateCell(evaluator, selectedRow.getCell(5), selectedRow.getCell(6), selectedRow.getCell(7), selectedRow.getCell(8), selectedRow.getCell(9), selectedRow.getCell(10), selectedRow.getCell(11), selectedRow.getCell(12), selectedRow.getCell(13), selectedRow.getCell(14), selectedRow.getCell(15), selectedRow.getCell(16), selectedRow.getCell(17));
+						//map.put("dr",selectedRow.getCell(5).getNumericCellValue()+"");
+						entry.getCommencementDate();
+					//	Cell monthCell =selectedRow.getCell(getMonthCell(entry.getMonth(), sheet.getRow(4), evaluator));
+						map.put("dr", selectedRow.getCell(10).getNumericCellValue()+"");
+
+						
+						map.put("total", "");
+						map.put("repeat", selectedRow.getCell(8).getNumericCellValue()+"");
+
+						//Gson gson = new Gson(); 
+						//	return  gson.toJson(map);
+						break;
+
+
+					}
+
+				}
+				
+			}
+
+
+		}
+		
 		for (Row r : sheetLease) {
 			///ONLY PUT COLUMN No in map id
 			int row = r.getRowNum();

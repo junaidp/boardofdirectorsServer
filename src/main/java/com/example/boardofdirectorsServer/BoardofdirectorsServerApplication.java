@@ -25,7 +25,7 @@ public class BoardofdirectorsServerApplication {
 		try {
 			try {
 			//	Calculation c = new Calculation();
-				Entry entry = new Entry("Lease No. 1", new Date("10/05/2020"), "Beginning", 5, 2, 2, 2670000, "Yearly", 0, 1000000, 10, 30, 10, 2021, 01);
+				Entry entry = new Entry("Lease No. 1", new Date("10/05/2020"), "Beginning", 5, 2, 2, 2670000, "Monthly", 0, 1000000, 10, 30, 10, 2020, 04);
 			//	c.entry(entry);
 				
 				Calculation c = new Calculation();
