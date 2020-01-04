@@ -485,6 +485,8 @@ public class Calculation {
 					if(date.getYear() == entry.getYear()){
 						Row selectedRow = r;
 					//	evaluateCell(evaluator, selectedRow.getCell(10), selectedRow.getCell(11));
+						evaluateCell(evaluator, selectedRow.getCell(10));
+						evaluateCell(evaluator, selectedRow.getCell(11));
 						map.put("financeCharge",selectedRow.getCell(10).getNumericCellValue()+"");
 						map.put("payment",selectedRow.getCell(11).getNumericCellValue()+"");
 
