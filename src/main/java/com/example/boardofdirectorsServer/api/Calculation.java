@@ -553,6 +553,7 @@ public class Calculation {
 
 						
 						map.put("total", "");
+						evaluateCell(evaluator, selectedRow.getCell(8));
 						map.put("repeat", selectedRow.getCell(8).getNumericCellValue()+"");
 
 						//Gson gson = new Gson(); 
