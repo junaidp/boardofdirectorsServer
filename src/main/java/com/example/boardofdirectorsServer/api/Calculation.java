@@ -441,6 +441,7 @@ public class Calculation {
 								selectedRow.getCell(16).getNumericCellValue();
 
 						map.put("total", total+"");
+						evaluateCell(evaluator, selectedRow.getCell(17));
 						map.put("repeat", selectedRow.getCell(17).getNumericCellValue()+"");
 
 						//Gson gson = new Gson(); 
