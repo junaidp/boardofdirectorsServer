@@ -545,6 +545,7 @@ public class Calculation {
 						//map.put("dr",selectedRow.getCell(5).getNumericCellValue()+"");
 						entry.getCommencementDate();
 					//	Cell monthCell =selectedRow.getCell(getMonthCell(entry.getMonth(), sheet.getRow(4), evaluator));
+						evaluateCell(evaluator, selectedRow.getCell(10));
 						map.put("dr", selectedRow.getCell(10).getNumericCellValue()+"");
 
 						
@@ -585,9 +586,11 @@ public class Calculation {
 					{
 						System.out.println(ex);
 					}
-					if(date.getYear() == entry.getYear()){
+					if(date.getYear() == entry.getYear() && date.getMonth().getValue() == entry.getMonth()){
 						Row selectedRow = r;
 					//	evaluateCell(evaluator, selectedRow.getCell(10), selectedRow.getCell(11));
+						evaluateCell(evaluator, selectedRow.getCell(10));
+						evaluateCell(evaluator, selectedRow.getCell(11));
 						map.put("financeCharge",selectedRow.getCell(10).getNumericCellValue()+"");
 						map.put("payment",selectedRow.getCell(11).getNumericCellValue()+"");
 
