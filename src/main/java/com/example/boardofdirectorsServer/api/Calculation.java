@@ -431,7 +431,7 @@ public class Calculation {
 								selectedRow.getCell(6).getNumericCellValue()+
 								selectedRow.getCell(7).getNumericCellValue()+
 								selectedRow.getCell(8).getNumericCellValue()+
-								+selectedRow.getCell(9).getNumericCellValue()+
+								selectedRow.getCell(9).getNumericCellValue()+
 								selectedRow.getCell(10).getNumericCellValue()+
 								selectedRow.getCell(11).getNumericCellValue()+
 								selectedRow.getCell(12).getNumericCellValue()+
