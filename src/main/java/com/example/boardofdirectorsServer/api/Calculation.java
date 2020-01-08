@@ -441,8 +441,17 @@ public class Calculation {
 								selectedRow.getCell(16).getNumericCellValue();
 
 						map.put("total", total+"");
-						evaluateCell(evaluator, selectedRow.getCell(17));
-						map.put("repeat", selectedRow.getCell(17).getNumericCellValue()+"");
+						if(entry.getPaymentsAt().equalsIgnoreCase("Beginning"))
+						{
+							evaluateCell(evaluator, selectedRow.getCell(17));
+							map.put("repeat", selectedRow.getCell(17).getNumericCellValue()+"");
+						}
+						else
+						{
+							Row upRow = sheet.getRow(row-1);
+							evaluateCell(evaluator, upRow.getCell(17));
+							map.put("repeat", upRow.getCell(17).getNumericCellValue()+"");
+						}
 
 						//Gson gson = new Gson(); 
 						//	return  gson.toJson(map);
