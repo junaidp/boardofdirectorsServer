@@ -449,8 +449,14 @@ public class Calculation {
 						else
 						{
 							Row upRow = sheet.getRow(row-1);
+							if(upRow.getRowNum() == 4)
+							{
+								map.put("repeat", "");
+							}
+							else {
 							evaluateCell(evaluator, upRow.getCell(17));
 							map.put("repeat", upRow.getCell(17).getNumericCellValue()+"");
+							}
 						}
 
 						//Gson gson = new Gson(); 
