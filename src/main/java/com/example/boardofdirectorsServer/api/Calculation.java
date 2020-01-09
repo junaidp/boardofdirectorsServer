@@ -426,12 +426,15 @@ public class Calculation {
 						Cell monthCell =selectedRow.getCell(getMonthCell(entry.getMonth(), sheet.getRow(4), evaluator));
 						evaluateCell(evaluator, monthCell);
 						map.put("dr", monthCell.getNumericCellValue()+"");
+						
+						evaluateCell(evaluator, selectedRow.getCell(5), selectedRow.getCell(6), selectedRow.getCell(7), selectedRow.getCell(8), selectedRow.getCell(9), selectedRow.getCell(10), selectedRow.getCell(11), selectedRow.getCell(12), selectedRow.getCell(13), selectedRow.getCell(14), selectedRow.getCell(15), selectedRow.getCell(16));
+						
 
 						double total = selectedRow.getCell(5).getNumericCellValue()+
 								selectedRow.getCell(6).getNumericCellValue()+
 								selectedRow.getCell(7).getNumericCellValue()+
 								selectedRow.getCell(8).getNumericCellValue()+
-								+selectedRow.getCell(9).getNumericCellValue()+
+								selectedRow.getCell(9).getNumericCellValue()+
 								selectedRow.getCell(10).getNumericCellValue()+
 								selectedRow.getCell(11).getNumericCellValue()+
 								selectedRow.getCell(12).getNumericCellValue()+
@@ -441,8 +444,23 @@ public class Calculation {
 								selectedRow.getCell(16).getNumericCellValue();
 
 						map.put("total", total+"");
-						evaluateCell(evaluator, selectedRow.getCell(17));
-						map.put("repeat", selectedRow.getCell(17).getNumericCellValue()+"");
+						if(entry.getPaymentsAt().equalsIgnoreCase("Beginning"))
+						{
+							evaluateCell(evaluator, selectedRow.getCell(17));
+							map.put("repeat", selectedRow.getCell(17).getNumericCellValue()+"");
+						}
+						else
+						{
+							Row upRow = sheet.getRow(row-1);
+							if(upRow.getRowNum() == 4)
+							{
+								map.put("repeat", "");
+							}
+							else {
+							evaluateCell(evaluator, upRow.getCell(17));
+							map.put("repeat", upRow.getCell(17).getNumericCellValue()+"");
+							}
+						}
 
 						//Gson gson = new Gson(); 
 						//	return  gson.toJson(map);
