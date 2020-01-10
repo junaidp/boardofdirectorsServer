@@ -566,13 +566,13 @@ public class Calculation {
 						//map.put("dr",selectedRow.getCell(5).getNumericCellValue()+"");
 						entry.getCommencementDate();
 					//	Cell monthCell =selectedRow.getCell(getMonthCell(entry.getMonth(), sheet.getRow(4), evaluator));
-						evaluateCell(evaluator, selectedRow.getCell(10));
-						map.put("dr", selectedRow.getCell(10).getNumericCellValue()+"");
+						evaluateCell(evaluator, selectedRow.getCell(7));
+						map.put("dr", selectedRow.getCell(7).getNumericCellValue()+"");
 
 						
 						map.put("total", "");
-						evaluateCell(evaluator, selectedRow.getCell(8));
-						map.put("repeat", selectedRow.getCell(8).getNumericCellValue()+"");
+						evaluateCell(evaluator, selectedRow.getCell(10));
+						map.put("repeat", selectedRow.getCell(10).getNumericCellValue()+"");
 
 						//Gson gson = new Gson(); 
 						//	return  gson.toJson(map);
