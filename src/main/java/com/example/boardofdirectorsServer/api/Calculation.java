@@ -568,7 +568,16 @@ public class Calculation {
 					//	Cell monthCell =selectedRow.getCell(getMonthCell(entry.getMonth(), sheet.getRow(4), evaluator));
 						evaluateCell(evaluator, selectedRow.getCell(7));
 						map.put("dr", selectedRow.getCell(7).getNumericCellValue()+"");
-
+						
+						Row upRow = sheet.getRow(row-1);
+						if(upRow.getRowNum() == 3)
+						{
+							map.put("accuredLiabality", "");
+						}
+						else {
+						evaluateCell(evaluator, upRow.getCell(7));
+						map.put("accuredLiabality", upRow.getCell(7).getNumericCellValue()+"");
+						}
 						
 						map.put("total", "");
 						evaluateCell(evaluator, selectedRow.getCell(10));
