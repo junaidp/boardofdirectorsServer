@@ -582,7 +582,10 @@ public class Calculation {
 						map.put("total", "");
 						evaluateCell(evaluator, selectedRow.getCell(10));
 						map.put("repeat", selectedRow.getCell(10).getNumericCellValue()+"");
-
+						
+						evaluateCell(evaluator, selectedRow.getCell(8));
+						map.put("financeCostRemaining", selectedRow.getCell(8).getNumericCellValue()+"");
+							
 						//Gson gson = new Gson(); 
 						//	return  gson.toJson(map);
 						break;
