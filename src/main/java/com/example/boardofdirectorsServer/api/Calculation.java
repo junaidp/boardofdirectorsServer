@@ -122,7 +122,7 @@ public class Calculation {
 				json = calculateJournal(wb, entry, typeJournal.getValue(), typeLease.getValue());
 				break;
 			case JOURNAL_QUARTERLY:
-				json = calculateJournalMonthly(wb, entry, typeJournal.getValue(), typeLease.getValue());
+				json = calculateJournalQuarterly(wb, entry, typeJournal.getValue(), typeLease.getValue());
 				break;
 			case JOURNAL_MONTHLY:
 				json = calculateJournalMonthly(wb, entry, typeJournal.getValue(), typeLease.getValue());
@@ -585,6 +585,142 @@ public class Calculation {
 						
 						evaluateCell(evaluator, selectedRow.getCell(8));
 						map.put("financeCostRemaining", selectedRow.getCell(8).getNumericCellValue()+"");
+							
+						//Gson gson = new Gson(); 
+						//	return  gson.toJson(map);
+						break;
+
+
+					}
+
+				}
+				
+			}
+
+
+		}
+		
+		for (Row r : sheetLease) {
+			///ONLY PUT COLUMN No in map id
+			int row = r.getRowNum();
+
+			if(r.getRowNum()>= 16 && row < leaseTerms+16)
+			{
+
+				System.out.println("In Row" +r.getRowNum());
+				Cell c = r.getCell(2);
+				evaluateCell(evaluator, c);
+
+				if (HSSFDateUtil.isCellDateFormatted(c)) {
+					LocalDateTime date = null;
+					try{
+						date = c.getLocalDateTimeCellValue();
+					}
+					catch(Exception ex)
+					{
+						System.out.println(ex);
+					}
+					if(date.getYear() == entry.getYear() && date.getMonth().getValue() == entry.getMonth()){
+						Row selectedRow = r;
+					//	evaluateCell(evaluator, selectedRow.getCell(10), selectedRow.getCell(11));
+						evaluateCell(evaluator, selectedRow.getCell(10));
+						evaluateCell(evaluator, selectedRow.getCell(11));
+						map.put("financeCharge",selectedRow.getCell(10).getNumericCellValue()+"");
+						map.put("payment",selectedRow.getCell(11).getNumericCellValue()+"");
+
+						Gson gson = new Gson(); 
+						return gson.toJson(map);
+					}
+				}
+			}
+
+
+		}
+		Gson gson = new Gson(); 
+		return gson.toJson(map);
+		
+	}
+	
+	public String calculateJournalQuarterly(XSSFWorkbook wb, Entry entry, int journalType, int leaseType) throws InvalidFormatException, IOException {
+
+
+		System.out.println("calculating Journal");
+		FormulaEvaluator evaluator = wb.getCreationHelper().createFormulaEvaluator();
+
+		System.out.println("starting loop");
+		XSSFSheet sheet = wb.getSheetAt(journalType);//.getSheet("Yearly Journal entry");
+		XSSFSheet sheetLease = wb.getSheetAt(leaseType);
+
+		//LinkedHashMap<String, LinkedHashMap<String, String>> mapSheet = new LinkedHashMap<String, LinkedHashMap<String, String>>();
+		System.out.println("In sheet" +sheet.getSheetName());
+		//int totalRows = sheet.getLastRowNum();
+		int leaseTerms = entry.getLeaseTerm();
+		int count = 0;
+		LinkedHashMap<String, String> map = new LinkedHashMap<String, String>();
+		int startingRow = 5;
+		if(journalType == TYPES.JOURNAL_MONTHLY.getValue())startingRow = 4;
+
+		for (Row r : sheet) {
+			///ONLY PUT COLUMN No in map id
+			int row = r.getRowNum();
+
+			if(r.getRowNum()>= startingRow )
+			{
+				count ++;
+				System.out.println("In Row" +r.getRowNum());
+				Cell c = r.getCell(0);
+
+				evaluateCell(evaluator, c);
+
+				System.out.println(c.getColumnIndex());
+				if (HSSFDateUtil.isCellDateFormatted(c)) {
+					LocalDateTime date = c.getLocalDateTimeCellValue();
+					//Date date = c.getDateCellValue();
+					String text = (entry.getMonth() < 10 ? "0" : "") + entry.getMonth();
+					int month = Integer.parseInt(text);
+					if(date.getYear() == entry.getYear() && date.getMonth().getValue() == month){
+						Row selectedRow = r;
+						//evaluateCell(evaluator, selectedRow.getCell(5), selectedRow.getCell(6), selectedRow.getCell(7), selectedRow.getCell(8), selectedRow.getCell(9), selectedRow.getCell(10), selectedRow.getCell(11), selectedRow.getCell(12), selectedRow.getCell(13), selectedRow.getCell(14), selectedRow.getCell(15), selectedRow.getCell(16), selectedRow.getCell(17));
+						//map.put("dr",selectedRow.getCell(5).getNumericCellValue()+"");
+						entry.getCommencementDate();
+					//	Cell monthCell =selectedRow.getCell(getMonthCell(entry.getMonth(), sheet.getRow(4), evaluator));
+						
+						evaluateCell(evaluator, selectedRow.getCell(6), selectedRow.getCell(7), selectedRow.getCell(8));
+						double dr1=selectedRow.getCell(6).getNumericCellValue();
+						double dr2=selectedRow.getCell(7).getNumericCellValue();
+						double dr3=selectedRow.getCell(8).getNumericCellValue();
+						
+						if(entry.getMonth() == 1 || entry.getMonth() == 4){
+						
+						map.put("dr", dr1+"");
+						}
+						else if(entry.getMonth() == 2 || entry.getMonth() == 5){
+							map.put("dr", dr2+"");
+						}
+						else if(entry.getMonth() == 3 || entry.getMonth() == 6){
+							map.put("dr", dr3+"");
+						}
+						
+						double total =  dr1+dr2+dr3;
+						map.put("total", total+"");
+						
+						evaluateCell(evaluator, selectedRow.getCell(9));
+						map.put("repeat", selectedRow.getCell(9).getNumericCellValue()+"");
+				
+						
+						Row upRow = sheet.getRow(row-1);
+						if(upRow.getRowNum() == 4)
+						{
+							map.put("aboveColJ", "");
+						}
+						else {
+						evaluateCell(evaluator, upRow.getCell(9));
+						map.put("aboveColJ", upRow.getCell(9).getNumericCellValue()+"");
+						}
+						
+						
+					//	evaluateCell(evaluator, selectedRow.getCell(8));
+					//	map.put("financeCostRemaining", selectedRow.getCell(8).getNumericCellValue()+"");
 							
 						//Gson gson = new Gson(); 
 						//	return  gson.toJson(map);
