@@ -108,6 +108,18 @@ public class CalculationController {
 		}
 	}
 	
+	@PostMapping("/journal/fta")
+	public String calculateJournalFirstTimeAdoption(@RequestBody Entry entry) throws Exception
+	{
+		try {
+			CalculationFTA c = new CalculationFTA();
+			json = c.entryFirstTimeAdoption(entry, TYPESFTA.RETROSPECTIVE, TYPESFTA.LEASE);
+			return json;
+		} catch (Exception e) {
+			throw e;
+		}
+	}
+	
 	@GetMapping
 	public String getCalculation(){
 

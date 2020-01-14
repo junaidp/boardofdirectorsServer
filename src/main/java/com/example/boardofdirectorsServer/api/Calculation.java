@@ -26,7 +26,7 @@ import com.google.gson.Gson;
 
 public class Calculation {
 
-	private String json="";
+	protected String json="";
 
 	///ifrs.xls
 
@@ -179,7 +179,7 @@ public class Calculation {
 		return file;
 	}
 
-	private InputStream getFileJournal() throws Exception {
+	protected InputStream getFileJournal() throws Exception {
 		String fileName = "static/Journal.xlsx";
 		System.out.println("opening file"+ fileName);
 		ClassLoader classLoader =  this.getClass().getClassLoader();
@@ -188,8 +188,18 @@ public class Calculation {
 		System.out.println("returning file");
 		return file;
 	}
+	
+	public InputStream getFile(String fileToOpen) throws Exception {
+		String fileName = "static/Firsttimeadoption.xlsx";
+		System.out.println("opening file"+ fileName);
+		ClassLoader classLoader =  this.getClass().getClassLoader();
+		System.out.println("here");
+		InputStream file = classLoader.getResourceAsStream(fileName);
+		System.out.println("returning file");
+		return file;
+	}
 
-	private void updateValues(Entry entry, Sheet sheetLease) {
+	protected void updateValues(Entry entry, Sheet sheetLease) {
 		sheetLease.getRow(3).getCell(0).setCellValue(entry.getLeaseContractNo());	
 		sheetLease.getRow(3).getCell(1).setCellValue(entry.getCommencementDate());	
 		sheetLease.getRow(3).getCell(2).setCellValue(entry.getPaymentsAt());	
@@ -206,7 +216,7 @@ public class Calculation {
 		sheetLease.getRow(3).getCell(13).setCellValue(entry.getEscalationAfterEvery());
 	}
 
-	private void printValues(Sheet sheetLease) {
+	protected void printValues(Sheet sheetLease) {
 		System.out.println(sheetLease.getRow(3).getCell(0).getStringCellValue());
 		System.out.println(sheetLease.getRow(3).getCell(1).getDateCellValue());
 		System.out.println(sheetLease.getRow(3).getCell(2).getStringCellValue());
@@ -825,7 +835,7 @@ public class Calculation {
 		return "";
 	}
 
-	private void evaluateCell(FormulaEvaluator evaluator, Cell... cells) {
+	protected void evaluateCell(FormulaEvaluator evaluator, Cell... cells) {
 		for(Cell c : cells)
 		{
 			evaluateCell(evaluator , c);
