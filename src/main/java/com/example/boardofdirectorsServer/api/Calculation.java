@@ -843,14 +843,16 @@ public class Calculation {
 		
 	}
 
-	private void evaluateCell(FormulaEvaluator evaluator, Cell c) {
+	protected CellType evaluateCell(FormulaEvaluator evaluator, Cell c) {
+		CellType type = null;
 		if (c.getCellType() == CellType.FORMULA) {
 			try{
-				evaluator.evaluateFormulaCell(c);
+				 type = evaluator.evaluateFormulaCell(c);
 			}catch(Exception ex){
 				System.out.println("In Exception in loop" + ex);
 			}
 		}
+		return type;
 	}
 
 

@@ -8,6 +8,8 @@ import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
+import org.apache.poi.ss.usermodel.CellValue;
+import org.apache.poi.ss.usermodel.FormulaError;
 import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -87,7 +89,7 @@ public class CalculationFTA extends Calculation{
 		Sheet sheet = wb.getSheet("Retrospective Journalentry");
 		
 		Sheet sheetLease = wb.getSheetAt(inputTab);
-	
+		//sheetLease.getRow(4).getCell(0)
 		//LinkedHashMap<String, LinkedHashMap<String, String>> mapSheet = new LinkedHashMap<String, LinkedHashMap<String, String>>();
 		System.out.println("In sheet" +sheet.getSheetName());
 		//int totalRows = sheet.getLastRowNum();
@@ -115,8 +117,15 @@ public class CalculationFTA extends Calculation{
 
 
 		}
+		CellValue cellValue = evaluator.evaluate(sheet.getRow(8).getCell(1));
+		
+		  if (cellValue.getCellType() == CellType.ERROR) {
+			   System.out.println("error cell value-"+ FormulaError.forInt(cellValue.getErrorValue()).getString());
+			  }
+		
 		evaluateCell(evaluator, sheet.getRow(8).getCell(1),sheet.getRow(9).getCell(1),sheet.getRow(10).getCell(1), sheet.getRow(11).getCell(1), sheet.getRow(12).getCell(1), sheet.getRow(13).getCell(1));
 		
+		  
 		evaluateCell(evaluator, sheet.getRow(15).getCell(1));
 		map.put("leseLiabality", sheet.getRow(15).getCell(1).getNumericCellValue()+"");
 		
