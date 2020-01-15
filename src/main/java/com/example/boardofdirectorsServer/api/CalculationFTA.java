@@ -103,27 +103,28 @@ public class CalculationFTA extends Calculation{
 			///ONLY PUT COLUMN No in map id
 			int row = r.getRowNum();
 
-			if(row>= startingRow && row<= leaseTerms+16)
+			if(row>= startingRow)
 			{
 				count ++;
 				System.out.println("In Row" +r.getRowNum());
-				Cell c = r.getCell(0);
-
+					for (Cell c : r) {
 				evaluateCell(evaluator, c);
 
-			
+				}
 				
 			}
 
 
 		}
-		CellValue cellValue = evaluator.evaluate(sheet.getRow(8).getCell(1));
+	//	evaluateCell(evaluator,sheet.getRow(4).getCell(1), sheet.getRow(5).getCell(1),sheet.getRow(6).getCell(1),sheet.getRow(7).getCell(1), sheet.getRow(8).getCell(1),sheet.getRow(9).getCell(1),sheet.getRow(10).getCell(1), sheet.getRow(11).getCell(1), sheet.getRow(12).getCell(1), sheet.getRow(13).getCell(1));
+		evaluateCell(evaluator, sheet.getRow(5).getCell(1),sheet.getRow(6).getCell(1));
+		 evaluator.evaluate(sheetLease.getRow(25).getCell(15));
+		CellValue cellValue = evaluator.evaluate(sheet.getRow(5).getCell(1));
 		
 		  if (cellValue.getCellType() == CellType.ERROR) {
 			   System.out.println("error cell value-"+ FormulaError.forInt(cellValue.getErrorValue()).getString());
 			  }
 		
-		evaluateCell(evaluator, sheet.getRow(8).getCell(1),sheet.getRow(9).getCell(1),sheet.getRow(10).getCell(1), sheet.getRow(11).getCell(1), sheet.getRow(12).getCell(1), sheet.getRow(13).getCell(1));
 		
 		  
 		evaluateCell(evaluator, sheet.getRow(15).getCell(1));
