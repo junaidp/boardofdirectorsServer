@@ -26,7 +26,7 @@ public class BoardofdirectorsServerApplication {
 			
 		try {
 			try {
-			callFTA();
+			callJournal();
 				
 			} catch (InvalidFormatException e) {
 				// TODO Auto-generated catch block
@@ -41,12 +41,12 @@ public class BoardofdirectorsServerApplication {
 
 	private static void callJournal() throws IOException, InvalidFormatException, Exception {
 		//	Calculation c = new Calculation();
-		Entry entry = new Entry("Lease No. 1", new Date("01/01/2020"), "Beginning", 5, 10, 2, 2670000, "Quarterly", 0, 1000000, 10, 30, 10, 2020, 04);
+		Entry entry = new Entry("Lease No. 1", new Date("01/01/2020"), "Beginning", 5, 10, 2, 2670000, "Quarterly", 0, 1000000, 10, 30, 10, 2020, 05);
 		
 		//	c.entry(entry);
 			
 			Calculation c = new Calculation();
-			String map = c.entryJournal(entry, TYPES.JOURNAL_QUARTERLY, TYPES.LEASE_MONTHLY);
+			String map = c.entryJournal(entry, TYPES.JOURNAL_QUARTERLY, TYPES.LEASE_QUARTERLY);
 			Gson gson = new Gson(); 
 			String json = gson.toJson(map);
 		//	System.out.println(json);
