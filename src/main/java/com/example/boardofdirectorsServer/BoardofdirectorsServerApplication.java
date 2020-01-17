@@ -23,19 +23,6 @@ public class BoardofdirectorsServerApplication {
 	public static void main(String[] args) throws Exception {
 	
 		SpringApplication.run(BoardofdirectorsServerApplication.class, args);
-			
-		try {
-			try {
-			callJournal();
-				
-			} catch (InvalidFormatException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 	
 	}
 

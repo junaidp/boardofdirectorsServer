@@ -118,7 +118,7 @@ public class CalculationFTA extends Calculation{
 		}
 	//	evaluateCell(evaluator,sheet.getRow(4).getCell(1), sheet.getRow(5).getCell(1),sheet.getRow(6).getCell(1),sheet.getRow(7).getCell(1), sheet.getRow(8).getCell(1),sheet.getRow(9).getCell(1),sheet.getRow(10).getCell(1), sheet.getRow(11).getCell(1), sheet.getRow(12).getCell(1), sheet.getRow(13).getCell(1));
 		evaluateCell(evaluator, sheet.getRow(5).getCell(1),sheet.getRow(6).getCell(1));
-		 evaluator.evaluate(sheetLease.getRow(25).getCell(15));
+		 evaluator.evaluate(sheet.getRow(5).getCell(1));
 		CellValue cellValue = evaluator.evaluate(sheet.getRow(5).getCell(1));
 		
 		  if (cellValue.getCellType() == CellType.ERROR) {
