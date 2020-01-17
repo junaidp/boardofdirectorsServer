@@ -688,7 +688,7 @@ public class Calculation {
 					//Date date = c.getDateCellValue();
 					String text = (entry.getMonth() < 10 ? "0" : "") + entry.getMonth();
 					int month = Integer.parseInt(text);
-					if(date.getYear() == entry.getYear() && date.getMonth().getValue() <= month){
+					if(date.getYear() == entry.getYear() && date.getMonth().getValue() == month){
 						Row selectedRow = r;
 						//evaluateCell(evaluator, selectedRow.getCell(5), selectedRow.getCell(6), selectedRow.getCell(7), selectedRow.getCell(8), selectedRow.getCell(9), selectedRow.getCell(10), selectedRow.getCell(11), selectedRow.getCell(12), selectedRow.getCell(13), selectedRow.getCell(14), selectedRow.getCell(15), selectedRow.getCell(16), selectedRow.getCell(17));
 						//map.put("dr",selectedRow.getCell(5).getNumericCellValue()+"");
@@ -696,36 +696,22 @@ public class Calculation {
 					//	Cell monthCell =selectedRow.getCell(getMonthCell(entry.getMonth(), sheet.getRow(4), evaluator));
 						
 						evaluateCell(evaluator, selectedRow.getCell(6), selectedRow.getCell(7), selectedRow.getCell(8));
-						double drG=selectedRow.getCell(6).getNumericCellValue();
-						double drH=selectedRow.getCell(7).getNumericCellValue();
-						double drI=selectedRow.getCell(8).getNumericCellValue();
+						double dr1=selectedRow.getCell(6).getNumericCellValue();
+						double dr2=selectedRow.getCell(7).getNumericCellValue();
+						double dr3=selectedRow.getCell(8).getNumericCellValue();
 						
+						if(entry.getMonth() == 1 || entry.getMonth() == 4){
 						
-						if(entry.getMonth() == date.getMonthValue()  || entry.getMonth() == date.getMonthValue()+3 || entry.getMonth() == date.getMonthValue()+6 || entry.getMonth() == date.getMonthValue()+9)
-						{
-							map.put("dr", drG+"");
-						}
-						if(entry.getMonth() == date.getMonthValue()+1 || entry.getMonth() == date.getMonthValue()+4 || entry.getMonth() == date.getMonthValue()+7 || entry.getMonth() == date.getMonthValue()+10)
-						{
-							map.put("dr", drH+"");
-						}
-						if(entry.getMonth() == date.getMonthValue()+2 || entry.getMonth() == date.getMonthValue()+5 || entry.getMonth() == date.getMonthValue()+8 )
-						{
-							map.put("dr", drI+"");
-						}
-						
-						/*if(entry.getMonth() == 1 || entry.getMonth() == 4){
-						
-							map.put("dr", dr1+"");
+						map.put("dr", dr1+"");
 						}
 						else if(entry.getMonth() == 2 || entry.getMonth() == 5){
 							map.put("dr", dr2+"");
 						}
 						else if(entry.getMonth() == 3 || entry.getMonth() == 6){
 							map.put("dr", dr3+"");
-						}*/
+						}
 						
-						double total =  drG+drH+drI;
+						double total =  dr1+dr2+dr3;
 						map.put("total", total+"");
 						
 						evaluateCell(evaluator, selectedRow.getCell(9));
