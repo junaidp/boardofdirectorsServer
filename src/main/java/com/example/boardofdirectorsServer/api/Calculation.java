@@ -677,11 +677,13 @@ public class Calculation {
 			if(r.getRowNum()>= startingRow )
 			{
 				count ++;
-				System.out.println("In Row" +r.getRowNum());
+				//System.out.println("In Row" +r.getRowNum());
 				Cell c = r.getCell(0);
 				Cell month1C = r.getCell(6);
 				Cell month2C = r.getCell(8);
 				Cell month3C = r.getCell(10);
+				
+				evaluateCell(evaluator, month1C,month2C,month3C);
 				
 				int month1 = getCellMonth(entry, month1C);
 				int month2 = getCellMonth(entry, month2C);
@@ -703,14 +705,14 @@ public class Calculation {
 						entry.getCommencementDate();
 					//	Cell monthCell =selectedRow.getCell(getMonthCell(entry.getMonth(), sheet.getRow(4), evaluator));
 						
-						evaluateCell(evaluator, selectedRow.getCell(6), selectedRow.getCell(7), selectedRow.getCell(8));
-						double drG=selectedRow.getCell(6).getNumericCellValue();
-						double drH=selectedRow.getCell(7).getNumericCellValue();
-						double drI=selectedRow.getCell(8).getNumericCellValue();
+						evaluateCell(evaluator, selectedRow.getCell(7), selectedRow.getCell(9), selectedRow.getCell(11));
+						double drG=selectedRow.getCell(7).getNumericCellValue();
+						double drH=selectedRow.getCell(9).getNumericCellValue();
+						double drI=selectedRow.getCell(11).getNumericCellValue();
 						
 						
 						
-						if(entry.getMonth() == 1 || entry.getMonth() == 4){
+						/*if(entry.getMonth() == 1 || entry.getMonth() == 4){
 						
 							map.put("dr", drG+"");
 						}
@@ -719,13 +721,26 @@ public class Calculation {
 						}
 						else if(entry.getMonth() == 3 || entry.getMonth() == 6){
 							map.put("dr", drI+"");
-						}
+						}*/
 						
+						if(entry.getMonth() == date.getMonthValue()  || entry.getMonth() == date.getMonthValue()+3 || entry.getMonth() == date.getMonthValue()+6 || entry.getMonth() == date.getMonthValue()+9)
+						{
+							map.put("dr", drG+"");
+						}
+						if(entry.getMonth() == date.getMonthValue()+1 || entry.getMonth() == date.getMonthValue()+4 || entry.getMonth() == date.getMonthValue()+7 || entry.getMonth() == date.getMonthValue()+10)
+						{
+							map.put("dr", drH+"");
+						}
+						if(entry.getMonth() == date.getMonthValue()+2 || entry.getMonth() == date.getMonthValue()+5 || entry.getMonth() == date.getMonthValue()+8 )
+						{
+							map.put("dr", drI+"");
+						}
+
 						double total =  drG+drH+drI;
 						map.put("total", total+"");
 						
-						evaluateCell(evaluator, selectedRow.getCell(9));
-						map.put("repeat", selectedRow.getCell(9).getNumericCellValue()+"");
+						evaluateCell(evaluator, selectedRow.getCell(12));
+						map.put("repeat", selectedRow.getCell(12).getNumericCellValue()+"");
 				
 						
 						Row upRow = sheet.getRow(row-1);
@@ -734,8 +749,8 @@ public class Calculation {
 							map.put("aboveColJ", "");
 						}
 						else {
-						evaluateCell(evaluator, upRow.getCell(9));
-						map.put("aboveColJ", upRow.getCell(9).getNumericCellValue()+"");
+						evaluateCell(evaluator, upRow.getCell(12));
+						map.put("aboveColJ", upRow.getCell(12).getNumericCellValue()+"");
 						}
 						
 						
@@ -798,11 +813,12 @@ public class Calculation {
 	}
 
 	private int getCellMonth(Entry entry, Cell c) {
-		LocalDateTime date = c.getLocalDateTimeCellValue();
-		//Date date = c.getDateCellValue();
-		String text = (entry.getMonth() < 10 ? "0" : "") + entry.getMonth();
-		int month = Integer.parseInt(text);
+		if (HSSFDateUtil.isCellDateFormatted(c)) {
+			LocalDateTime date = c.getLocalDateTimeCellValue();
+		int month = date.getMonthValue();
 		return month;
+		}
+		return 0;
 	}
 
 	private int getMonthCell(int month, XSSFRow headingRow, FormulaEvaluator evaluator) {
