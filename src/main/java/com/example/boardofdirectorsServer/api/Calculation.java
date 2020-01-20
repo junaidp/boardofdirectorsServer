@@ -695,7 +695,6 @@ public class Calculation {
 				if (HSSFDateUtil.isCellDateFormatted(c)) {
 					LocalDateTime date = c.getLocalDateTimeCellValue();
 					//Date date = c.getDateCellValue();
-					map.put("date", date+"");
 					
 					String text = (entry.getMonth() < 10 ? "0" : "") + entry.getMonth();
 					int month = Integer.parseInt(text);
@@ -746,7 +745,15 @@ public class Calculation {
 						}
 						
 						
-						
+						Cell cStartOfMonth = r.getCell(1);
+						Cell cEndOfMonth = r.getCell(2);
+						if (HSSFDateUtil.isCellDateFormatted(cStartOfMonth) && HSSFDateUtil.isCellDateFormatted(cEndOfMonth)) {
+							LocalDateTime dateStart = cStartOfMonth.getLocalDateTimeCellValue();
+							LocalDateTime dateEnd = cEndOfMonth.getLocalDateTimeCellValue();
+							//Date date = c.getDateCellValue();
+							map.put("startDate", dateStart+"");
+							map.put("endDate", dateEnd+"");
+						}
 					//	evaluateCell(evaluator, selectedRow.getCell(8));
 					//	map.put("financeCostRemaining", selectedRow.getCell(8).getNumericCellValue()+"");
 							
