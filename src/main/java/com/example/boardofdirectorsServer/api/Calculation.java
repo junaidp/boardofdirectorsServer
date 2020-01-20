@@ -695,6 +695,8 @@ public class Calculation {
 				if (HSSFDateUtil.isCellDateFormatted(c)) {
 					LocalDateTime date = c.getLocalDateTimeCellValue();
 					//Date date = c.getDateCellValue();
+					map.put("date", date+"");
+					
 					String text = (entry.getMonth() < 10 ? "0" : "") + entry.getMonth();
 					int month = Integer.parseInt(text);
 				//	if(date.getYear() == entry.getYear() && date.getMonth().getValue() == month){
@@ -743,8 +745,6 @@ public class Calculation {
 						map.put("aboveColJ", upRow.getCell(12).getNumericCellValue()+"");
 						}
 						
-						evaluateCell(evaluator, upRow.getCell(0));
-						map.put("date", upRow.getCell(0).getNumericCellValue()+"");
 						
 						
 					//	evaluateCell(evaluator, selectedRow.getCell(8));
