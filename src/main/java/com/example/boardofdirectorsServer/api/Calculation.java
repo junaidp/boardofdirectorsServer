@@ -711,17 +711,7 @@ public class Calculation {
 						double drI=selectedRow.getCell(11).getNumericCellValue();
 						
 						
-						
-						/*if(entry.getMonth() == 1 || entry.getMonth() == 4){
-						
-							map.put("dr", drG+"");
-						}
-						else if(entry.getMonth() == 2 || entry.getMonth() == 5){
-							map.put("dr", drH+"");
-						}
-						else if(entry.getMonth() == 3 || entry.getMonth() == 6){
-							map.put("dr", drI+"");
-						}*/
+				
 						
 						if(entry.getMonth() == date.getMonthValue()  || entry.getMonth() == date.getMonthValue()+3 || entry.getMonth() == date.getMonthValue()+6 || entry.getMonth() == date.getMonthValue()+9)
 						{
@@ -752,6 +742,9 @@ public class Calculation {
 						evaluateCell(evaluator, upRow.getCell(12));
 						map.put("aboveColJ", upRow.getCell(12).getNumericCellValue()+"");
 						}
+						
+						evaluateCell(evaluator, upRow.getCell(0));
+						map.put("date", upRow.getCell(0).getNumericCellValue()+"");
 						
 						
 					//	evaluateCell(evaluator, selectedRow.getCell(8));
