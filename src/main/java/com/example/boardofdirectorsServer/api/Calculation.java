@@ -727,8 +727,6 @@ public class Calculation {
 							map.put("dr", drI+"");
 						}
 
-						double total =  drG+drH+drI;
-						map.put("total", total+"");
 						
 						evaluateCell(evaluator, selectedRow.getCell(12));
 						map.put("repeat", selectedRow.getCell(12).getNumericCellValue()+"");
@@ -740,6 +738,16 @@ public class Calculation {
 							map.put("aboveColJ", "");
 						}
 						else {
+							evaluateCell(evaluator, upRow.getCell(7), upRow.getCell(9), upRow.getCell(11));
+							
+							double drGUp=upRow.getCell(7).getNumericCellValue();
+							double drHUp=upRow.getCell(9).getNumericCellValue();
+							double drIUp=upRow.getCell(11).getNumericCellValue();
+						
+							double total =  drGUp+drHUp+drIUp;
+							map.put("total", total+"");
+							
+							
 						evaluateCell(evaluator, upRow.getCell(12));
 						map.put("aboveColJ", upRow.getCell(12).getNumericCellValue()+"");
 						}
