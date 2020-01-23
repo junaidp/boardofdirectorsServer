@@ -811,6 +811,12 @@ public class Calculation {
 						Gson gson = new Gson(); 
 						return gson.toJson(map);
 					}
+					else
+					{
+						map.put("financeCharge","0");
+						map.put("payment","0");
+
+					}
 				}
 			}
 
