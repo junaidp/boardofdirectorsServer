@@ -735,7 +735,7 @@ public class Calculation {
 						Row upRow = sheet.getRow(row-1);
 						if(upRow.getRowNum() == 4)
 						{
-							map.put("aboveColJ", "");
+							map.put("aboveColJ", "0");
 						}
 						else {
 							evaluateCell(evaluator, upRow.getCell(7), upRow.getCell(9), upRow.getCell(11));
