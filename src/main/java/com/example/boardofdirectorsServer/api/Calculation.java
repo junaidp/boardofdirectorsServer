@@ -815,7 +815,7 @@ public class Calculation {
 					{
 						map.put("financeCharge","0");
 						map.put("payment","0");
-
+						break;
 					}
 				}
 			}
