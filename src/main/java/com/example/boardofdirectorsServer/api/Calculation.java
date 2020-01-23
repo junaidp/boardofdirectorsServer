@@ -736,6 +736,7 @@ public class Calculation {
 						if(upRow.getRowNum() == 4)
 						{
 							map.put("aboveColJ", "0");
+							map.put("total", "0");
 						}
 						else {
 							evaluateCell(evaluator, upRow.getCell(7), upRow.getCell(9), upRow.getCell(11));
