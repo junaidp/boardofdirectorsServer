@@ -891,12 +891,32 @@ public class Calculation {
 		}
 		
 	}
+	
+	protected void evaluateInCell(FormulaEvaluator evaluator, Cell... cells) {
+		for(Cell c : cells)
+		{
+			evaluateInCell(evaluator , c);
+		}
+		
+	}
 
 	protected CellType evaluateCell(FormulaEvaluator evaluator, Cell c) {
 		CellType type = null;
 		if (c.getCellType() == CellType.FORMULA) {
 			try{
 				 type = evaluator.evaluateFormulaCell(c);
+			}catch(Exception ex){
+				System.out.println("In Exception in loop" + ex);
+			}
+		}
+		return type;
+	}
+	
+	protected Cell evaluateInCell(FormulaEvaluator evaluator, Cell c) {
+		Cell type = null;
+		if (c.getCellType() == CellType.FORMULA) {
+			try{
+				 type = evaluator.evaluateInCell(c);
 			}catch(Exception ex){
 				System.out.println("In Exception in loop" + ex);
 			}

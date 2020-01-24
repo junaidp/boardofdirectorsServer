@@ -7,10 +7,8 @@ import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.web.bind.annotation.CrossOrigin;
-
 import com.example.boardofdirectorsServer.api.Calculation;
 import com.example.boardofdirectorsServer.api.CalculationFTA;
-import com.example.boardofdirectorsServer.api.Constants;
 import com.example.boardofdirectorsServer.api.TYPES;
 import com.example.boardofdirectorsServer.api.TYPESFTA;
 import com.example.boardofdirectorsServer.model.Entry;
@@ -23,7 +21,7 @@ public class BoardofdirectorsServerApplication {
 	public static void main(String[] args) throws Exception {
 	
 		SpringApplication.run(BoardofdirectorsServerApplication.class, args);
-		//callJournal();
+		//callFTA();
 	}
 
 	private static void callJournal() throws IOException, InvalidFormatException, Exception {
@@ -39,9 +37,9 @@ public class BoardofdirectorsServerApplication {
 		//	System.out.println(json);
 	}
 	
-	private  void callFTA() throws IOException, InvalidFormatException, Exception {
+	private  static void callFTA() throws IOException, InvalidFormatException, Exception {
 		//	Calculation c = new Calculation();
-			Entry entry = new Entry("Lease No. 1", new Date("03/03/2016"), "Beginning", 5, 10, 2, 2670000, "Yearly", 0, 0, 10, 30, 10, 2020, 04);
+			Entry entry = new Entry("Lease No. 1", new Date("15/03/2016"), "Beginning", 2, 20, 50, 100000, "Yearly", 0, 0, 25, 10, 2, 2020, 04);
 		//	c.entry(entry);
 			
 			CalculationFTA c = new CalculationFTA();
