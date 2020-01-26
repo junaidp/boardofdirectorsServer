@@ -446,7 +446,8 @@ public class Calculation {
 							map.put("RepeatmonthAccrued", "");
 						}
 						else{
-
+							evaluateCell(evaluator, upRow.getCell(5), upRow.getCell(6), upRow.getCell(7), upRow.getCell(8), upRow.getCell(9), upRow.getCell(10), upRow.getCell(11), upRow.getCell(12), upRow.getCell(13), upRow.getCell(14), upRow.getCell(15), upRow.getCell(16));
+							
 						double total = upRow.getCell(5).getNumericCellValue()+
 								upRow.getCell(6).getNumericCellValue()+
 								upRow.getCell(7).getNumericCellValue()+
