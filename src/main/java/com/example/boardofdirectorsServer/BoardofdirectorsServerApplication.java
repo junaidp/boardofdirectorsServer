@@ -21,7 +21,7 @@ public class BoardofdirectorsServerApplication {
 	public static void main(String[] args) throws Exception {
 	
 		SpringApplication.run(BoardofdirectorsServerApplication.class, args);
-		callJournal();
+	//	callJournal();
 	}
 
 	private static void callJournal() throws IOException, InvalidFormatException, Exception {
