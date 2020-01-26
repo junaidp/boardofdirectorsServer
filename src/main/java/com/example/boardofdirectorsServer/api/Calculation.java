@@ -461,7 +461,6 @@ public class Calculation {
 								upRow.getCell(16).getNumericCellValue();
 
 						map.put("total", total+"");
-						map.put("RepeatmonthAccrued", upRow.getCell(17).getNumericCellValue()+"");
 						
 						
 							
@@ -481,6 +480,15 @@ public class Calculation {
 							else {
 							evaluateCell(evaluator, upRow.getCell(17));
 							map.put("repeat", upRow.getCell(17).getNumericCellValue()+"");
+							
+							Row upRow2 = sheet.getRow(upRow.getRowNum()-1);
+							
+							if(upRow2.getRowNum() != 4)
+							{
+							evaluateCell(evaluator, upRow2.getCell(17));
+							map.put("RepeatmonthAccrued", upRow2.getCell(17).getNumericCellValue()+"");
+							}
+							
 							}
 						}
 
@@ -768,6 +776,16 @@ public class Calculation {
 							
 						evaluateCell(evaluator, upRow.getCell(12));
 						map.put("aboveColJ", upRow.getCell(12).getNumericCellValue()+"");
+						
+						Row upRow2 = sheet.getRow(upRow.getRowNum()-1);
+						if(upRow2.getRowNum() == 4)
+						{
+							map.put("repeatmonthAccrued","0");
+						}
+						else{
+						evaluateCell(evaluator, upRow2.getCell(12));
+						map.put("repeatmonthAccrued", upRow2.getCell(12).getNumericCellValue()+"");
+						}
 						}
 						
 						
