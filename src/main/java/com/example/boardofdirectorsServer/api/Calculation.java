@@ -442,6 +442,10 @@ public class Calculation {
 						Row upRow = sheet.getRow(row-1);
 						if(upRow.getRowNum() == 4)
 						{
+							map.put("total", "0");
+							map.put("RepeatmonthAccrued", "");
+						}
+						else{
 
 						double total = upRow.getCell(5).getNumericCellValue()+
 								upRow.getCell(6).getNumericCellValue()+
@@ -459,9 +463,7 @@ public class Calculation {
 						map.put("total", total+"");
 						map.put("RepeatmonthAccrued", upRow.getCell(17).getNumericCellValue()+"");
 						
-						}else{
-							map.put("total", "0");
-							map.put("RepeatmonthAccrued", "0");
+						
 							
 						}
 						if(entry.getPaymentsAt().equalsIgnoreCase("Beginning"))
