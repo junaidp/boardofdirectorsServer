@@ -399,7 +399,7 @@ public class Calculation {
 	public String calculateJournal(XSSFWorkbook wb, Entry entry, int journalType, int leaseType) throws InvalidFormatException, IOException {
 
 
-		System.out.println("calculating Journal");
+		System.out.println("calculating Journal Yearly");
 		FormulaEvaluator evaluator = wb.getCreationHelper().createFormulaEvaluator();
 
 		System.out.println("starting loop");
@@ -439,21 +439,31 @@ public class Calculation {
 						
 						evaluateCell(evaluator, selectedRow.getCell(5), selectedRow.getCell(6), selectedRow.getCell(7), selectedRow.getCell(8), selectedRow.getCell(9), selectedRow.getCell(10), selectedRow.getCell(11), selectedRow.getCell(12), selectedRow.getCell(13), selectedRow.getCell(14), selectedRow.getCell(15), selectedRow.getCell(16));
 						
+						Row upRow = sheet.getRow(row-1);
+						if(upRow.getRowNum() == 4)
+						{
 
-						double total = selectedRow.getCell(5).getNumericCellValue()+
-								selectedRow.getCell(6).getNumericCellValue()+
-								selectedRow.getCell(7).getNumericCellValue()+
-								selectedRow.getCell(8).getNumericCellValue()+
-								selectedRow.getCell(9).getNumericCellValue()+
-								selectedRow.getCell(10).getNumericCellValue()+
-								selectedRow.getCell(11).getNumericCellValue()+
-								selectedRow.getCell(12).getNumericCellValue()+
-								selectedRow.getCell(13).getNumericCellValue()+
-								selectedRow.getCell(14).getNumericCellValue()+
-								selectedRow.getCell(15).getNumericCellValue()+
-								selectedRow.getCell(16).getNumericCellValue();
+						double total = upRow.getCell(5).getNumericCellValue()+
+								upRow.getCell(6).getNumericCellValue()+
+								upRow.getCell(7).getNumericCellValue()+
+								upRow.getCell(8).getNumericCellValue()+
+								upRow.getCell(9).getNumericCellValue()+
+								upRow.getCell(10).getNumericCellValue()+
+								upRow.getCell(11).getNumericCellValue()+
+								upRow.getCell(12).getNumericCellValue()+
+								upRow.getCell(13).getNumericCellValue()+
+								upRow.getCell(14).getNumericCellValue()+
+								upRow.getCell(15).getNumericCellValue()+
+								upRow.getCell(16).getNumericCellValue();
 
 						map.put("total", total+"");
+						map.put("RepeatmonthAccrued", upRow.getCell(17).getNumericCellValue()+"");
+						
+						}else{
+							map.put("total", "0");
+							map.put("RepeatmonthAccrued", "0");
+							
+						}
 						if(entry.getPaymentsAt().equalsIgnoreCase("Beginning"))
 						{
 							evaluateCell(evaluator, selectedRow.getCell(17));
@@ -461,7 +471,7 @@ public class Calculation {
 						}
 						else
 						{
-							Row upRow = sheet.getRow(row-1);
+							
 							if(upRow.getRowNum() == 4)
 							{
 								map.put("repeat", "");
@@ -522,6 +532,11 @@ public class Calculation {
 						Gson gson = new Gson(); 
 						return gson.toJson(map);
 					}
+				}
+				else
+				{
+					Gson gson = new Gson(); 
+					return gson.toJson(map);
 				}
 			}
 
