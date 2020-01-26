@@ -31,7 +31,7 @@ public class BoardofdirectorsServerApplication {
 		//	c.entry(entry);
 			
 			Calculation c = new Calculation();
-			String map = c.entryJournal(entry, TYPES.JOURNAL_YEARLY, TYPES.LEASE_YEARLY);
+			String map = c.entryJournal(entry, TYPES.JOURNAL_QUARTERLY, TYPES.LEASE_QUARTERLY);
 			Gson gson = new Gson(); 
 			String json = gson.toJson(map);
 		//	System.out.println(json);
