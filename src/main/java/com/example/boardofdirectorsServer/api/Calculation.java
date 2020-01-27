@@ -1084,7 +1084,7 @@ public class Calculation {
 		return 0;
 	}
 
-	private void putinMap(LinkedHashMap<String, String> mapSheet,
+	protected void putinMap(LinkedHashMap<String, String> mapSheet,
 			Cell c, CellType cellType) {
 
 

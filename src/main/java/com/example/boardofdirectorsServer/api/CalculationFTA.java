@@ -60,7 +60,9 @@ public class CalculationFTA extends Calculation{
 			case RETROSPECTIVE:
 				json = calculateFTA(wb, entry, outPutTab.getValue(), inputTab.getValue());
 				break;
-			
+			case LEASE:
+				json = calculateFTALease(wb, entry, outPutTab.getValue());
+				break;
 			
 			default:
 				break;
@@ -79,6 +81,59 @@ public class CalculationFTA extends Calculation{
 			throw e;
 		}
 
+	}
+	
+	public String calculateFTALease(XSSFWorkbook wb, Entry entry, int leaseType) throws InvalidFormatException, IOException {
+
+
+		System.out.println("calculating FTA Lease");
+		FormulaEvaluator evaluator = wb.getCreationHelper().createFormulaEvaluator();
+		Sheet sheet = wb.getSheetAt(leaseType);
+
+		LinkedHashMap<String, LinkedHashMap<String, String>> mapSheet = new LinkedHashMap<String, LinkedHashMap<String, String>>();
+		System.out.println("In sheet" +sheet.getSheetName());
+		int leaseTerms = entry.getLeaseTerm();
+		int count = 0;
+
+		for (Row r : sheet) {
+			///ONLY PUT COLUMN No in map id
+			int row = r.getRowNum();
+
+			if(r.getRowNum()>= 16 && count < leaseTerms)
+			{
+
+				LinkedHashMap<String, String> mapRow = new LinkedHashMap<String, String>();
+
+				System.out.println("In Row" +r.getRowNum());
+				for (Cell c : r) {
+					CellType cellType = null;
+					if (c.getCellType() == CellType.FORMULA) {
+						try{
+							evaluator.evaluateFormulaCell(c);
+						}catch(Exception ex){
+							System.out.println("In Exception in loop" + ex);
+							mapRow.put(c.getColumnIndex()+"", ":"+"");
+							System.out.println("In error"+ ex);
+						}
+						cellType = c.getCachedFormulaResultType();
+					}
+					else
+					{
+						cellType = c.getCellType();
+					}
+					putinMap(mapRow, c, cellType);
+				}
+				mapSheet.put(row+1+"", mapRow);
+				count ++;
+			}
+
+		}
+
+
+		System.out.println("returning FTA  map");
+		Gson gson = new Gson(); 
+		return gson.toJson(mapSheet);
+		
 	}
 	
 	
@@ -191,13 +246,13 @@ public class CalculationFTA extends Calculation{
 		
 	//	evaluateInCell(evaluator, sheetRetrospective.getRow(5).getCell(1), sheetRetrospective.getRow(6).getCell(1));
 		  
-//		evaluateInCell(evaluator, sheetRetrospective.getRow(5).getCell(1));
-//		map.put("leseLiabality", sheetRetrospective.getRow(5).getCell(1).getDateCellValue()+"");
+		CellType type = evaluateCell(evaluator, sheetRetrospective.getRow(6).getCell(1));
+		map.put("leseLiabality", sheetRetrospective.getRow(5).getCell(1).getDateCellValue()+"");
 		
-	//	evaluateInCell(evaluator, sheetRetrospective.getRow(28).getCell(1));
+		evaluateInCell(evaluator, sheetRetrospective.getRow(28).getCell(1));
 		map.put("RightToUse", sheetRetrospective.getRow(28).getCell(1).getNumericCellValue()+"");
 		
-	//	evaluateInCell(evaluator, sheetRetrospective.getRow(29).getCell(1));
+		evaluateInCell(evaluator, sheetRetrospective.getRow(29).getCell(1));
 		map.put("RetainedEarning", sheetRetrospective.getRow(29).getCell(1).getNumericCellValue()+"");
 		
 		map.put("leseLiabality", sheetRetrospective.getRow(15).getCell(1).getNumericCellValue()+"");

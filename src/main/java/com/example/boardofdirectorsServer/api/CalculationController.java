@@ -120,6 +120,18 @@ public class CalculationController {
 		}
 	}
 	
+	@PostMapping("/fta/lease")
+	public String calculateFTALease(@RequestBody Entry entry) throws Exception
+	{
+		try {
+			CalculationFTA c = new CalculationFTA();
+			json = c.entryFirstTimeAdoption(entry, TYPESFTA.LEASE, TYPESFTA.LEASE);
+			return json;
+		} catch (Exception e) {
+			throw e;
+		}
+	}
+	
 	@GetMapping
 	public String getCalculation(){
 
