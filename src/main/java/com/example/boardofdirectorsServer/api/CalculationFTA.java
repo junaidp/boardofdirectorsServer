@@ -166,7 +166,10 @@ public class CalculationFTA extends Calculation{
 					evaluateCell(evaluator, c);
 					if (HSSFDateUtil.isCellDateFormatted(c)) {
 						LocalDateTime date = c.getLocalDateTimeCellValue();
+						System.out.println("VALUE:"+sheetRetrospective.getRow(5).getCell(1).getDateCellValue());
 						sheetRetrospective.getRow(5).getCell(1).setCellValue(date);
+						System.out.println("VALUE:"+sheetRetrospective.getRow(5).getCell(1).getDateCellValue());
+						
 						break;
 					}
 				}
