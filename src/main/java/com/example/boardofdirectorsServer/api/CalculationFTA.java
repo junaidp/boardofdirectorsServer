@@ -181,10 +181,14 @@ public class CalculationFTA extends Calculation{
 		System.out.println("CELL TYPE Row15:"+sheetRetrospective.getRow(15).getCell(1).getCellType());
 		map.put("leseLiabality", sheetRetrospective.getRow(15).getCell(1).getNumericCellValue()+"");
 
+		
 		evaluateCell(evaluator, sheetRetrospective.getRow(28).getCell(1));
+		System.out.println("CELL TYPE Row28:"+sheetRetrospective.getRow(28).getCell(1).getCellType());
 		map.put("RightToUse", sheetRetrospective.getRow(28).getCell(1).getNumericCellValue()+"");
 
 		evaluateCell(evaluator, sheetRetrospective.getRow(29).getCell(1));
+		System.out.println("CELL TYPE Row28:"+sheetRetrospective.getRow(29).getCell(1).getCellType());
+		
 		map.put("RetainedEarning", sheetRetrospective.getRow(29).getCell(1).getNumericCellValue()+"");
 
 		Gson gson = new Gson(); 
