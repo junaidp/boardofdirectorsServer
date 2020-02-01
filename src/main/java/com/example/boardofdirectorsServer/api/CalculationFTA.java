@@ -166,10 +166,7 @@ public class CalculationFTA extends Calculation{
 					evaluateCell(evaluator, c);
 					if (HSSFDateUtil.isCellDateFormatted(c)) {
 						LocalDateTime date = c.getLocalDateTimeCellValue();
-						System.out.println("VALUE:"+sheetRetrospective.getRow(5).getCell(1).getDateCellValue());
 						sheetRetrospective.getRow(5).getCell(1).setCellValue(date);
-						System.out.println("VALUE:"+sheetRetrospective.getRow(5).getCell(1).getDateCellValue());
-						
 						break;
 					}
 				}
@@ -177,18 +174,12 @@ public class CalculationFTA extends Calculation{
 		}
 	
 		evaluateCell(evaluator, sheetRetrospective.getRow(15).getCell(1));
-		System.out.println("CELL TYPE Row8:"+sheetRetrospective.getRow(8).getCell(1).getCellType());
-		System.out.println("CELL TYPE Row15:"+sheetRetrospective.getRow(15).getCell(1).getCellType());
 		map.put("leseLiabality", sheetRetrospective.getRow(15).getCell(1).getNumericCellValue()+"");
 
-		
 		evaluateCell(evaluator, sheetRetrospective.getRow(28).getCell(1));
-		System.out.println("CELL TYPE Row28:"+sheetRetrospective.getRow(28).getCell(1).getCellType());
 		map.put("RightToUse", sheetRetrospective.getRow(28).getCell(1).getNumericCellValue()+"");
 
 		evaluateCell(evaluator, sheetRetrospective.getRow(29).getCell(1));
-		System.out.println("CELL TYPE Row28:"+sheetRetrospective.getRow(29).getCell(1).getCellType());
-		
 		map.put("RetainedEarning", sheetRetrospective.getRow(29).getCell(1).getNumericCellValue()+"");
 
 		Gson gson = new Gson(); 
