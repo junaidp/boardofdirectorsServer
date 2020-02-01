@@ -177,6 +177,8 @@ public class CalculationFTA extends Calculation{
 		}
 	
 		evaluateCell(evaluator, sheetRetrospective.getRow(15).getCell(1));
+		System.out.println("CELL TYPE Row8:"+sheetRetrospective.getRow(8).getCell(1).getCellType());
+		System.out.println("CELL TYPE Row15:"+sheetRetrospective.getRow(15).getCell(1).getCellType());
 		map.put("leseLiabality", sheetRetrospective.getRow(15).getCell(1).getNumericCellValue()+"");
 
 		evaluateCell(evaluator, sheetRetrospective.getRow(28).getCell(1));
