@@ -21,7 +21,7 @@ public class BoardofdirectorsServerApplication {
 	public static void main(String[] args) throws Exception {
 	
 		SpringApplication.run(BoardofdirectorsServerApplication.class, args);
-		//callFTA();
+	//	callFTA();
 	}
 
 	private static void callJournal() throws IOException, InvalidFormatException, Exception {
@@ -39,11 +39,11 @@ public class BoardofdirectorsServerApplication {
 	
 	private  static void callFTA() throws IOException, InvalidFormatException, Exception {
 		//	Calculation c = new Calculation();
-			Entry entry = new Entry("Lease No. 1", new Date("15/03/2016"), "Beginning", 2, 20, 50, 1000000, "Yearly", 0, 0, 25, 10, 2, 2020, 04);
+			Entry entry = new Entry("Lease No. 1", new Date("03/15/2016"), "Beginning", 5 , 30, 20, 100000, "Yearly", 0, 0, 25, 10, 2, 2020, 04);
 		//	c.entry(entry);
 			
 			CalculationFTA c = new CalculationFTA();
-			String map = c.entryFirstTimeAdoption(entry, TYPESFTA.LEASE, TYPESFTA.LEASE);
+			String map = c.entryFirstTimeAdoption(entry, TYPESFTA.RETROSPECTIVE, TYPESFTA.LEASE);
 			Gson gson = new Gson(); 
 			String json = gson.toJson(map);
 		//	System.out.println(json);
