@@ -152,7 +152,7 @@ public class CalculationFTA extends Calculation{
 		LinkedHashMap<String, String> map = new LinkedHashMap<String, String>();
 		int startingRowLease = 16;
 	
-
+  // FOR GETTING RESTROSPECTIVE DATA
 		for (Row r : sheetLease) {
 			///ONLY PUT COLUMN No in map id
 			int row = r.getRowNum();
@@ -172,7 +172,7 @@ public class CalculationFTA extends Calculation{
 				}
 			}
 		}
-	
+		
 		evaluateCell(evaluator, sheetRetrospective.getRow(15).getCell(1));
 		map.put("leseLiabality", sheetRetrospective.getRow(15).getCell(1).getNumericCellValue()+"");
 
@@ -181,6 +181,37 @@ public class CalculationFTA extends Calculation{
 
 		evaluateCell(evaluator, sheetRetrospective.getRow(29).getCell(1));
 		map.put("RetainedEarning", sheetRetrospective.getRow(29).getCell(1).getNumericCellValue()+"");
+		
+		 // FOR GETTING COMULATIVE DATA
+		for (Row r : sheetLease) {
+			///ONLY PUT COLUMN No in map id
+			int row = r.getRowNum();
+
+			if(row>= startingRowLease)
+			{
+				evaluateCell(evaluator, r.getCell(1));
+				if(r.getCell(1).getNumericCellValue() == sheetCumulative.getRow(14).getCell(1).getNumericCellValue())
+				{
+					Cell c = r.getCell(3);
+					evaluateCell(evaluator, c);
+					if (HSSFDateUtil.isCellDateFormatted(c)) {
+						LocalDateTime date = c.getLocalDateTimeCellValue();
+						sheetCumulative.getRow(5).getCell(1).setCellValue(date);
+						break;
+					}
+				}
+			}
+		}
+		
+		
+		evaluateCell(evaluator, sheetCumulative.getRow(15).getCell(1));
+		map.put("leseLiabalityCumulative", sheetCumulative.getRow(15).getCell(1).getNumericCellValue()+"");
+
+		evaluateCell(evaluator, sheetCumulative.getRow(33).getCell(1));
+		map.put("RightToUseCumulative", sheetCumulative.getRow(33).getCell(1).getNumericCellValue()+"");
+
+		evaluateCell(evaluator, sheetCumulative.getRow(34).getCell(1));
+		map.put("RetainedEarningCumulative", sheetCumulative.getRow(34).getCell(1).getNumericCellValue()+"");
 
 		Gson gson = new Gson(); 
 		return gson.toJson(map);
