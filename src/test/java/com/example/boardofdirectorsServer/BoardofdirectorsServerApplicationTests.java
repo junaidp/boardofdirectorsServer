@@ -1,11 +1,14 @@
 package com.example.boardofdirectorsServer;
 
+import java.util.List;
+
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import com.example.boardofdirectorsServer.helper.DataHelper;
 import com.example.boardofdirectorsServer.helper.UserHelper;
+import com.example.boardofdirectorsServer.model.UserData;
 
 @SpringBootTest
 class BoardofdirectorsServerApplicationTests {
@@ -33,7 +36,7 @@ class BoardofdirectorsServerApplicationTests {
 	
 	@Test
 	void testGetUserData() {
-		String j = userData.getUserData("1135");
+		List<UserData> j = userData.getUserData("1135");
 		System.out.println(j);
 	}
 }
