@@ -33,7 +33,7 @@ public class DataHelper {
 		}
 	}
 
-	public String getUserData(String userId)
+	public List<UserData> getUserData(String userId)
 	{
 		try {
 
@@ -45,9 +45,10 @@ public class DataHelper {
 			List<UserData> userdata = mongoOperation.find(query, UserData.class);
 			System.out.println(userdata);
 			if(userdata == null)
-				return "Data not found";
-			String json = gson.toJson(userdata);
-			return json;
+				return null;
+			return userdata;
+			//String json = gson.toJson(userdata);
+			//return json;
 		}catch(Exception ex)
 		{
 			System.out.println("Error is :"+ ex.getMessage());

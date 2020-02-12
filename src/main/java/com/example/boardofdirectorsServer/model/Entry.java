@@ -23,6 +23,7 @@ public class Entry {
 	private	int escalationAfterEvery;
 	private int year;
 	private int month;
+	private int userId;
 
 	public Entry(@JsonProperty("leaseContractNo")String leaseContractNo, @JsonProperty("commencementDate")Date commencementDate,
 			@JsonProperty("paymentsAt")String paymentsAt, @JsonProperty("annualDiscountRate")float annualDiscountRate,@JsonProperty("leaseTerm")int leaseTerm,
@@ -30,7 +31,7 @@ public class Entry {
 			@JsonProperty("initialDirectCost")int initialDirectCost,@JsonProperty("guaranteedResidualValue")double guaranteedResidualValue,
 			@JsonProperty("usefulLifeOfTheAsset")int usefulLifeOfTheAsset,
 			@JsonProperty("escalation")float escalation,	@JsonProperty("escalationAfterEvery")int escalationAfterEvery, 
-			@JsonProperty("year")int year, @JsonProperty("month")int month) {
+			@JsonProperty("year")int year, @JsonProperty("month")int month, @JsonProperty("userId")int userId) {
 
 		this.leaseContractNo = leaseContractNo;
 		this.commencementDate = commencementDate;
@@ -52,6 +53,10 @@ public class Entry {
 		round(this.escalation, 2);
 		round(this.annualDiscountRate, 2);
 		
+	}
+
+	public Entry() {
+		// TODO Auto-generated constructor stub
 	}
 
 	public String getLeaseContractNo() {
@@ -120,6 +125,10 @@ public class Entry {
 
 	public int getMonth() {
 		return month;
+	}
+
+	public int getUserId() {
+		return userId;
 	}
 
 

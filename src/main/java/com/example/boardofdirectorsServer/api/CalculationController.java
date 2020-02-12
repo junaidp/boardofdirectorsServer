@@ -1,7 +1,11 @@
 package com.example.boardofdirectorsServer.api;
 
 import java.io.IOException;
+import java.util.LinkedHashMap;
+import java.util.List;
+
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.springframework.beans.BeanUtils;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -9,7 +13,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.boardofdirectorsServer.helper.DataHelper;
 import com.example.boardofdirectorsServer.model.Entry;
+import com.example.boardofdirectorsServer.model.UserData;
+import com.google.gson.Gson;
 
 @RequestMapping("calculation")
 @RestController
@@ -17,6 +24,7 @@ import com.example.boardofdirectorsServer.model.Entry;
 public class CalculationController {
 
 	String json;
+	Gson gson = new Gson();
 
 	@PostMapping
 	public String calculate(@RequestBody Entry entry) throws Exception
@@ -77,7 +85,26 @@ public class CalculationController {
 	{
 		try {
 			Calculation c = new Calculation();
-			json = c.entryJournal(entry, TYPES.JOURNAL_YEARLY, TYPES.LEASE_YEARLY);
+			
+			///
+			int userId = entry.getUserId();
+			DataHelper dataHelper = new DataHelper();
+			List<UserData> dataList = dataHelper.getUserData(userId+"");
+			///
+			double dr = 0;
+			for(UserData userData: dataList)
+			{
+				Entry entryc = new Entry();
+				BeanUtils.copyProperties(userData, entryc);
+				json = c.entryJournal(entryc, TYPES.JOURNAL_YEARLY, TYPES.LEASE_YEARLY);
+				@SuppressWarnings("unchecked")
+				LinkedHashMap<String, String> map = gson.fromJson(json, LinkedHashMap.class);
+				dr = dr + Double.parseDouble(map.get("dr"));
+			}
+			LinkedHashMap<String, String> mapFinal = new LinkedHashMap<String, String>();
+			mapFinal.put("dr", dr+"");
+			
+			
 			return json;
 		} catch (Exception e) {
 			throw e;
