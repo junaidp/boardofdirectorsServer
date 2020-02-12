@@ -49,6 +49,7 @@ public class Entry {
 		this.escalationAfterEvery = escalationAfterEvery;
 		this.year = year;
 		this.month = month;
+		this.userId = userId;
 		
 		round(this.escalation, 2);
 		round(this.annualDiscountRate, 2);
