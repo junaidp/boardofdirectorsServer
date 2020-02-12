@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -25,6 +26,9 @@ public class CalculationController {
 
 	String json;
 	Gson gson = new Gson();
+	
+	@Autowired
+	DataHelper dataHelper;
 
 	@PostMapping
 	public String calculate(@RequestBody Entry entry) throws Exception
@@ -88,7 +92,6 @@ public class CalculationController {
 			
 			///
 			int userId = entry.getUserId();
-			DataHelper dataHelper = new DataHelper();
 			List<UserData> dataList = dataHelper.getUserData(userId+"");
 			///
 			double dr = 0;
