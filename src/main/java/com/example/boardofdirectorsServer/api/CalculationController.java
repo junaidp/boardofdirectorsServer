@@ -103,21 +103,32 @@ public class CalculationController {
 			///
 			Gson gson = new Gson();
 			int userId = entry.getUserId();
+			System.out.println("calling getuser data");
 			List<UserData> dataList = dataHelper.getUserData(userId+"");
+			System.out.println("back from data:"+ dataList);
 			///
 			double dr = 0;
 			for(UserData userData: dataList)
 			{
 				Entry entryc = new Entry();
 				BeanUtils.copyProperties(userData, entryc);
+				System.out.println("calling entryJournal");
 				json = c.entryJournal(entryc, TYPES.JOURNAL_YEARLY, TYPES.LEASE_YEARLY);
+				System.out.println("back from entryJournal"+ json);
+				System.out.println("converting");
+				
 				@SuppressWarnings("unchecked")
 				LinkedHashMap<String, String> map = gson.fromJson(json, LinkedHashMap.class);
+				System.out.println("converted");
+				
 				dr = dr + Double.parseDouble(map.get("dr"));
+				System.out.println("added");
+				
 			}
 			LinkedHashMap<String, String> mapFinal = new LinkedHashMap<String, String>();
 			mapFinal.put("dr", dr+"");
 			
+			System.out.println("retruning"+ json);
 			
 			return json;
 		} catch (Exception e) {
