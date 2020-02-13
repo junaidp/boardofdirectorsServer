@@ -106,6 +106,8 @@ public class CalculationController {
 			System.out.println("calling getuser data");
 			List<UserData> dataList = dataHelper.getUserData(userId+"");
 			System.out.println("back from data:"+ dataList);
+			LinkedHashMap<String, LinkedHashMap<String, String>> mapFinal = new LinkedHashMap<String, LinkedHashMap<String, String>>();
+			
 			///
 			double dr = 0;
 			for(UserData userData: dataList)
@@ -121,16 +123,14 @@ public class CalculationController {
 				LinkedHashMap<String, String> map = gson.fromJson(json, LinkedHashMap.class);
 				System.out.println("converted");
 				
-				dr = dr + Double.parseDouble(map.get("dr"));
 				System.out.println("added");
+				mapFinal.put(userData.getDataId(), map);
 				
 			}
-			LinkedHashMap<String, String> mapFinal = new LinkedHashMap<String, String>();
-			mapFinal.put("dr", dr+"");
 			
-			System.out.println("retruning"+ json);
+			System.out.println("retruning"+ mapFinal);
 			
-			return json;
+			return gson.toJson(mapFinal);
 		} catch (Exception e) {
 			throw e;
 		}
