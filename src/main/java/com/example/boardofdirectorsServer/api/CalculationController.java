@@ -94,7 +94,7 @@ public class CalculationController {
 		}
 	}*/
 	
-	@PostMapping("/journal/yearly")
+	@GetMapping("/journal/yearly")
 	public String calculateJournalYearly(@RequestBody Entry entry) throws Exception
 	{
 		try {
