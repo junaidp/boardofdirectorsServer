@@ -36,8 +36,9 @@ public class DataHelper {
 	public List<UserData> getUserData(String userId)
 	{
 		try {
-
+			
 			System.out.println("{ userId : '"+userId+"'}");
+			System.out.println("{ Mongooperation: '"+mongoOperation+"'}");
 			Query query = new Query();
 			query.addCriteria(Criteria.where("userId").is(userId));
 			//	BasicQuery query1 = new BasicQuery("{ name : '"+name+"'} , { password: '"+password+"'}");
