@@ -114,7 +114,7 @@ public class CalculationController {
 			{
 				Entry entryc = new Entry();
 				BeanUtils.copyProperties(userData, entryc);
-				System.out.println("calling entryJournal"+ entryc);
+				System.out.println("calling entryJournal"+ entryc.getAnnualDiscountRate()+":"+ entryc.getCommencementDate()+":"+ entry.getEscalation());
 				json = c.entryJournal(entryc, TYPES.JOURNAL_YEARLY, TYPES.LEASE_YEARLY);
 				System.out.println("back from entryJournal"+ json);
 				System.out.println("converting");
