@@ -82,7 +82,7 @@ public class CalculationController {
 		}
 	}
 	
-	/*@PostMapping("/journal/yearly")
+	@PostMapping("/journal/yearly")
 	public String calculateJournalYearly(@RequestBody Entry entry) throws Exception
 	{
 		try {
@@ -92,8 +92,8 @@ public class CalculationController {
 		} catch (Exception e) {
 			throw e;
 		}
-	}*/
-	
+	}
+	/*
 	@GetMapping("/journal/yearly")
 	public String calculateJournalYearly(@RequestBody Entry entry) throws Exception
 	{
@@ -137,7 +137,7 @@ public class CalculationController {
 		}
 	}
 
-
+	*/
 	@PostMapping("/journal/quarterly")
 	public String calculateJournalQuarterly(@RequestBody Entry entry) throws Exception
 	{
