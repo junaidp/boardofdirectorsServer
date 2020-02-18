@@ -93,9 +93,9 @@ public class CalculationController {
 			throw e;
 		}
 	}
-	/*
-	@GetMapping("/journal/yearly")
-	public String calculateJournalYearly(@RequestBody Entry entry) throws Exception
+
+	@GetMapping("/journal/yearlySum")
+	public String calculateJournalYearlySum(@RequestBody Entry entry) throws Exception
 	{
 		try {
 			Calculation c = new Calculation();
@@ -137,7 +137,7 @@ public class CalculationController {
 		}
 	}
 
-	*/
+	
 	@PostMapping("/journal/quarterly")
 	public String calculateJournalQuarterly(@RequestBody Entry entry) throws Exception
 	{
