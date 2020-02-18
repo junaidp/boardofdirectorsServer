@@ -122,6 +122,9 @@ public class CalculationController {
 				
 				@SuppressWarnings("unchecked")
 				LinkedHashMap<String, String> map = gson.fromJson(json, LinkedHashMap.class);
+				map.put("commencementDate", entry.getCommencementDate()+"");
+				map.put("leaseTerm", entry.getLeaseTerm()+"");
+				map.put("paymentsAt", entry.getPaymentsAt());
 				System.out.println("converted");
 				
 				System.out.println("added");
