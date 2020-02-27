@@ -13,7 +13,6 @@ import com.example.boardofdirectorsServer.api.CalculationController;
 import com.example.boardofdirectorsServer.api.CalculationFTA;
 import com.example.boardofdirectorsServer.api.TYPES;
 import com.example.boardofdirectorsServer.api.TYPESFTA;
-import com.example.boardofdirectorsServer.helper.DataHelper;
 import com.example.boardofdirectorsServer.model.Entry;
 import com.google.gson.Gson;
 

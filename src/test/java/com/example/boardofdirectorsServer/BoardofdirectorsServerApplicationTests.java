@@ -21,11 +21,11 @@ class BoardofdirectorsServerApplicationTests {
 	@Autowired CalculationController c;
 	
 
-	@Test
+	//@Test
 	void contextLoads() {
 	}
 	
-	@Test
+	//@Test
 	void testGetUserById() {
 		
 		String j = user.getUserWithId("11");
@@ -33,7 +33,7 @@ class BoardofdirectorsServerApplicationTests {
 	}
 
 	
-	@Test
+	//@Test
 	void testGetUser() {
 		String j = user.getUser("shehryar", "password1");
 		System.out.println(j);
@@ -41,8 +41,8 @@ class BoardofdirectorsServerApplicationTests {
 	
 	@Test
 	void testGetUserData() {
-		List<UserData> j = userData.getUserData("1135");
-		System.out.println(j);
+		List<UserData> j = userData.getUserData("1144");
+		System.out.println("UserData for 1144"+ j);
 	}
 	
 	@Test

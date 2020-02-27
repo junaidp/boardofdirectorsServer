@@ -1,6 +1,8 @@
 package com.example.boardofdirectorsServer.model;
 
 
+import java.util.Date;
+
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -9,51 +11,34 @@ public class UserData {
 
 	@Id
 	private String dataId;
-	private String userId;
 	private String leaseContractNo;
-	private String classAsset;
-	private String commencementDate;
-	private String paymentsAt;
-	private String annualDiscountRate;
-	private String leaseTerm;
-	private String expectedPeriod;
-	private String leasePayment;
-	private String paymentIntervals;
-	private String initialDirectCost;
-	private String guaranteedResidualValue;
-	private String usefulLifeOfTheAsset;
-	private String escalation;
-	private String escalationAfterEvery;
+	private	Date commencementDate;	
+	private	String paymentsAt; 	
+	private	float annualDiscountRate;
+	private	int leaseTerm;	
+	private	int expectedPeriod;	
+	private	double leasePayment;	
+	private	String paymentIntervals;	
+	private	int initialDirectCost;	
+	private	double guaranteedResidualValue;	
+	private	int usefulLifeOfTheAsset;	
+	private	float escalation;	
+	private	int escalationAfterEvery;
+	private int year;
+	private int month;
+	private int userId;
 	
 	
-	public String getDataId() {
-		return dataId;
-	}
-	public void setDataId(String dataId) {
-		this.dataId = dataId;
-	}
-	public String getUserId() {
-		return userId;
-	}
-	public void setUserId(String userId) {
-		this.userId = userId;
-	}
 	public String getLeaseContractNo() {
 		return leaseContractNo;
 	}
 	public void setLeaseContractNo(String leaseContractNo) {
 		this.leaseContractNo = leaseContractNo;
 	}
-	public String getClassAsset() {
-		return classAsset;
-	}
-	public void setClassAsset(String classAsset) {
-		this.classAsset = classAsset;
-	}
-	public String getCommencementDate() {
+	public Date getCommencementDate() {
 		return commencementDate;
 	}
-	public void setCommencementDate(String commencementDate) {
+	public void setCommencementDate(Date commencementDate) {
 		this.commencementDate = commencementDate;
 	}
 	public String getPaymentsAt() {
@@ -62,28 +47,28 @@ public class UserData {
 	public void setPaymentsAt(String paymentsAt) {
 		this.paymentsAt = paymentsAt;
 	}
-	public String getAnnualDiscountRate() {
+	public float getAnnualDiscountRate() {
 		return annualDiscountRate;
 	}
-	public void setAnnualDiscountRate(String annualDiscountRate) {
+	public void setAnnualDiscountRate(float annualDiscountRate) {
 		this.annualDiscountRate = annualDiscountRate;
 	}
-	public String getLeaseTerm() {
+	public int getLeaseTerm() {
 		return leaseTerm;
 	}
-	public void setLeaseTerm(String leaseTerm) {
+	public void setLeaseTerm(int leaseTerm) {
 		this.leaseTerm = leaseTerm;
 	}
-	public String getExpectedPeriod() {
+	public int getExpectedPeriod() {
 		return expectedPeriod;
 	}
-	public void setExpectedPeriod(String expectedPeriod) {
+	public void setExpectedPeriod(int expectedPeriod) {
 		this.expectedPeriod = expectedPeriod;
 	}
-	public String getLeasePayment() {
+	public double getLeasePayment() {
 		return leasePayment;
 	}
-	public void setLeasePayment(String leasePayment) {
+	public void setLeasePayment(double leasePayment) {
 		this.leasePayment = leasePayment;
 	}
 	public String getPaymentIntervals() {
@@ -92,38 +77,62 @@ public class UserData {
 	public void setPaymentIntervals(String paymentIntervals) {
 		this.paymentIntervals = paymentIntervals;
 	}
-	public String getInitialDirectCost() {
+	public int getInitialDirectCost() {
 		return initialDirectCost;
 	}
-	public void setInitialDirectCost(String initialDirectCost) {
+	public void setInitialDirectCost(int initialDirectCost) {
 		this.initialDirectCost = initialDirectCost;
 	}
-	public String getGuaranteedResidualValue() {
+	public double getGuaranteedResidualValue() {
 		return guaranteedResidualValue;
 	}
-	public void setGuaranteedResidualValue(String guaranteedResidualValue) {
+	public void setGuaranteedResidualValue(double guaranteedResidualValue) {
 		this.guaranteedResidualValue = guaranteedResidualValue;
 	}
-	public String getUsefulLifeOfTheAsset() {
+	public int getUsefulLifeOfTheAsset() {
 		return usefulLifeOfTheAsset;
 	}
-	public void setUsefulLifeOfTheAsset(String usefulLifeOfTheAsset) {
+	public void setUsefulLifeOfTheAsset(int usefulLifeOfTheAsset) {
 		this.usefulLifeOfTheAsset = usefulLifeOfTheAsset;
 	}
-	public String getEscalation() {
+	public float getEscalation() {
 		return escalation;
 	}
-	public void setEscalation(String escalation) {
+	public void setEscalation(float escalation) {
 		this.escalation = escalation;
 	}
-	public String getEscalationAfterEvery() {
+	public int getEscalationAfterEvery() {
 		return escalationAfterEvery;
 	}
-	public void setEscalationAfterEvery(String escalationAfterEvery) {
+	public void setEscalationAfterEvery(int escalationAfterEvery) {
 		this.escalationAfterEvery = escalationAfterEvery;
 	}
+	public int getYear() {
+		return year;
+	}
+	public void setYear(int year) {
+		this.year = year;
+	}
+	public int getMonth() {
+		return month;
+	}
+	public void setMonth(int month) {
+		this.month = month;
+	}
+	public int getUserId() {
+		return userId;
+	}
+	public void setUserId(int userId) {
+		this.userId = userId;
+	}
+	public String getDataId() {
+		return dataId;
+	}
+	public void setDataId(String dataId) {
+		this.dataId = dataId;
+	}
 	
-
-
+	
+	
 	
 }
