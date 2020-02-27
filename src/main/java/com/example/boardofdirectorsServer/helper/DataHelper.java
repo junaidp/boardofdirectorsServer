@@ -32,6 +32,18 @@ public class DataHelper {
 			throw ex;
 		}
 	}
+	
+	public String deleteAllData()
+	{
+		try {
+			userDataRepository.deleteAll();
+		return "user's data saved";	
+		}
+		catch(Exception ex)
+		{
+			throw ex;
+		}
+	}
 
 	public List<UserData> getUserData(String userId)
 	{

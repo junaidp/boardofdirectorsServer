@@ -39,15 +39,21 @@ class BoardofdirectorsServerApplicationTests {
 		System.out.println(j);
 	}
 	
-	@Test
+//	@Test
 	void testGetUserData() {
 		List<UserData> j = userData.getUserData("1144");
-		System.out.println("UserData for 1144"+ j);
+		System.out.println("UserData for 1145"+ j);
 	}
 	
-	@Test
+//	@Test
+	void testDeleteAllData() {
+		 userData.deleteAllData();
+		System.out.println("AllData deleted");
+	}
+	
+//	@Test
 	void testGetJournalSum(){
-		Entry entry = new Entry("Lease No. 1", new Date("01/01/2020"), "Beginning", 5, 40, 2, 2670000, "Quarterly", 0, 1000000, 10, 30, 10, 2022, 01, 1133);
+		Entry entry = new Entry("Lease No. 1", new Date("01/01/2020"), "Beginning", 5, 40, 2, 2670000, "Quarterly", 0, 1000000, 10, 30, 10, 2022, 01, 1145);
 		
 		try {
 			c.calculateJournalYearlySum(entry);
