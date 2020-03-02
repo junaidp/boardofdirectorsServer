@@ -45,7 +45,7 @@ public class DataHelper {
 		}
 	}
 
-	public List<UserData> getUserData(String userId)
+	public List<UserData> getUserData(int userId)
 	{
 		try {
 			

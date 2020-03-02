@@ -33,7 +33,7 @@ public class DataController {
 	}
 	
 	@GetMapping("/getData")
-	public String getData(@PathParam("userId") String userId) throws Exception
+	public String getData(@PathParam("userId") int userId) throws Exception
 	{
 		System.out.println(userId);
 		 List<UserData> s = userData.getUserData(userId);

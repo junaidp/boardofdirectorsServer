@@ -1,5 +1,7 @@
 package com.example.boardofdirectorsServer.api;
 
+import java.util.UUID;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,11 +28,11 @@ public class UserController {
 	@PostMapping("/saveUser")
 	public String saveUser(@RequestBody User userEntity)
 	{
-
+		userEntity.setUserId(user.getAvaiablaeUserId());
 		return user.saveUser(userEntity);
 	}
 	
-	@PostMapping("/signIn")
+		@PostMapping("/signIn")
 	public String singIn(@RequestBody UserTest userTest) throws Exception
 	{
 		System.out.println(userTest.getName() +","+ userTest.getPassword());

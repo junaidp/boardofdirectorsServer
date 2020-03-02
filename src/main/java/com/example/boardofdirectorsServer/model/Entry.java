@@ -132,5 +132,69 @@ public class Entry {
 		return userId;
 	}
 
+	public void setLeaseContractNo(String leaseContractNo) {
+		this.leaseContractNo = leaseContractNo;
+	}
+
+	public void setCommencementDate(Date commencementDate) {
+		this.commencementDate = commencementDate;
+	}
+
+	public void setPaymentsAt(String paymentsAt) {
+		this.paymentsAt = paymentsAt;
+	}
+
+	public void setAnnualDiscountRate(float annualDiscountRate) {
+		this.annualDiscountRate = annualDiscountRate;
+	}
+
+	public void setLeaseTerm(int leaseTerm) {
+		this.leaseTerm = leaseTerm;
+	}
+
+	public void setExpectedPeriod(int expectedPeriod) {
+		this.expectedPeriod = expectedPeriod;
+	}
+
+	public void setLeasePayment(double leasePayment) {
+		this.leasePayment = leasePayment;
+	}
+
+	public void setPaymentIntervals(String paymentIntervals) {
+		this.paymentIntervals = paymentIntervals;
+	}
+
+	public void setInitialDirectCost(int initialDirectCost) {
+		this.initialDirectCost = initialDirectCost;
+	}
+
+	public void setGuaranteedResidualValue(double guaranteedResidualValue) {
+		this.guaranteedResidualValue = guaranteedResidualValue;
+	}
+
+	public void setUsefulLifeOfTheAsset(int usefulLifeOfTheAsset) {
+		this.usefulLifeOfTheAsset = usefulLifeOfTheAsset;
+	}
+
+	public void setEscalation(float escalation) {
+		this.escalation = escalation;
+	}
+
+	public void setEscalationAfterEvery(int escalationAfterEvery) {
+		this.escalationAfterEvery = escalationAfterEvery;
+	}
+
+	public void setYear(int year) {
+		this.year = year;
+	}
+
+	public void setMonth(int month) {
+		this.month = month;
+	}
+
+	public void setUserId(int userId) {
+		this.userId = userId;
+	}
+
 
 }

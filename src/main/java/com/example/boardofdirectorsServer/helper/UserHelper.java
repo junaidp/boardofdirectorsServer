@@ -25,6 +25,7 @@ public class UserHelper {
 	public String saveUser(User user)
 	{
 		try {
+			System.out.println("Saving user"+ user);
 		userRepository.save(user);
 		return "user saved";	
 		}
@@ -80,6 +81,13 @@ public class UserHelper {
 			throw ex;
 		}
 		return userJson;
+	}
+
+	public int getAvaiablaeUserId() {
+		Long total = userRepository.count();
+		int count = total.intValue();
+		return count+1;
+		
 	}
 
 }

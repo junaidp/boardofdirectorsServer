@@ -104,7 +104,7 @@ public class CalculationController {
 			Gson gson = new Gson();
 			int userId = entry.getUserId();
 			System.out.println("calling getuser data");
-			List<UserData> dataList = dataHelper.getUserData(userId+"");
+			List<UserData> dataList = dataHelper.getUserData(userId);
 			System.out.println("back from data:"+ dataList);
 			LinkedHashMap<String, LinkedHashMap<String, String>> mapFinal = new LinkedHashMap<String, LinkedHashMap<String, String>>();
 			
@@ -113,21 +113,19 @@ public class CalculationController {
 			for(UserData userData: dataList)
 			{
 				Entry entryc = new Entry();
-				BeanUtils.copyProperties(userData, entryc);
+				copyData(userData, entryc);
 				System.out.println("USE DATA:" + userData.getCommencementDate()+":"+userData.getAnnualDiscountRate()+":"+userData.getEscalation());
-				System.out.println("calling entryJournal"+ entryc.getAnnualDiscountRate()+":"+ entryc.getCommencementDate()+":"+ entry.getEscalation());
+				System.out.println("calling entryJournal"+ entryc.getAnnualDiscountRate()+":"+ entryc.getCommencementDate()+":"+ entryc.getEscalation());
 				json = c.entryJournal(entry, TYPES.JOURNAL_YEARLY, TYPES.LEASE_YEARLY);
-				System.out.println("back from entryJournal"+ json);
 				System.out.println("converting");
 				
 				@SuppressWarnings("unchecked")
 				LinkedHashMap<String, String> map = gson.fromJson(json, LinkedHashMap.class);
-				map.put("commencementDate", entry.getCommencementDate()+"");
-				map.put("paymentInterval", entry.getPaymentIntervals());
-				map.put("paymentsAt", entry.getPaymentsAt());
+			//	map.put("commencementDate", entry.getCommencementDate()+"");
+			//	map.put("paymentInterval", entry.getPaymentIntervals());
+			//	map.put("paymentsAt", entry.getPaymentsAt());
 				System.out.println("converted");
 				
-				System.out.println("added");
 				mapFinal.put(userData.getDataId(), map);
 				
 			}
@@ -141,6 +139,28 @@ public class CalculationController {
 	}
 
 	
+	private void copyData(UserData s, Entry t) {
+		
+		t.setAnnualDiscountRate(s.getAnnualDiscountRate());
+		t.setCommencementDate(s.getCommencementDate());
+		t.setEscalation(s.getEscalation());
+		t.setEscalationAfterEvery(s.getEscalationAfterEvery());
+		t.setExpectedPeriod(s.getExpectedPeriod());
+		t.setGuaranteedResidualValue(s.getGuaranteedResidualValue());
+		t.setInitialDirectCost(s.getInitialDirectCost());
+		t.setLeaseContractNo(s.getLeaseContractNo());
+		t.setLeasePayment(s.getLeasePayment());
+		t.setLeaseTerm(s.getLeaseTerm());
+		t.setMonth(s.getMonth());
+		t.setPaymentIntervals(s.getPaymentIntervals());
+		t.setPaymentsAt(s.getPaymentsAt());
+		t.setUsefulLifeOfTheAsset(s.getUsefulLifeOfTheAsset());
+		t.setUserId(s.getUserId());
+		t.setYear(s.getYear());
+		
+		
+	}
+
 	@PostMapping("/journal/quarterly")
 	public String calculateJournalQuarterly(@RequestBody Entry entry) throws Exception
 	{
