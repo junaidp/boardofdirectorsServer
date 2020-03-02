@@ -116,7 +116,7 @@ public class CalculationController {
 				copyData(userData, entryc);
 				System.out.println("USE DATA:" + userData.getCommencementDate()+":"+userData.getAnnualDiscountRate()+":"+userData.getEscalation());
 				System.out.println("calling entryJournal"+ entryc.getAnnualDiscountRate()+":"+ entryc.getCommencementDate()+":"+ entryc.getEscalation());
-				json = c.entryJournal(entry, TYPES.JOURNAL_YEARLY, TYPES.LEASE_YEARLY);
+				json = c.entryJournal(entryc, TYPES.JOURNAL_YEARLY, TYPES.LEASE_YEARLY);
 				System.out.println("converting");
 				
 				@SuppressWarnings("unchecked")
