@@ -48,7 +48,7 @@ class BoardofdirectorsServerApplicationTests {
 		System.out.println("AllData deleted");
 	}
 	
-	@Test
+	//@Test
 	void saveUser()
 	{
 		System.out.println("saveUser testcase running");
@@ -61,7 +61,7 @@ class BoardofdirectorsServerApplicationTests {
 		
 		
 	}
-	@Test
+//	@Test
 	void testGetUserData() {
 		List<UserData> j = userData.getUserData(1145);
 		System.out.println("UserData for 1145"+ j);
