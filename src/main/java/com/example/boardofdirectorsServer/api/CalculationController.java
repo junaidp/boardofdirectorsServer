@@ -125,7 +125,7 @@ public class CalculationController {
 			//	map.put("paymentInterval", entry.getPaymentIntervals());
 			//	map.put("paymentsAt", entry.getPaymentsAt());
 				System.out.println("converted");
-				
+				map.put("commencementDate", entryc.getCommencementDate()+"");
 				mapFinal.put(userData.getDataId(), map);
 				
 			}
