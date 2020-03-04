@@ -114,6 +114,8 @@ public class CalculationController {
 			{
 				Entry entryc = new Entry();
 				copyData(userData, entryc);
+				entryc.setYear(entry.getYear());
+				entryc.setMonth(entry.getMonth());
 				System.out.println("USE DATA:" + userData.getCommencementDate()+":"+userData.getAnnualDiscountRate()+":"+userData.getEscalation());
 				System.out.println("calling entryJournal"+ entryc.getAnnualDiscountRate()+":"+ entryc.getCommencementDate()+":"+ entryc.getEscalation());
 				json = c.entryJournal(entryc, TYPES.JOURNAL_YEARLY, TYPES.LEASE_YEARLY);
