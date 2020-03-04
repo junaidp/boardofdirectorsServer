@@ -153,12 +153,10 @@ public class CalculationController {
 		t.setLeaseContractNo(s.getLeaseContractNo());
 		t.setLeasePayment(s.getLeasePayment());
 		t.setLeaseTerm(s.getLeaseTerm());
-		t.setMonth(s.getMonth());
 		t.setPaymentIntervals(s.getPaymentIntervals());
 		t.setPaymentsAt(s.getPaymentsAt());
 		t.setUsefulLifeOfTheAsset(s.getUsefulLifeOfTheAsset());
 		t.setUserId(s.getUserId());
-		t.setYear(s.getYear());
 		
 		
 	}
