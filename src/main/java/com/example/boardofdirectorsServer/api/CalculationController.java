@@ -1,6 +1,8 @@
 package com.example.boardofdirectorsServer.api;
 
 import java.io.IOException;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.LinkedHashMap;
 import java.util.List;
 
@@ -83,11 +85,15 @@ public class CalculationController {
 	}
 	
 	@PostMapping("/journal/yearly")
-	public String calculateJournalYearly(@RequestBody Entry entry) throws Exception
+	public String calculateJournalYearly(@RequestBody Entry entryc) throws Exception
 	{
 		try {
 			Calculation c = new Calculation();
-			json = c.entryJournal(entry, TYPES.JOURNAL_YEARLY, TYPES.LEASE_YEARLY);
+			System.out.println("Values going For SUM  are:"+ entryc.getCommencementDate()+"::"+ entryc.getPaymentsAt()+"::"+ entryc.getAnnualDiscountRate() +"::"+ entryc.getLeaseTerm()+"::"+
+					entryc.getExpectedPeriod()+"::"+ entryc.getLeasePayment() +"::"+ entryc.getPaymentIntervals()+"::" +entryc.getInitialDirectCost()+"::"+  entryc.getGuaranteedResidualValue()
+					+"::"+ entryc.getUsefulLifeOfTheAsset()+"::"+ entryc.getEscalation()+"::"+ entryc.getEscalationAfterEvery()+"::");
+					
+			json = c.entryJournal(entryc, TYPES.JOURNAL_YEARLY, TYPES.LEASE_YEARLY);
 			return json;
 		} catch (Exception e) {
 			throw e;
@@ -118,8 +124,11 @@ public class CalculationController {
 				entryc.setMonth(entry.getMonth());
 				System.out.println("USE DATA:" + userData.getCommencementDate()+":"+userData.getAnnualDiscountRate()+":"+userData.getEscalation());
 				System.out.println("calling entryJournal"+ entryc.getAnnualDiscountRate()+":"+ entryc.getCommencementDate()+":"+ entryc.getEscalation());
+				System.out.println("Values going For SUM  are:"+ entryc.getCommencementDate()+"::"+ entryc.getPaymentsAt()+"::"+ entryc.getAnnualDiscountRate() +"::"+ entryc.getLeaseTerm()+"::"+
+				entryc.getExpectedPeriod()+"::"+ entryc.getLeasePayment() +"::"+ entryc.getPaymentIntervals()+"::" +entryc.getInitialDirectCost()+"::"+  entryc.getGuaranteedResidualValue()
+				+"::"+ entryc.getUsefulLifeOfTheAsset()+"::"+ entryc.getEscalation()+"::"+ entryc.getEscalationAfterEvery()+"::");
 				json = c.entryJournal(entryc, TYPES.JOURNAL_YEARLY, TYPES.LEASE_YEARLY);
-				System.out.println("converting");
+				System.out.println("result is +" + json);
 				
 				@SuppressWarnings("unchecked")
 				LinkedHashMap<String, String> map = gson.fromJson(json, LinkedHashMap.class);
@@ -145,9 +154,9 @@ public class CalculationController {
 	
 	private void copyData(UserData s, Entry t) {
 		
-		t.setAnnualDiscountRate(s.getAnnualDiscountRate());
+		t.setAnnualDiscountRate(s.getAnnualDiscountRate()/100);
 		t.setCommencementDate(s.getCommencementDate());
-		t.setEscalation(s.getEscalation());
+		t.setEscalation(s.getEscalation()/100);
 		t.setEscalationAfterEvery(s.getEscalationAfterEvery());
 		t.setExpectedPeriod(s.getExpectedPeriod());
 		t.setGuaranteedResidualValue(s.getGuaranteedResidualValue());
@@ -159,8 +168,17 @@ public class CalculationController {
 		t.setPaymentsAt(s.getPaymentsAt());
 		t.setUsefulLifeOfTheAsset(s.getUsefulLifeOfTheAsset());
 		t.setUserId(s.getUserId());
+		round(t.getEscalation(), 2);
+		round(t.getAnnualDiscountRate(), 2);
 		
-		
+	}
+	
+	public static double round(double value, int places) {
+	    if (places < 0) throw new IllegalArgumentException();
+
+	    BigDecimal bd = BigDecimal.valueOf(value);
+	    bd = bd.setScale(places, RoundingMode.HALF_UP);
+	    return bd.doubleValue();
 	}
 
 	@PostMapping("/journal/quarterly")
