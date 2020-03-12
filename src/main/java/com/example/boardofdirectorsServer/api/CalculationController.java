@@ -127,7 +127,20 @@ public class CalculationController {
 				System.out.println("Values going For SUM  are:"+ entryc.getCommencementDate()+"::"+ entryc.getPaymentsAt()+"::"+ entryc.getAnnualDiscountRate() +"::"+ entryc.getLeaseTerm()+"::"+
 				entryc.getExpectedPeriod()+"::"+ entryc.getLeasePayment() +"::"+ entryc.getPaymentIntervals()+"::" +entryc.getInitialDirectCost()+"::"+  entryc.getGuaranteedResidualValue()
 				+"::"+ entryc.getUsefulLifeOfTheAsset()+"::"+ entryc.getEscalation()+"::"+ entryc.getEscalationAfterEvery()+"::");
-				json = c.entryJournal(entryc, TYPES.JOURNAL_YEARLY, TYPES.LEASE_YEARLY);
+				
+				if(entryc.getPaymentIntervals().equalsIgnoreCase("Yearly"))
+				{
+					json = c.entryJournal(entryc, TYPES.JOURNAL_YEARLY, TYPES.LEASE_YEARLY);
+				}
+				else if(entryc.getPaymentIntervals().equalsIgnoreCase("Monthly"))
+				{
+					json = c.entryJournal(entryc, TYPES.JOURNAL_MONTHLY, TYPES.LEASE_MONTHLY);
+				}
+				else if(entryc.getPaymentIntervals().equalsIgnoreCase("Quarterly"))
+				{
+					json = c.entryJournal(entryc, TYPES.JOURNAL_QUARTERLY, TYPES.LEASE_QUARTERLY);
+				}
+				
 				System.out.println("result is +" + json);
 				
 				@SuppressWarnings("unchecked")
