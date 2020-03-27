@@ -42,10 +42,16 @@ class BoardofdirectorsServerApplicationTests {
 	
 	
 	
-//	@Test
+	//@Test
 	void testDeleteAllData() {
 		 userData.deleteAllData();
 		System.out.println("AllData deleted");
+	}
+	
+	//@Test
+	void testDeleteAllUsers() {
+		 user.deleteAll();
+		System.out.println("All users deleted");
 	}
 	
 	//@Test
@@ -67,7 +73,7 @@ class BoardofdirectorsServerApplicationTests {
 		System.out.println("UserData for 1145"+ j);
 	}
 	
-	@Test
+	//	@Test
 	void testGetJournalSum(){
 		Entry entry = new Entry("Lease No. 1", new Date("01/04/2020"), "Beginning", 3, 10, 10, 2670000, "Yearly", 0, 
 				1000000, 10, 30, 10, 2022, 01, 29);

@@ -90,4 +90,15 @@ public class UserHelper {
 		
 	}
 
+	public String deleteAll() {
+		try {
+			userRepository.deleteAll();
+		return "user's deleted";	
+		}
+		catch(Exception ex)
+		{
+			throw ex;
+		}
+	}
+
 }

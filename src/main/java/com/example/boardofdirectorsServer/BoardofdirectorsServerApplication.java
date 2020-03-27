@@ -6,10 +6,11 @@ import java.util.Date;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import com.example.boardofdirectorsServer.api.Calculation;
-import com.example.boardofdirectorsServer.api.CalculationController;
 import com.example.boardofdirectorsServer.api.CalculationFTA;
 import com.example.boardofdirectorsServer.api.TYPES;
 import com.example.boardofdirectorsServer.api.TYPESFTA;
@@ -17,6 +18,7 @@ import com.example.boardofdirectorsServer.model.Entry;
 import com.google.gson.Gson;
 
 @SpringBootApplication
+//@EnableAutoConfiguration(exclude={MongoAutoConfiguration.class})
 @CrossOrigin(origins = "*")
 public class BoardofdirectorsServerApplication {
 

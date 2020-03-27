@@ -2,6 +2,7 @@ package com.example.boardofdirectorsServer.api;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.LinkedHashMap;
@@ -33,6 +34,36 @@ public class Calculation {
 	public Calculation() throws IOException, InvalidFormatException
 	{
 
+	}
+	
+	public String formatDate(Date date )
+	{
+		String formattedDate = "";
+		System.out.println("Going to format date:"+ date);
+		try{
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
+		 formattedDate = sdf.format(date);
+		}catch(Exception ex)
+		{
+			System.out.println("Exception in formatting date:"+ date);
+			
+		}
+		return formattedDate;
+	}
+	
+	public String formatDate(LocalDateTime date )
+	{
+		String formattedDate = "";
+		System.out.println("Going to format date:"+ date);
+		try{
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
+		 formattedDate = sdf.format(date);
+		}catch(Exception ex)
+		{
+			System.out.println("Exception in formatting date:"+ date);
+			
+		}
+		return formattedDate;
 	}
 
 	public String entry(Entry entry) throws Exception{
@@ -800,8 +831,8 @@ public class Calculation {
 							LocalDateTime dateStart = cStartOfMonth.getLocalDateTimeCellValue();
 							LocalDateTime dateEnd = cEndOfMonth.getLocalDateTimeCellValue();
 							//Date date = c.getDateCellValue();
-							map.put("startDate", dateStart+"");
-							map.put("endDate", dateEnd+"");
+							map.put("startDate", formatDate(dateStart)+"");
+							map.put("endDate", formatDate(dateEnd)+"");
 						}
 					//	evaluateCell(evaluator, selectedRow.getCell(8));
 					//	map.put("financeCostRemaining", selectedRow.getCell(8).getNumericCellValue()+"");
@@ -1095,7 +1126,7 @@ public class Calculation {
 
 		case NUMERIC:
 			if (HSSFDateUtil.isCellDateFormatted(c)) {
-				mapSheet.put(cellLocation, c.getColumnIndex()==9?  month(c.getDateCellValue().getMonth())+"": c.getDateCellValue()+"");
+				mapSheet.put(cellLocation, c.getColumnIndex()==9?  month(c.getDateCellValue().getMonth())+"": formatDate(c.getDateCellValue())+"");
 			}
 			else {
 				c.getRow().getRowNum();
