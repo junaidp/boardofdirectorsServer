@@ -18,7 +18,6 @@ import com.example.boardofdirectorsServer.model.Entry;
 import com.google.gson.Gson;
 
 @SpringBootApplication
-//@EnableAutoConfiguration(exclude={MongoAutoConfiguration.class})
 @CrossOrigin(origins = "*")
 public class BoardofdirectorsServerApplication {
 

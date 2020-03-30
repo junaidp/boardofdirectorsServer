@@ -39,7 +39,7 @@ public class Calculation {
 	public String formatDate(Date date )
 	{
 		String formattedDate = "";
-		System.out.println("Going to format date:"+ date);
+		System.out.println("Formtting date:"+ date);
 		try{
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
 		 formattedDate = sdf.format(date);
@@ -51,20 +51,20 @@ public class Calculation {
 		return formattedDate;
 	}
 	
-	public String formatDate(LocalDateTime date )
+	/*public String formatDate(LocalDateTime date )
 	{
 		String formattedDate = "";
-		System.out.println("Going to format date:"+ date);
+		System.out.println("Formatting Local date:"+ date);
 		try{
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
 		 formattedDate = sdf.format(date);
 		}catch(Exception ex)
 		{
-			System.out.println("Exception in formatting date:"+ date);
+			System.out.println("Exception in formatting Local date:"+ date);
 			
 		}
 		return formattedDate;
-	}
+	}*/
 
 	public String entry(Entry entry) throws Exception{
 		Gson gson;
@@ -752,7 +752,7 @@ public class Calculation {
 
 				evaluateCell(evaluator, c);
 
-				System.out.println(c.getColumnIndex());
+				//System.out.println(c.getColumnIndex());
 				if (HSSFDateUtil.isCellDateFormatted(c)) {
 					LocalDateTime date = c.getLocalDateTimeCellValue();
 					//Date date = c.getDateCellValue();
@@ -764,7 +764,7 @@ public class Calculation {
 						Row selectedRow = r;
 						//evaluateCell(evaluator, selectedRow.getCell(5), selectedRow.getCell(6), selectedRow.getCell(7), selectedRow.getCell(8), selectedRow.getCell(9), selectedRow.getCell(10), selectedRow.getCell(11), selectedRow.getCell(12), selectedRow.getCell(13), selectedRow.getCell(14), selectedRow.getCell(15), selectedRow.getCell(16), selectedRow.getCell(17));
 						//map.put("dr",selectedRow.getCell(5).getNumericCellValue()+"");
-						entry.getCommencementDate();
+						//entry.getCommencementDate();
 					//	Cell monthCell =selectedRow.getCell(getMonthCell(entry.getMonth(), sheet.getRow(4), evaluator));
 						
 						evaluateCell(evaluator, selectedRow.getCell(7), selectedRow.getCell(9), selectedRow.getCell(11));
@@ -828,11 +828,13 @@ public class Calculation {
 						Cell cStartOfMonth = r.getCell(1);
 						Cell cEndOfMonth = r.getCell(2);
 						if (HSSFDateUtil.isCellDateFormatted(cStartOfMonth) && HSSFDateUtil.isCellDateFormatted(cEndOfMonth)) {
+							evaluateCell(evaluator, cStartOfMonth);
+							evaluateCell(evaluator, cEndOfMonth);
 							LocalDateTime dateStart = cStartOfMonth.getLocalDateTimeCellValue();
 							LocalDateTime dateEnd = cEndOfMonth.getLocalDateTimeCellValue();
 							//Date date = c.getDateCellValue();
-							map.put("startDate", formatDate(dateStart)+"");
-							map.put("endDate", formatDate(dateEnd)+"");
+							map.put("startDate", dateStart+"");
+							map.put("endDate", dateEnd+"");
 						}
 					//	evaluateCell(evaluator, selectedRow.getCell(8));
 					//	map.put("financeCostRemaining", selectedRow.getCell(8).getNumericCellValue()+"");
