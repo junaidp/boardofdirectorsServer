@@ -427,6 +427,7 @@ public class Calculation {
 
 	}
 
+	@SuppressWarnings("deprecation")
 	public String calculateJournal(XSSFWorkbook wb, Entry entry, int journalType, int leaseType) throws InvalidFormatException, IOException {
 
 
@@ -459,7 +460,8 @@ public class Calculation {
 				System.out.println(c.getColumnIndex());
 				if (HSSFDateUtil.isCellDateFormatted(c)) {
 					LocalDateTime date = c.getLocalDateTimeCellValue();
-					if(date.getYear() == entry.getYear()){
+					//if(date.getYear() == entry.getYear())
+					if(date.getYear() == entry.getCommencementDate().getYear()+1900){ // ADDED FOR getting data from commencemt date
 						Row selectedRow = r;
 						//evaluateCell(evaluator, selectedRow.getCell(5), selectedRow.getCell(6), selectedRow.getCell(7), selectedRow.getCell(8), selectedRow.getCell(9), selectedRow.getCell(10), selectedRow.getCell(11), selectedRow.getCell(12), selectedRow.getCell(13), selectedRow.getCell(14), selectedRow.getCell(15), selectedRow.getCell(16), selectedRow.getCell(17));
 						//map.put("dr",selectedRow.getCell(5).getNumericCellValue()+"");
