@@ -760,7 +760,8 @@ public class Calculation {
 					String text = (entry.getMonth() < 10 ? "0" : "") + entry.getMonth();
 					int month = Integer.parseInt(text);
 				//	if(date.getYear() == entry.getYear() && date.getMonth().getValue() == month){
-					if(date.getYear() == entry.getYear() && (month1 == month || month2 == month || month3 == month) ){
+					if((date.getYear() == entry.getYear() && (month1 == month || month2 == month || month3 == month))
+							|| (entry.getYear() - date.getYear() == 1 && month3 == 1 && month == 1)){ // ADDED CONDITION FOR GEtting Monthof Jan from previous Year.
 						Row selectedRow = r;
 						//evaluateCell(evaluator, selectedRow.getCell(5), selectedRow.getCell(6), selectedRow.getCell(7), selectedRow.getCell(8), selectedRow.getCell(9), selectedRow.getCell(10), selectedRow.getCell(11), selectedRow.getCell(12), selectedRow.getCell(13), selectedRow.getCell(14), selectedRow.getCell(15), selectedRow.getCell(16), selectedRow.getCell(17));
 						//map.put("dr",selectedRow.getCell(5).getNumericCellValue()+"");
@@ -779,14 +780,20 @@ public class Calculation {
 						{
 							map.put("dr", drG+"");
 						}
-						if(entry.getMonth() == date.getMonthValue()+1 || entry.getMonth() == date.getMonthValue()+4 || entry.getMonth() == date.getMonthValue()+7 || entry.getMonth() == date.getMonthValue()+10)
+						else if(entry.getMonth() == date.getMonthValue()+1 || entry.getMonth() == date.getMonthValue()+4 || entry.getMonth() == date.getMonthValue()+7 || entry.getMonth() == date.getMonthValue()+10)
 						{
 							map.put("dr", drH+"");
 						}
-						if(entry.getMonth() == date.getMonthValue()+2 || entry.getMonth() == date.getMonthValue()+5 || entry.getMonth() == date.getMonthValue()+8 )
+						else if(entry.getMonth() == date.getMonthValue()+2 || entry.getMonth() == date.getMonthValue()+5 || entry.getMonth() == date.getMonthValue()+8 )
 						{
 							map.put("dr", drI+"");
 						}
+						// ADDED CONDITION FOR GEtting Monthof Jan from previous Year.
+						else if(entry.getYear() - date.getYear() == 1 && month3 == 1 && month == 1){
+							map.put("dr", drI+"");
+						}
+						
+						
 
 						
 						evaluateCell(evaluator, selectedRow.getCell(12));
