@@ -460,25 +460,34 @@ public class Calculation {
 				System.out.println(c.getColumnIndex());
 				if (HSSFDateUtil.isCellDateFormatted(c)) {
 					LocalDateTime date = c.getLocalDateTimeCellValue();
-					//if(date.getYear() == entry.getYear()) {
-					if(date.getYear() == entry.getCommencementDate().getYear()+1900){ // ADDED FOR getting data from commencemt date
+					if(date.getYear() == entry.getYear()) {
+					//if(date.getYear() == entry.getCommencementDate().getYear()+1900){ // ADDED FOR getting data from commencemt date
 						Row selectedRow = r;
-						if(entry.getCommencementDate().getMonth() != 0 && entry.getMonth() < entry.getCommencementDate().getMonth()+1)// ADDED FOR getting data from commencemt date
-							{
-								row = r.getRowNum()+1;
-								selectedRow = sheet.getRow(row); 
-							}
+						
 						//evaluateCell(evaluator, selectedRow.getCell(5), selectedRow.getCell(6), selectedRow.getCell(7), selectedRow.getCell(8), selectedRow.getCell(9), selectedRow.getCell(10), selectedRow.getCell(11), selectedRow.getCell(12), selectedRow.getCell(13), selectedRow.getCell(14), selectedRow.getCell(15), selectedRow.getCell(16), selectedRow.getCell(17));
 						//map.put("dr",selectedRow.getCell(5).getNumericCellValue()+"");
 					//	entry.getCommencementDate();
-						Cell monthCell =selectedRow.getCell(getMonthCell(entry.getMonth(), sheet.getRow(4), evaluator));
-						evaluateCell(evaluator, monthCell);
+						
+						// ADDED FOR getting data from commencemt date
+						Cell monthCell = null;
+						if(entry.getCommencementDate().getMonth() != 0 && entry.getMonth() < entry.getCommencementDate().getMonth()+1)// ADDED FOR getting data from commencemt date
+						{
+							Row selectedRowAbove = sheet.getRow(r.getRowNum()-1); 
+							monthCell = selectedRowAbove.getCell(getMonthCell(entry.getMonth(), sheet.getRow(4), evaluator));
+								
+						}
+						else 
+						{
+						 monthCell =selectedRow.getCell(getMonthCell(entry.getMonth(), sheet.getRow(4), evaluator));
+						}
+						 evaluateCell(evaluator, monthCell);
+						
 						map.put("dr", monthCell.getNumericCellValue()+"");
 						
 						evaluateCell(evaluator, selectedRow.getCell(5), selectedRow.getCell(6), selectedRow.getCell(7), selectedRow.getCell(8), selectedRow.getCell(9), selectedRow.getCell(10), selectedRow.getCell(11), selectedRow.getCell(12), selectedRow.getCell(13), selectedRow.getCell(14), selectedRow.getCell(15), selectedRow.getCell(16));
 						
 						Row upRow = sheet.getRow(row-1);
-						if(upRow.getRowNum() == 4)
+						if(upRow.getRowNum() <= 4)
 						{
 							map.put("total", "0");
 							map.put("RepeatmonthAccrued", "0");
