@@ -482,7 +482,15 @@ public class Calculation {
 						}
 						 evaluateCell(evaluator, monthCell);
 						
-						map.put("dr", monthCell.getNumericCellValue()+"");
+					
+						
+					if(entry.getYear() < entry.getCommencementDate().getYear()+1900 ||
+							(entry.getYear() == entry.getCommencementDate().getYear()+1900 && entry.getMonth() < entry.getCommencementDate().getMonth())){
+							map.put("dr", "0");
+						}
+						else {
+							map.put("dr", monthCell.getNumericCellValue()+"");
+						}
 						
 						evaluateCell(evaluator, selectedRow.getCell(5), selectedRow.getCell(6), selectedRow.getCell(7), selectedRow.getCell(8), selectedRow.getCell(9), selectedRow.getCell(10), selectedRow.getCell(11), selectedRow.getCell(12), selectedRow.getCell(13), selectedRow.getCell(14), selectedRow.getCell(15), selectedRow.getCell(16));
 						
