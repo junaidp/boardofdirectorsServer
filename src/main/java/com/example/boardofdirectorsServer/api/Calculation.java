@@ -4,14 +4,17 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.LinkedHashMap;
 
+import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFDateUtil;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.ss.usermodel.Row;
@@ -128,6 +131,75 @@ public class Calculation {
 		}
 
 	}
+	
+	public String entryTEST(Entry entry, TYPES typeJournal, TYPES typeLease) throws Exception{
+
+		try {
+
+			OPCPackage pkg;
+			System.out.println("opening file");
+			InputStream file = getFileTEST();
+			pkg = OPCPackage.open(file);
+			XSSFWorkbook wb = new XSSFWorkbook(pkg);
+			XSSFSheet sheet = wb.getSheetAt(1);
+			FormulaEvaluator evaluator = wb.getCreationHelper().createFormulaEvaluator();
+
+			for (Row r : sheet) {
+				///ONLY PUT COLUMN No in map id
+				int row = r.getRowNum();
+
+				if(r.getRowNum()>= 5)
+				{
+					
+					System.out.println("In Row" +r.getRowNum());
+					Cell c = r.getCell(0);
+
+					evaluateCell(evaluator, c);
+
+					System.out.println(c.getColumnIndex());
+					if (HSSFDateUtil.isCellDateFormatted(c)) {
+						LocalDateTime date = c.getLocalDateTimeCellValue();
+						System.out.println(date.getYear());
+						if(date.getYear() == entry.getYear()) {
+						//if(date.getYear() == entry.getCommencementDate().getYear()+1900){ // ADDED FOR getting data from commencemt date
+							Row selectedRow = r;
+							
+							//evaluateCell(evaluator, selectedRow.getCell(5), selectedRow.getCell(6), selectedRow.getCell(7), selectedRow.getCell(8), selectedRow.getCell(9), selectedRow.getCell(10), selectedRow.getCell(11), selectedRow.getCell(12), selectedRow.getCell(13), selectedRow.getCell(14), selectedRow.getCell(15), selectedRow.getCell(16), selectedRow.getCell(17));
+							//map.put("dr",selectedRow.getCell(5).getNumericCellValue()+"");
+						//	entry.getCommencementDate();
+							
+							// ADDED FOR getting data from commencemt date
+							Cell monthCell = null;
+							
+							if(entry.getCommencementDate().getMonth() != 0 && entry.getMonth() < entry.getCommencementDate().getMonth()+1)// ADDED FOR getting data from commencemt date
+							{
+								Row selectedRowAbove = sheet.getRow(r.getRowNum()-1); 
+								monthCell = selectedRowAbove.getCell(getMonthCell(entry.getMonth(), sheet.getRow(4), evaluator));
+									
+							}
+							else 
+							{
+							 monthCell =selectedRow.getCell(getMonthCell(entry.getMonth(), sheet.getRow(4), evaluator));
+							}
+							
+							
+							evaluateCell(evaluator, monthCell);
+							
+							if(entry.getYear() < entry.getCommencementDate().getYear()+1900 ||
+								(entry.getYear() == entry.getCommencementDate().getYear()+1900 && entry.getMonth() < entry.getCommencementDate().getMonth()+1)){
+								double dr = monthCell.getNumericCellValue();
+							}
+							else {
+								double dr1 = monthCell.getNumericCellValue();
+							}
+						}}}}
+			
+			
+		}catch(Exception ex) {
+			
+		}
+		return json;
+	}
 
 	public String entryJournal(Entry entry, TYPES typeJournal, TYPES typeLease) throws Exception{
 
@@ -229,10 +301,21 @@ public class Calculation {
 		System.out.println("returning file");
 		return file;
 	}
+	
+	protected InputStream getFileTEST() throws Exception {
+		String fileName = "static/test.xlsx";
+		System.out.println("opening file"+ fileName);
+		ClassLoader classLoader =  this.getClass().getClassLoader();
+		System.out.println("here");
+		InputStream file = classLoader.getResourceAsStream(fileName);
+		System.out.println("returning file");
+		return file;
+	}
+	
 
 	protected void updateValues(Entry entry, Sheet sheetLease) {
 		sheetLease.getRow(3).getCell(0).setCellValue(entry.getLeaseContractNo());	
-		sheetLease.getRow(3).getCell(1).setCellValue(entry.getCommencementDate());	
+		sheetLease.getRow(3).getCell(1).setCellValue(getPreviousDate(entry.getCommencementDate()));	
 		sheetLease.getRow(3).getCell(2).setCellValue(entry.getPaymentsAt());	
 		sheetLease.getRow(3).getCell(3).setCellValue(entry.getAnnualDiscountRate());	
 		sheetLease.getRow(3).getCell(4).setCellValue(entry.getLeaseTerm());	
@@ -245,6 +328,14 @@ public class Calculation {
 		sheetLease.getRow(3).getCell(11).setCellValue(entry.getUsefulLifeOfTheAsset());	
 		sheetLease.getRow(3).getCell(12).setCellValue(entry.getEscalation());	
 		sheetLease.getRow(3).getCell(13).setCellValue(entry.getEscalationAfterEvery());
+	}
+	
+	private Date getPreviousDate(Date date) {
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(date);
+		cal.add(Calendar.HOUR, -5);
+		Date fiveHourBack = cal.getTime();
+		return fiveHourBack;
 	}
 
 	protected void printValues(Sheet sheetLease) {
@@ -429,8 +520,7 @@ public class Calculation {
 
 	@SuppressWarnings("deprecation")
 	public String calculateJournal(XSSFWorkbook wb, Entry entry, int journalType, int leaseType) throws InvalidFormatException, IOException {
-
-
+		
 		System.out.println("calculating Journal Yearly");
 		FormulaEvaluator evaluator = wb.getCreationHelper().createFormulaEvaluator();
 
@@ -445,11 +535,12 @@ public class Calculation {
 		int count = 0;
 		LinkedHashMap<String, String> map = new LinkedHashMap<String, String>();
 
+		
 		for (Row r : sheet) {
 			///ONLY PUT COLUMN No in map id
 			int row = r.getRowNum();
 
-			if(r.getRowNum()>= 5 && count < leaseTerms)
+			if(r.getRowNum()>= 5 && count <= leaseTerms)
 			{
 				count ++;
 				System.out.println("In Row" +r.getRowNum());
@@ -460,6 +551,7 @@ public class Calculation {
 				System.out.println(c.getColumnIndex());
 				if (HSSFDateUtil.isCellDateFormatted(c)) {
 					LocalDateTime date = c.getLocalDateTimeCellValue();
+					System.out.println(date.getYear());
 					if(date.getYear() == entry.getYear()) {
 					//if(date.getYear() == entry.getCommencementDate().getYear()+1900){ // ADDED FOR getting data from commencemt date
 						Row selectedRow = r;
@@ -470,6 +562,7 @@ public class Calculation {
 						
 						// ADDED FOR getting data from commencemt date
 						Cell monthCell = null;
+						
 						if(entry.getCommencementDate().getMonth() != 0 && entry.getMonth() < entry.getCommencementDate().getMonth()+1)// ADDED FOR getting data from commencemt date
 						{
 							Row selectedRowAbove = sheet.getRow(r.getRowNum()-1); 
@@ -480,12 +573,12 @@ public class Calculation {
 						{
 						 monthCell =selectedRow.getCell(getMonthCell(entry.getMonth(), sheet.getRow(4), evaluator));
 						}
-						 evaluateCell(evaluator, monthCell);
 						
-					
 						
-					if(entry.getYear() < entry.getCommencementDate().getYear()+1900 ||
-							(entry.getYear() == entry.getCommencementDate().getYear()+1900 && entry.getMonth() < entry.getCommencementDate().getMonth())){
+						evaluateCell(evaluator, monthCell);
+						
+						if(entry.getYear() < entry.getCommencementDate().getYear()+1900 ||
+							(entry.getYear() == entry.getCommencementDate().getYear()+1900 && entry.getMonth() < entry.getCommencementDate().getMonth()+1)){
 							map.put("dr", "0");
 						}
 						else {
@@ -528,7 +621,7 @@ public class Calculation {
 						}
 						else
 						{
-							
+							System.out.println(upRow.getRowNum()+ "uprow");
 							if(upRow.getRowNum() == 4)
 							{
 								map.put("repeat", "");
@@ -661,8 +754,23 @@ public class Calculation {
 						//map.put("dr",selectedRow.getCell(5).getNumericCellValue()+"");
 						entry.getCommencementDate();
 					//	Cell monthCell =selectedRow.getCell(getMonthCell(entry.getMonth(), sheet.getRow(4), evaluator));
+						//hamza 2020 aug changed dr cell from clumn 7 to column 10 
+						//and repeat from ccolumn 10 to column 8
+						evaluateCell(evaluator, selectedRow.getCell(10));
 						evaluateCell(evaluator, selectedRow.getCell(7));
-						map.put("dr", selectedRow.getCell(7).getNumericCellValue()+"");
+						evaluateCell(evaluator, selectedRow.getCell(8));
+
+						if(entry.getPaymentsAt().equalsIgnoreCase("Beginning")) {
+							map.put("dr", selectedRow.getCell(10).getNumericCellValue()+"");
+							map.put("repeat", selectedRow.getCell(8).getNumericCellValue()+"");
+
+						}
+						else {
+							map.put("dr", selectedRow.getCell(7).getNumericCellValue()+"");
+							map.put("repeat", selectedRow.getCell(10).getNumericCellValue()+"");
+
+							
+						}
 						
 						Row upRow = sheet.getRow(row-1);
 						if(upRow.getRowNum() == 3)
@@ -675,8 +783,6 @@ public class Calculation {
 						}
 						
 						map.put("total", "");
-						evaluateCell(evaluator, selectedRow.getCell(10));
-						map.put("repeat", selectedRow.getCell(10).getNumericCellValue()+"");
 						
 						evaluateCell(evaluator, selectedRow.getCell(8));
 						map.put("financeCostRemaining", selectedRow.getCell(8).getNumericCellValue()+"");
@@ -758,7 +864,11 @@ public class Calculation {
 		for (Row r : sheet) {
 			///ONLY PUT COLUMN No in map id
 			int row = r.getRowNum();
-
+			if(row == 1210)
+			{
+				System.out.println("calcul");
+			}
+			System.out.println("calculateJournalQuarterly on row:"+ row);
 			if(r.getRowNum()>= startingRow )
 			{
 				count ++;
@@ -1006,7 +1116,8 @@ public class Calculation {
 
 	protected CellType evaluateCell(FormulaEvaluator evaluator, Cell c) {
 		CellType type = null;
-		if (c.getCellType() == CellType.FORMULA) {
+		
+		if (c!= null && c.getCellType() == CellType.FORMULA) {
 			try{
 				 type = evaluator.evaluateFormulaCell(c);
 			}catch(Exception ex){

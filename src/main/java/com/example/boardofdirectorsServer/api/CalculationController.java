@@ -250,6 +250,22 @@ public class CalculationController {
 		return json;
 	}
 	
+	@PostMapping("/journal/test")
+	public String calculateJournaltest(@RequestBody Entry entryc) throws Exception
+	{
+		try {
+			Calculation c = new Calculation();
+			System.out.println("Values going For SUM  are:"+ entryc.getCommencementDate()+"::"+ entryc.getPaymentsAt()+"::"+ entryc.getAnnualDiscountRate() +"::"+ entryc.getLeaseTerm()+"::"+
+					entryc.getExpectedPeriod()+"::"+ entryc.getLeasePayment() +"::"+ entryc.getPaymentIntervals()+"::" +entryc.getInitialDirectCost()+"::"+  entryc.getGuaranteedResidualValue()
+					+"::"+ entryc.getUsefulLifeOfTheAsset()+"::"+ entryc.getEscalation()+"::"+ entryc.getEscalationAfterEvery()+"::");
+					
+			json = c.entryTEST(entryc, TYPES.JOURNAL_YEARLY, TYPES.LEASE_YEARLY);
+			return json;
+		} catch (Exception e) {
+			throw e;
+		}
+	}
+	
 
 
 }

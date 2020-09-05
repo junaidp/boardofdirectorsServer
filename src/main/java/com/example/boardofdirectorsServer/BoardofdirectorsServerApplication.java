@@ -30,20 +30,6 @@ public class BoardofdirectorsServerApplication {
 	}
 	
 
-
-	private static void callJournal() throws IOException, InvalidFormatException, Exception {
-		//	Calculation c = new Calculation();
-		Entry entry = new Entry("Lease No. 1", new Date("01/01/2020"), "Beginning", 5, 40, 2, 2670000, "Quarterly", 0, 1000000, 10, 30, 10, 2022, 01, 1);
-		
-		//	c.entry(entry);
-			
-			Calculation c = new Calculation();
-			String map = c.entryJournal(entry, TYPES.JOURNAL_QUARTERLY, TYPES.LEASE_QUARTERLY);
-			Gson gson = new Gson(); 
-			String json = gson.toJson(map);
-		//	System.out.println(json);
-	}
-	
 	private  static void callFTA() throws IOException, InvalidFormatException, Exception {
 		//	Calculation c = new Calculation();
 			Entry entry = new Entry("Lease No. 1", new Date("03/15/2016"), "Beginning", 5 , 20, 20, 100000, "Yearly", 0, 0, 25, 10, 2, 2020, 04, 1);
