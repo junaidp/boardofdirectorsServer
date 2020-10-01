@@ -5,6 +5,8 @@ import java.util.Date;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 @Document
 public class User {
 
@@ -14,7 +16,7 @@ public class User {
 	private String email;
 	private String city;
 	private String companyAddress;
-	private Integer contactNumber;
+	private String contactNumber;
 	private String currency;
 	private String userType;
 	private String password;
@@ -22,7 +24,7 @@ public class User {
 	private int userId;
 	
 	
-
+	
 	public String getName() {
 		return name;
 	}
@@ -65,10 +67,10 @@ public class User {
 	public void setCurrency(String currency) {
 		this.currency = currency;
 	}
-	public Integer getContactNumber() {
+	public String getContactNumber() {
 		return contactNumber;
 	}
-	public void setContactNumber(Integer contactNumber) {
+	public void setContactNumber(String contactNumber) {
 		this.contactNumber = contactNumber;
 	}
 	public String getUserType() {

@@ -27,7 +27,9 @@ public class UserController {
 	
 	@PostMapping("/saveUser")
 	public String saveUser(@RequestBody User userEntity)
+	
 	{
+	//	userEntity.setContactNumber(Integer.parseInt(userEntity.getContactNumber()));
 		userEntity.setUserId(user.getAvaiablaeUserId());
 		return user.saveUser(userEntity);
 	}
