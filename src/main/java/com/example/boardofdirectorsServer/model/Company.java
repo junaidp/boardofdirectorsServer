@@ -1,3 +1,4 @@
+
 package com.example.boardofdirectorsServer.model;
 
 import java.util.Date;
@@ -6,7 +7,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document
-public class User {
+public class Company {
 
 	@Id
 	private String id;
@@ -20,8 +21,23 @@ public class User {
 	private String password;
 	private String paymentSchedule;
 	private Date creationDate = new Date();
-	private int userId;
 	private int companyId;
+
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	public int getCompanyId() {
+		return companyId;
+	}
+
+	public void setCompanyId(int companyId) {
+		this.companyId = companyId;
+	}
 
 	public String getName() {
 		return name;
@@ -29,30 +45,6 @@ public class User {
 
 	public void setName(String name) {
 		this.name = name;
-	}
-
-	public Date getCreationDate() {
-		return creationDate;
-	}
-
-	public void setCreationDate(Date creationDate) {
-		this.creationDate = creationDate;
-	}
-
-	public String getPassword() {
-		return password;
-	}
-
-	public void setPassword(String password) {
-		this.password = password;
-	}
-
-	public int getUserId() {
-		return userId;
-	}
-
-	public void setUserId(int userId) {
-		this.userId = userId;
 	}
 
 	public String getEmail() {
@@ -71,12 +63,12 @@ public class User {
 		this.city = city;
 	}
 
-	public String getCurrency() {
-		return currency;
+	public String getCompanyAddress() {
+		return companyAddress;
 	}
 
-	public void setCurrency(String currency) {
-		this.currency = currency;
+	public void setCompanyAddress(String companyAddress) {
+		this.companyAddress = companyAddress;
 	}
 
 	public String getContactNumber() {
@@ -87,6 +79,14 @@ public class User {
 		this.contactNumber = contactNumber;
 	}
 
+	public String getCurrency() {
+		return currency;
+	}
+
+	public void setCurrency(String currency) {
+		this.currency = currency;
+	}
+
 	public String getUserType() {
 		return userType;
 	}
@@ -95,12 +95,12 @@ public class User {
 		this.userType = userType;
 	}
 
-	public String getCompanyAddress() {
-		return companyAddress;
+	public String getPassword() {
+		return password;
 	}
 
-	public void setCompanyAddress(String companyAddress) {
-		this.companyAddress = companyAddress;
+	public void setPassword(String password) {
+		this.password = password;
 	}
 
 	public String getPaymentSchedule() {
@@ -111,12 +111,12 @@ public class User {
 		this.paymentSchedule = paymentSchedule;
 	}
 
-	public int getCompanyId() {
-		return companyId;
+	public Date getCreationDate() {
+		return creationDate;
 	}
 
-	public void setCompanyId(int companyId) {
-		this.companyId = companyId;
+	public void setCreationDate(Date creationDate) {
+		this.creationDate = creationDate;
 	}
 
 }

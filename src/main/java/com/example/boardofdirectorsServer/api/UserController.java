@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.boardofdirectorsServer.helper.UserHelper;
+import com.example.boardofdirectorsServer.model.Company;
 import com.example.boardofdirectorsServer.model.User;
 import com.example.boardofdirectorsServer.model.UserTest;
 
@@ -27,19 +28,49 @@ public class UserController {
 	{
 		// userEntity.setContactNumber(Integer.parseInt(userEntity.getContactNumber()));
 		userEntity.setUserId(user.getAvaiablaeUserId());
-		return user.saveUser(userEntity);
+		if (userEntity.getUserType().equals("individual")) {
+
+			return user.saveUser(userEntity);
+		} else {
+			Company company = new Company();
+			company.setName(userEntity.getName());
+			company.setCompanyId(user.getAvaiablaeCompanyId());
+			company.setEmail(userEntity.getEmail());
+			company.setCity(userEntity.getCity());
+			company.setCompanyAddress(userEntity.getCompanyAddress());
+			company.setContactNumber(userEntity.getContactNumber());
+			company.setCreationDate(userEntity.getCreationDate());
+			company.setCurrency(userEntity.getCurrency());
+			company.setPassword(userEntity.getPassword());
+			company.setPaymentSchedule(userEntity.getPaymentSchedule());
+			company.setUserType(userEntity.getUserType());
+
+			return user.saveCompany(company);
+		}
+
 	}
 
 	@PostMapping("/signIn")
 	public String singIn(@RequestBody UserTest userTest) throws Exception {
 		System.out.println(userTest.getName() + "," + userTest.getPassword());
-		return user.getUser(userTest.getName(), userTest.getPassword());
+		String loggedInCredentials = user.getUser(userTest.getName(), userTest.getPassword());
+
+		if (loggedInCredentials.equals("null")) {
+			return loggedInCredentials = user.getCompany(userTest.getName(), userTest.getPassword());
+		} else {
+			return loggedInCredentials;
+		}
 
 	}
 
 	@GetMapping("/getAllUsers")
 	public String getAllUsers() {
 		return user.getAllUsers();
+	}
+
+	@GetMapping("/getCompanyUsers")
+	public String getCompanyUsers(@RequestParam String companyId) throws Exception {
+		return user.getCompanyUsers(companyId);
 	}
 
 	@GetMapping("/getUserWithId")
