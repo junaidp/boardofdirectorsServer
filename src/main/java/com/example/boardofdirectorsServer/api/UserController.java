@@ -52,6 +52,7 @@ public class UserController {
 
 	@PostMapping("/signIn")
 	public String singIn(@RequestBody UserTest userTest) throws Exception {
+
 		System.out.println(userTest.getName() + "," + userTest.getPassword());
 		String loggedInCredentials = user.getUser(userTest.getName(), userTest.getPassword());
 

@@ -8,9 +8,11 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Component;
 
+import com.example.boardofdirectorsServer.model.ClassOfAsset;
 import com.example.boardofdirectorsServer.model.Company;
 import com.example.boardofdirectorsServer.model.User;
 import com.example.boardofdirectorsServer.model.UserData;
+import com.example.boardofdirectorsServer.repository.ClassOfAssetRepository;
 import com.example.boardofdirectorsServer.repository.UserDataRepository;
 import com.example.boardofdirectorsServer.repository.UserRepository;
 import com.google.gson.Gson;
@@ -22,6 +24,8 @@ public class DataHelper {
 	UserRepository userRepository;
 	@Autowired
 	UserDataRepository userDataRepository;
+	@Autowired
+	ClassOfAssetRepository classOfAssetRepository;
 	@Autowired
 	MongoOperations mongoOperation;
 	Gson gson = new Gson();
@@ -171,6 +175,29 @@ public class DataHelper {
 
 		}
 		return false;
+	}
+
+	public String getClassOfAsset() {
+		System.out.println("in get all users");
+		String jsonAssets = null;
+		try {
+			List<ClassOfAsset> classOfAssets = classOfAssetRepository.findAll();
+			jsonAssets = gson.toJson(classOfAssets);
+		} catch (Exception ex) {
+			System.out.println(ex);
+		}
+		return jsonAssets;
+	}
+
+	public String saveData(ClassOfAsset data) {
+		try {
+
+			classOfAssetRepository.save(data);
+			return "Succcess:  Class of Asset saved";
+
+		} catch (Exception ex) {
+			throw ex;
+		}
 	}
 
 }

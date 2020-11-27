@@ -91,7 +91,7 @@ public class UserHelper {
 			System.out.println("{ name : '" + name + "'}");
 			System.out.println("{ password : '" + password + "'}");
 			Query query = new Query();
-			query.addCriteria(Criteria.where("name").is(name).and("password").is(password));
+			query.addCriteria(Criteria.where("email").is(name).and("password").is(password));
 			// BasicQuery query1 = new BasicQuery("{ name : '"+name+"'} , {
 			// password: '"+password+"'}");
 			System.out.println("ff");
@@ -187,6 +187,15 @@ public class UserHelper {
 		try {
 			userRepository.deleteAll();
 			return "user's deleted";
+		} catch (Exception ex) {
+			throw ex;
+		}
+	}
+
+	public String deleteAllCompanies() {
+		try {
+			companyRepository.deleteAll();
+			return "companies deleted";
 		} catch (Exception ex) {
 			throw ex;
 		}

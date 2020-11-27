@@ -13,6 +13,11 @@ public class UserData {
 	private String leaseContractNo;
 	private Date commencementDate;
 	private String paymentsAt;
+	private String leaseName;
+	private String lessorName;
+	private String lesseeName;
+	private String location;
+	private String classOfAsset;
 	private float annualDiscountRate;
 	private int leaseTerm;
 	private int expectedPeriod;
@@ -170,6 +175,46 @@ public class UserData {
 
 	public void setCompanyId(int companyId) {
 		this.companyId = companyId;
+	}
+
+	public String getLeaseName() {
+		return leaseName;
+	}
+
+	public void setLeaseName(String leaseName) {
+		this.leaseName = leaseName;
+	}
+
+	public String getLessorName() {
+		return lessorName;
+	}
+
+	public void setLessorName(String lessorName) {
+		this.lessorName = lessorName;
+	}
+
+	public String getLesseeName() {
+		return lesseeName;
+	}
+
+	public void setLesseeName(String lesseeName) {
+		this.lesseeName = lesseeName;
+	}
+
+	public String getLocation() {
+		return location;
+	}
+
+	public void setLocation(String location) {
+		this.location = location;
+	}
+
+	public String getClassOfAsset() {
+		return classOfAsset;
+	}
+
+	public void setClassOfAsset(String classOfAsset) {
+		this.classOfAsset = classOfAsset;
 	}
 
 }
