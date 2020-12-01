@@ -27,14 +27,19 @@ public class ReportHelper {
 
 			Query query = new Query();
 			Criteria critOr = new Criteria();
+			// Criteria critAnd = new Criteria();
+			// critAnd =
+			// critAnd.and("userId").is(reportFilterEntity.getUserId());
+
 			critOr.orOperator(Criteria.where("classOfAsset").is(reportFilterEntity.getClassOfAsset()),
 					Criteria.where("lessorName").is(reportFilterEntity.getLessorName()),
-					Criteria.where("userId").is(reportFilterEntity.getUserId()),
 					Criteria.where("companyId").is(reportFilterEntity.getCompanyId()),
-					Criteria.where("classOfAsset").is(reportFilterEntity.getClassOfAsset()),
 					Criteria.where("leaseName").is(reportFilterEntity.getLeaseName()));
+			critOr.andOperator(Criteria.where("userId").is(reportFilterEntity.getUserId()));
 
 			query.addCriteria(critOr);
+			// critAnd.orOperator(critOr);
+			// query.addCriteria(critAnd);
 
 			List<UserData> userdata = mongoOperation.find(query, UserData.class);
 			System.out.println(userdata);

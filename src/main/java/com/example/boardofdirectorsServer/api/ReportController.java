@@ -2,7 +2,7 @@ package com.example.boardofdirectorsServer.api;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -18,7 +18,7 @@ public class ReportController {
 	@Autowired
 	ReportHelper reportHelper;
 
-	@GetMapping("/getReportData")
+	@PostMapping("/getReportData")
 	public String getReportData(@RequestBody ReportFilterEntity reportEntity) {
 		return reportHelper.getFilteredReportData(reportEntity);
 	}
