@@ -69,6 +69,13 @@ public class UserHelper {
 			System.out.println("{ name : '" + name + "'}");
 			System.out.println("{ password : '" + password + "'}");
 			Query query = new Query();
+
+			if (name == "All") {
+				query.addCriteria(Criteria.where("email").is(name));
+			}
+			if (password == "All") {
+				query.addCriteria(Criteria.where("password").is(password));
+			}
 			query.addCriteria(Criteria.where("email").is(name).and("password").is(password));
 			// BasicQuery query1 = new BasicQuery("{ name : '"+name+"'} , {
 			// password: '"+password+"'}");

@@ -193,7 +193,7 @@ public class DataHelper {
 		try {
 
 			classOfAssetRepository.save(data);
-			return "Succcess:  Class of Asset saved";
+			return "Success:data Class of Asset saved";
 
 		} catch (Exception ex) {
 			throw ex;
