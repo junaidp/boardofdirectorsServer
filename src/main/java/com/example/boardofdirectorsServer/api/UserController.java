@@ -79,4 +79,14 @@ public class UserController {
 		return user.getUserWithId(userId);
 	}
 
+	@GetMapping("/deleteAllUsers")
+	public String deleteAllUsers() throws Exception {
+		return user.deleteAll();
+	}
+
+	@GetMapping("/deleteAllCompanies")
+	public String deleteAllCompanies() throws Exception {
+		return user.deleteAllCompanies();
+	}
+
 }

@@ -66,4 +66,9 @@ public class DataController {
 		return userData.saveData(classAssetEntity);
 	}
 
+	@GetMapping("/deleteAllData")
+	public String deleteAllData() {
+		return userData.deleteAllData();
+	}
+
 }

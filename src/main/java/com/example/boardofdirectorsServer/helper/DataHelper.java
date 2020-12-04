@@ -50,7 +50,7 @@ public class DataHelper {
 	public String deleteAllData() {
 		try {
 			userDataRepository.deleteAll();
-			return "user's data saved";
+			return "user's data deleted";
 		} catch (Exception ex) {
 			throw ex;
 		}
