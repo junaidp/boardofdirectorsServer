@@ -16,7 +16,7 @@ import com.example.boardofdirectorsServer.repository.UserRepository;
 import com.google.gson.Gson;
 
 @Component
-public class UserHelper {
+public class UserHelper extends BaseHelper {
 
 	@Autowired
 	UserRepository userRepository;

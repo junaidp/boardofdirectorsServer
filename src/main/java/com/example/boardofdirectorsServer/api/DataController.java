@@ -25,8 +25,8 @@ public class DataController {
 	DataHelper userData;
 
 	@PostMapping("/saveData")
-	public String saveUser(@RequestBody UserData userEntity) {
-		return userData.saveData(userEntity);
+	public String saveData(@RequestBody UserData dataEntity) {
+		return userData.saveData(dataEntity);
 	}
 
 	@GetMapping("/getData")
@@ -34,6 +34,16 @@ public class DataController {
 		int userIdInt = Integer.parseInt(userId);
 		System.out.println(userId);
 		List<UserData> s = userData.getUserData(userIdInt);
+		Gson gson = new Gson();
+		return gson.toJson(s);
+
+	}
+
+	@GetMapping("/getUserDataByDataId")
+	public String getUserDataByDataId(@RequestParam String dataId) throws Exception {
+		int dataIdInt = Integer.parseInt(dataId);
+		System.out.println(dataIdInt);
+		List<UserData> s = userData.getUserDataByDataId(dataId);
 		Gson gson = new Gson();
 		return gson.toJson(s);
 

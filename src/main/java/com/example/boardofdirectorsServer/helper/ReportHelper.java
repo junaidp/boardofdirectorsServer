@@ -33,7 +33,9 @@ public class ReportHelper {
 
 			critOr.orOperator(Criteria.where("classOfAsset").is(reportFilterEntity.getClassOfAsset()),
 					Criteria.where("lessorName").is(reportFilterEntity.getLessorName()),
-					Criteria.where("companyId").is(reportFilterEntity.getCompanyId()),
+					Criteria.where("location").is(reportFilterEntity.getLocation()),
+					Criteria.where("commencementDate").is(reportFilterEntity.getDate()),
+					// Criteria.where("companyId").is(reportFilterEntity.getCompanyId()),
 					Criteria.where("leaseName").is(reportFilterEntity.getLeaseName()));
 			critOr.andOperator(Criteria.where("userId").is(reportFilterEntity.getUserId()));
 

@@ -32,6 +32,7 @@ public class UserData {
 	private int month;
 	private int userId;
 	private int companyId;
+	private int id;
 
 	public String getLeaseContractNo() {
 		return leaseContractNo;
@@ -215,6 +216,14 @@ public class UserData {
 
 	public void setClassOfAsset(String classOfAsset) {
 		this.classOfAsset = classOfAsset;
+	}
+
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
 	}
 
 }

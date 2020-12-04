@@ -14,14 +14,11 @@ import com.example.boardofdirectorsServer.model.User;
 import com.example.boardofdirectorsServer.model.UserData;
 import com.example.boardofdirectorsServer.repository.ClassOfAssetRepository;
 import com.example.boardofdirectorsServer.repository.UserDataRepository;
-import com.example.boardofdirectorsServer.repository.UserRepository;
 import com.google.gson.Gson;
 
 @Component
 public class DataHelper {
 
-	@Autowired
-	UserRepository userRepository;
 	@Autowired
 	UserDataRepository userDataRepository;
 	@Autowired
@@ -39,6 +36,7 @@ public class DataHelper {
 			User user = getUserWithId(data.getUserId() + "");
 			Boolean allow = allowSave(user, data);
 			if (allow) {
+				data.setId(getAvaiablaeDataId());
 				userDataRepository.save(data);
 				return "Success :user's data saved";
 			} else {
@@ -64,6 +62,28 @@ public class DataHelper {
 			System.out.println("{ Mongooperation: '" + mongoOperation + "'}");
 			Query query = new Query();
 			query.addCriteria(Criteria.where("userId").is(userId));
+			// BasicQuery query1 = new BasicQuery("{ name : '"+name+"'} , {
+			// password: '"+password+"'}");
+			System.out.println("ff");
+			List<UserData> userdata = mongoOperation.find(query, UserData.class);
+			System.out.println(userdata);
+			if (userdata == null)
+				return null;
+			return userdata;
+			// String json = gson.toJson(userdata);
+			// return json;
+		} catch (Exception ex) {
+			System.out.println("Error is :" + ex.getMessage());
+			throw ex;
+		}
+	}
+
+	public List<UserData> getUserDataByDataId(String dataId) {
+		try {
+			System.out.println("{ dataId : '" + dataId + "'}");
+			System.out.println("{ Mongooperation: '" + mongoOperation + "'}");
+			Query query = new Query();
+			query.addCriteria(Criteria.where("dataId").is(dataId));
 			// BasicQuery query1 = new BasicQuery("{ name : '"+name+"'} , {
 			// password: '"+password+"'}");
 			System.out.println("ff");
@@ -198,6 +218,13 @@ public class DataHelper {
 		} catch (Exception ex) {
 			throw ex;
 		}
+	}
+
+	public int getAvaiablaeDataId() {
+		Long total = userDataRepository.count();
+		int count = total.intValue();
+		return count + 1;
+
 	}
 
 }

@@ -11,6 +11,7 @@ public class ReportFilterEntity {
 	@Id
 	private String dataId;
 	private String leaseContractNo;
+	private String quickReport;
 	private Date date;
 	private Date startingDate;
 	private Date endingDate;
