@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.boardofdirectorsServer.helper.DataHelper;
@@ -55,6 +56,47 @@ public class CalculationController {
 		} catch (Exception e) {
 			throw e;
 		}
+	}
+
+	@GetMapping("/lease/yearlyByDataId")
+	public String calculateLeaseYearlyByDataId(@RequestParam String dataId) throws Exception {
+		try {
+			int dataIdInt = Integer.parseInt(dataId);
+			UserData userData = dataHelper.getUserDataByDataId(dataIdInt);
+			// if (userData == null) {
+			Entry e = new Entry();
+			setEntryObject(userData, e);
+			// }
+
+			Calculation c = new Calculation();
+			json = c.entryLease(e, Constants.LEASE_YEARLY);
+			return json;
+		} catch (Exception e) {
+			throw e;
+		}
+	}
+
+	private void setEntryObject(UserData userData, Entry e) {
+		float escalation = userData.getEscalation() / 100;
+		float annuadlDiscountRate = userData.getAnnualDiscountRate() / 100;
+		round(annuadlDiscountRate, 2);
+		round(escalation, 2);
+
+		e.setAnnualDiscountRate(annuadlDiscountRate);
+		e.setCommencementDate(userData.getCommencementDate());
+		e.setCompanyId(userData.getCompanyId());
+		e.setUserId(userData.getUserId());
+		e.setEscalation(escalation);
+		e.setEscalationAfterEvery(userData.getEscalationAfterEvery());
+		e.setExpectedPeriod(userData.getExpectedPeriod());
+		e.setGuaranteedResidualValue(userData.getGuaranteedResidualValue());
+		e.setInitialDirectCost(userData.getInitialDirectCost());
+		e.setLeaseContractNo(userData.getLeaseContractNo());
+		e.setLeasePayment(userData.getLeasePayment());
+		e.setLeaseTerm(userData.getLeaseTerm());
+		e.setPaymentIntervals(userData.getPaymentIntervals());
+		e.setPaymentsAt(userData.getPaymentsAt());
+
 	}
 
 	@PostMapping("/lease/quarterly")
@@ -154,6 +196,14 @@ public class CalculationController {
 				map.put("commencementDate", entryc.getCommencementDate() + "");
 				map.put("paymentsAt", entryc.getPaymentsAt());
 				map.put("paymentIntervals", entryc.getPaymentIntervals());
+				map.put("leaseName", userData.getLeaseName());
+				map.put("lessorName", userData.getLessorName());
+				map.put("referenceNo", userData.getLeaseContractNo());
+				map.put("classOfAsset", userData.getClassOfAsset());
+				map.put("id", userData.getId() + "");
+
+				// map.put("payment", value)
+
 				mapFinal.put(userData.getDataId(), map);
 
 			}

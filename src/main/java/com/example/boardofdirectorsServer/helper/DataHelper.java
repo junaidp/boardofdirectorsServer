@@ -78,16 +78,18 @@ public class DataHelper {
 		}
 	}
 
-	public List<UserData> getUserDataByDataId(String dataId) {
+	public UserData getUserDataByDataId(Integer dataId) {
 		try {
 			System.out.println("{ dataId : '" + dataId + "'}");
 			System.out.println("{ Mongooperation: '" + mongoOperation + "'}");
 			Query query = new Query();
-			query.addCriteria(Criteria.where("dataId").is(dataId));
+			query.addCriteria(Criteria.where("id").is(dataId));
 			// BasicQuery query1 = new BasicQuery("{ name : '"+name+"'} , {
 			// password: '"+password+"'}");
 			System.out.println("ff");
-			List<UserData> userdata = mongoOperation.find(query, UserData.class);
+			UserData userdata = mongoOperation.findOne(query, UserData.class);
+			// List<UserData> userdata = mongoOperation.find(query,
+			// UserData.class);
 			System.out.println(userdata);
 			if (userdata == null)
 				return null;

@@ -43,9 +43,9 @@ public class DataController {
 	public String getUserDataByDataId(@RequestParam String dataId) throws Exception {
 		int dataIdInt = Integer.parseInt(dataId);
 		System.out.println(dataIdInt);
-		List<UserData> s = userData.getUserDataByDataId(dataId);
+		UserData userDataObject = userData.getUserDataByDataId(dataIdInt);
 		Gson gson = new Gson();
-		return gson.toJson(s);
+		return gson.toJson(userDataObject);
 
 	}
 
