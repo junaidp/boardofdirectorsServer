@@ -24,6 +24,9 @@ public class UserHelper {
 	CompanyReprository companyRepository;
 	@Autowired
 	MongoOperations mongoOperation;
+	@Autowired
+	Utility utility;
+
 	Gson gson = new Gson();
 
 	public String saveUser(User user) {
@@ -32,7 +35,11 @@ public class UserHelper {
 			// setPaymentSchedule(user);
 			System.out.println("Saving user" + user);
 			if (checkUserEmailAlreadyExists(user)) {
+				// Account will be always InActive , Unless verified by Admin
+				user.setActive(false);
 				userRepository.save(user);
+				// Send Verification Email to Admin
+				sendVerificationEmailToAdmin(user.getUserId());
 				saveResponce = "Success:user Saved Successfully";
 			} else {
 				saveResponce = "Failure: Sorry User with this email Already Exists!";
@@ -251,6 +258,44 @@ public class UserHelper {
 			System.out.println(ex);
 		}
 		return emailExists;
+	}
+
+	public String sendVerificationEmailToAdmin(int userId) {
+		Query query = new Query();
+		Query queryCompany = new Query();
+
+		query.addCriteria(Criteria.where("userId").is(userId));
+		User user = mongoOperation.findOne(query, User.class);
+
+		queryCompany.addCriteria(Criteria.where("companyId").is(user.getCompanyId()));
+		Company company = mongoOperation.findOne(queryCompany, Company.class);
+
+		System.out.println("Sending Verification Email to: " + company.getEmail() + "For User : " + user.getName());
+
+		String url = utility.mainUrl + "/users/activateUser?userId=" + userId + "";
+		String content = "<a href='" + url + "'> Activate Account </a>";
+		String message = "Pls click the link to activate the Account for user: " + user.getName() + "<br>";
+
+		utility.sendEmail(message + content, company.getEmail(), "junaidp@gmail.com", "Account Verificationf or E2L");
+
+		String json = gson.toJson(user);
+
+		return json;
+
+	}
+
+	public String activateUser(int userId) {
+		try {
+			Query query = new Query();
+
+			query.addCriteria(Criteria.where("userId").is(userId));
+			User user = mongoOperation.findOne(query, User.class);
+			user.setActive(true);
+			userRepository.save(user);
+		} catch (Exception ex) {
+			return "Failed to activate account: " + ex;
+		}
+		return "Account activated";
 	}
 
 }

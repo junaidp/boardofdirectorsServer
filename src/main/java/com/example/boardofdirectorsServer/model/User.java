@@ -22,6 +22,7 @@ public class User {
 	private Date creationDate = new Date();
 	private int userId;
 	private int companyId;
+	private boolean active;
 
 	public String getName() {
 		return name;
@@ -117,6 +118,14 @@ public class User {
 
 	public void setCompanyId(int companyId) {
 		this.companyId = companyId;
+	}
+
+	public boolean isActive() {
+		return active;
+	}
+
+	public void setActive(boolean active) {
+		this.active = active;
 	}
 
 }

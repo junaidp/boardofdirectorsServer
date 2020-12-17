@@ -89,4 +89,17 @@ public class UserController {
 		return user.deleteAllCompanies();
 	}
 
+	// Not to be called from controller..
+	// This will be from Inside SignUp Method (after user account Created with
+	// status:notActive)
+	@GetMapping("/sendVerificationEmailToAdmin")
+	public String sendVerificationEmailToAdmin(@RequestParam int userId) throws Exception {
+		return user.sendVerificationEmailToAdmin(userId);
+	}
+
+	@PostMapping("/activateUser")
+	public String activateUser(@RequestParam int userId) throws Exception {
+		return user.activateUser(userId);
+	}
+
 }
