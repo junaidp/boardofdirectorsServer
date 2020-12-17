@@ -23,6 +23,7 @@ public class UserData {
 	private int expectedPeriod;
 	private double leasePayment;
 	private String paymentIntervals;
+	private String contractCurrency;
 	private int initialDirectCost;
 	private double guaranteedResidualValue;
 	private int usefulLifeOfTheAsset;
@@ -40,6 +41,7 @@ public class UserData {
 	private String answer5;
 	private String answer6;
 	private String answer7;
+	private String conclusion;
 
 	public String getLeaseContractNo() {
 		return leaseContractNo;
@@ -287,6 +289,22 @@ public class UserData {
 
 	public void setAnswer7(String answer7) {
 		this.answer7 = answer7;
+	}
+
+	public String getConclusion() {
+		return conclusion;
+	}
+
+	public void setConclusion(String conclusion) {
+		this.conclusion = conclusion;
+	}
+
+	public String getContractCurrency() {
+		return contractCurrency;
+	}
+
+	public void setContractCurrency(String contractCurrency) {
+		this.contractCurrency = contractCurrency;
 	}
 
 }

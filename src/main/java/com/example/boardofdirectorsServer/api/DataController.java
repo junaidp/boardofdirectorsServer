@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.boardofdirectorsServer.helper.DataHelper;
 import com.example.boardofdirectorsServer.model.ClassOfAsset;
+import com.example.boardofdirectorsServer.model.User;
 import com.example.boardofdirectorsServer.model.UserData;
 import com.google.gson.Gson;
 
@@ -30,12 +31,22 @@ public class DataController {
 	}
 
 	@GetMapping("/getData")
-	public String getData(@RequestParam String userId) throws Exception {
+	public String getData(@RequestParam String userId, @RequestParam String companyId) throws Exception {
 		int userIdInt = Integer.parseInt(userId);
+		int companyIdInt = Integer.parseInt(companyId);
+		List<UserData> data;
+		User userDetails = userData.getUserWithId(userId);
+
+		if (userDetails.getCompanyId() == 0) {
+			data = userData.getUserData(userIdInt);
+		} else {
+			data = userData.getCompanyData(companyIdInt);
+		}
+
 		System.out.println(userId);
-		List<UserData> s = userData.getUserData(userIdInt);
+		// List<UserData> data = userData.getUserData(userIdInt);
 		Gson gson = new Gson();
-		return gson.toJson(s);
+		return gson.toJson(data);
 
 	}
 
