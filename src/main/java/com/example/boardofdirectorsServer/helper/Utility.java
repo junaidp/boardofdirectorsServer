@@ -14,6 +14,7 @@ public class Utility {
 	@Autowired
 	private JavaMailSender javaMailSender;
 	public String mainUrl = "http://3f67e325e8e6.ngrok.io";
+	public String approveRequestUrl = "http://ifrsclient.herokuapp.com/RequeestApproved?id=";
 
 	public boolean sendEmail(String body, String sendTo, String cc, String subject) {
 

@@ -51,15 +51,44 @@ public class ReportHelper {
 			// critAnd =
 			// critAnd.and("userId").is(reportFilterEntity.getUserId());
 
-			critOr.orOperator(Criteria.where("classOfAsset").is(reportFilterEntity.getClassOfAsset()),
-					Criteria.where("lessorName").is(reportFilterEntity.getLessorName()),
-					Criteria.where("location").is(reportFilterEntity.getLocation()),
-					Criteria.where("commencementDate").is(reportFilterEntity.getDate()),
-					// Criteria.where("companyId").is(reportFilterEntity.getCompanyId()),
-					Criteria.where("leaseName").is(reportFilterEntity.getLeaseName()));
-			critOr.andOperator(Criteria.where("userId").is(reportFilterEntity.getUserId()));
+			if ((reportFilterEntity.getLeaseName().equals("All")) && (reportFilterEntity.getLessorName().equals("All"))
+					&& (reportFilterEntity.getClassOfAsset().equals("All"))) {
 
-			query.addCriteria(critOr);
+				query.addCriteria(Criteria.where("userId").is(reportFilterEntity.getUserId()));
+
+			} else {
+				// critOr.orOperator(Criteria.where("classOfAsset").is(reportFilterEntity.getClassOfAsset()),
+				// Criteria.where("lessorName").is(reportFilterEntity.getLessorName()),
+				// //
+				// Criteria.where("location").is(reportFilterEntity.getLocation()),
+				// //
+				// Criteria.where("commencementDate").is(reportFilterEntity.getDate()),
+				// //
+				// Criteria.where("companyId").is(reportFilterEntity.getCompanyId()),
+				// Criteria.where("leaseName").is(reportFilterEntity.getLeaseName()));
+				// critOr.andOperator(Criteria.where("lessorName").is(reportFilterEntity.getLessorName()));
+				// critOr.andOperator(Criteria.where("leaseName").is(reportFilterEntity.getLeaseName()));
+
+				Criteria criteria = new Criteria();
+				criteria = criteria.and("userId").is(reportFilterEntity.getUserId());
+				if (!reportFilterEntity.getLeaseName().equals("All")) {
+					criteria = criteria.and("leaseName").is(reportFilterEntity.getLeaseName());
+				}
+				if (!reportFilterEntity.getLessorName().equals("All")) {
+					criteria = criteria.and("lessorName").is(reportFilterEntity.getLessorName());
+				}
+				if (!reportFilterEntity.getClassOfAsset().equals("All")) {
+					criteria = criteria.and("classOfAsset").is(reportFilterEntity.getClassOfAsset());
+				}
+				// else {
+				// criteria = criteria.and("expiryDateTime").lte(new Date());
+				// }
+
+				// critOr.andOperator(Criteria.where("userId").is(reportFilterEntity.getUserId()));
+				query.addCriteria(criteria);
+
+			}
+
 			// critAnd.orOperator(critOr);
 			// query.addCriteria(critAnd);
 
@@ -88,16 +117,38 @@ public class ReportHelper {
 			// critAnd =
 			// critAnd.and("userId").is(reportFilterEntity.getUserId());
 
-			critOr.orOperator(Criteria.where("classOfAsset").is(reportFilterEntity.getClassOfAsset()),
-					Criteria.where("lessorName").is(reportFilterEntity.getLessorName()),
-					Criteria.where("location").is(reportFilterEntity.getLocation()),
-					Criteria.where("commencementDate").is(reportFilterEntity.getDate()),
-					// Criteria.where("companyId").is(reportFilterEntity.getCompanyId()),
-					Criteria.where("leaseName").is(reportFilterEntity.getLeaseName()));
-			critOr.andOperator(Criteria.where("companyId").is(reportFilterEntity.getCompanyId()));
-			// critOr.andOperator(Criteria.where("userId").is(reportFilterEntity.getUserId()));
+			if ((reportFilterEntity.getLeaseName().equals("All")) && (reportFilterEntity.getLessorName().equals("All"))
+					&& (reportFilterEntity.getClassOfAsset().equals("All"))) {
 
-			query.addCriteria(critOr);
+				query.addCriteria(Criteria.where("companyId").is(reportFilterEntity.getCompanyId()));
+
+			} else {
+				Criteria criteria = new Criteria();
+				criteria = criteria.and("companyId").is(reportFilterEntity.getCompanyId());
+				if (!reportFilterEntity.getLeaseName().equals("All")) {
+					criteria = criteria.and("leaseName").is(reportFilterEntity.getLeaseName());
+				}
+				if (!reportFilterEntity.getLessorName().equals("All")) {
+					criteria = criteria.and("lessorName").is(reportFilterEntity.getLessorName());
+				}
+				if (!reportFilterEntity.getClassOfAsset().equals("All")) {
+					criteria = criteria.and("classOfAsset").is(reportFilterEntity.getClassOfAsset());
+				}
+
+				query.addCriteria(criteria);
+				// critOr.orOperator(Criteria.where("classOfAsset").is(reportFilterEntity.getClassOfAsset()),
+				// Criteria.where("lessorName").is(reportFilterEntity.getLessorName()),
+				// Criteria.where("location").is(reportFilterEntity.getLocation()),
+				// Criteria.where("commencementDate").is(reportFilterEntity.getDate()),
+				// //
+				// Criteria.where("companyId").is(reportFilterEntity.getCompanyId()),
+				// Criteria.where("leaseName").is(reportFilterEntity.getLeaseName()));
+				// critOr.andOperator(Criteria.where("companyId").is(reportFilterEntity.getCompanyId()));
+				// //
+				// critOr.andOperator(Criteria.where("userId").is(reportFilterEntity.getUserId()));
+				//
+				// query.addCriteria(critOr);
+			}
 			// critAnd.orOperator(critOr);
 			// query.addCriteria(critAnd);
 

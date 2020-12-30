@@ -13,6 +13,7 @@ import com.example.boardofdirectorsServer.helper.UserHelper;
 import com.example.boardofdirectorsServer.model.Company;
 import com.example.boardofdirectorsServer.model.User;
 import com.example.boardofdirectorsServer.model.UserTest;
+import com.google.gson.Gson;
 
 @RequestMapping("/users")
 @RestController
@@ -21,6 +22,8 @@ public class UserController {
 
 	@Autowired
 	UserHelper user;
+
+	Gson gson = new Gson();
 
 	@PostMapping("/saveUser")
 	public String saveUser(@RequestBody User userEntity)
@@ -52,12 +55,27 @@ public class UserController {
 
 	@PostMapping("/signIn")
 	public String singIn(@RequestBody UserTest userTest) throws Exception {
-
+		String loggedInCredentials;
 		System.out.println(userTest.getName() + "," + userTest.getPassword());
-		String loggedInCredentials = user.getUser(userTest.getName(), userTest.getPassword());
+		User loggedInUser = user.getUser(userTest.getName(), userTest.getPassword());
+		// if (loggedInUser != null) {
+		// if (loggedInUser.isActive() == false) {
+		// return loggedInCredentials = "Activation Alert: You are not yet
+		// verified by the admin";
+		// }
+		// }
+
+		loggedInCredentials = gson.toJson(loggedInUser);
 
 		if (loggedInCredentials.equals("null")) {
-			return loggedInCredentials = user.getCompany(userTest.getName(), userTest.getPassword());
+			Company loggedInCompany = user.getCompany(userTest.getName(), userTest.getPassword());
+			// if (loggedInCompany != null) {
+			// if (loggedInCompany.isActive() == false) {
+			// return loggedInCredentials = "Activation Alert: You are not yet
+			// verified by the admin";
+			// }
+			// }
+			return loggedInCredentials = gson.toJson(loggedInCompany);
 		} else {
 			return loggedInCredentials;
 		}

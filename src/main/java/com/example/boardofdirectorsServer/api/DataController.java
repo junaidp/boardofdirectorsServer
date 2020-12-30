@@ -50,6 +50,27 @@ public class DataController {
 
 	}
 
+	@GetMapping("/getDataForFilters")
+	public String getDataForFilters(@RequestParam String userId, @RequestParam String companyId,
+			@RequestParam String filterName) throws Exception {
+		int userIdInt = Integer.parseInt(userId);
+		int companyIdInt = Integer.parseInt(companyId);
+		String data = null;
+		User userDetails = userData.getUserWithId(userId);
+
+		if (userDetails.getCompanyId() == 0) {
+			data = userData.getUserDataUniqueRow(userIdInt, filterName);
+		} else {
+			// ss data = userData.getCompanyData(companyIdInt);
+			data = userData.getCompanyDataUniqueRow(companyIdInt, filterName);
+		}
+
+		System.out.println(userId);
+		// List<UserData> data = userData.getUserData(userIdInt);
+		return data;
+
+	}
+
 	@GetMapping("/getUserDataByDataId")
 	public String getUserDataByDataId(@RequestParam String dataId) throws Exception {
 		int dataIdInt = Integer.parseInt(dataId);

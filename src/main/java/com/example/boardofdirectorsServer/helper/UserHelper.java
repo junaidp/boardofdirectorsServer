@@ -40,7 +40,7 @@ public class UserHelper {
 				userRepository.save(user);
 				// Send Verification Email to Admin
 				sendVerificationEmailToAdmin(user.getUserId());
-				saveResponce = "Success:user Saved Successfully";
+				saveResponce = "Success:Please wait for the approval of account by admin:You will receive email once your account is activated.";
 			} else {
 				saveResponce = "Failure: Sorry User with this email Already Exists!";
 
@@ -58,6 +58,7 @@ public class UserHelper {
 			System.out.println(company);
 			if (checkCompanyEmailAlreadyExists(company)) {
 				companyRepository.save(company);
+
 				saveResponce = "Success: Company Saved Successfully";
 			} else {
 				saveResponce = "Failure: Sorry Company with this email Already Exists!";
@@ -70,7 +71,7 @@ public class UserHelper {
 		}
 	}
 
-	public String getUser(String name, String password) {
+	public User getUser(String name, String password) {
 		try {
 
 			System.out.println("{ name : '" + name + "'}");
@@ -92,14 +93,14 @@ public class UserHelper {
 
 			String json = gson.toJson(user);
 
-			return json;
+			return user;
 		} catch (Exception ex) {
 			System.out.println("Error is :" + ex.getMessage());
 			throw ex;
 		}
 	}
 
-	public String getCompany(String name, String password) {
+	public Company getCompany(String name, String password) {
 		try {
 
 			System.out.println("{ name : '" + name + "'}");
@@ -114,7 +115,7 @@ public class UserHelper {
 
 			String json = gson.toJson(company);
 
-			return json;
+			return company;
 		} catch (Exception ex) {
 			System.out.println("Error is :" + ex.getMessage());
 			throw ex;
@@ -267,16 +268,24 @@ public class UserHelper {
 		query.addCriteria(Criteria.where("userId").is(userId));
 		User user = mongoOperation.findOne(query, User.class);
 
-		queryCompany.addCriteria(Criteria.where("companyId").is(user.getCompanyId()));
-		Company company = mongoOperation.findOne(queryCompany, Company.class);
+		// queryCompany.addCriteria(Criteria.where("companyId").is(user.getCompanyId()));
+		// Company company = mongoOperation.findOne(queryCompany,
+		// Company.class);
+		// company.getEmail()
+		// System.out.println("Sending Verification Email to: " +
+		// company.getEmail() + "For User : " + user.getName());
 
-		System.out.println("Sending Verification Email to: " + company.getEmail() + "For User : " + user.getName());
+		// String url = utility.mainUrl + "/users/activateUser?userId=" + userId
+		// + "";
+		String url = utility.approveRequestUrl + userId + "";
 
-		String url = utility.mainUrl + "/users/activateUser?userId=" + userId + "";
 		String content = "<a href='" + url + "'> Activate Account </a>";
-		String message = "Pls click the link to activate the Account for user: " + user.getName() + "<br>";
+		String message = "Please click the link to activate the Account for user: " + user.getName() + "<br>";
 
-		utility.sendEmail(message + content, company.getEmail(), "junaidp@gmail.com", "Account Verificationf or E2L");
+		utility.sendEmail(message + content, "adnankhokhar451@gmail.com", "junaidp@gmail.com",
+				"Account Verificationf or E2L");
+		// utility.sendEmail(message + content, company.getEmail(),
+		// "junaidp@gmail.com", "Account Verificationf or E2L");
 
 		String json = gson.toJson(user);
 

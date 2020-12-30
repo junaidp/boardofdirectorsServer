@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoOperations;
+import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Component;
@@ -25,6 +26,8 @@ public class DataHelper {
 	ClassOfAssetRepository classOfAssetRepository;
 	@Autowired
 	MongoOperations mongoOperation;
+	@Autowired
+	MongoTemplate mongoTemplate;
 	Gson gson = new Gson();
 
 	public String saveData(UserData data) {
@@ -65,13 +68,32 @@ public class DataHelper {
 			// BasicQuery query1 = new BasicQuery("{ name : '"+name+"'} , {
 			// password: '"+password+"'}");
 			System.out.println("ff");
+
 			List<UserData> userdata = mongoOperation.find(query, UserData.class);
+
 			System.out.println(userdata);
 			if (userdata == null)
 				return null;
 			return userdata;
 			// String json = gson.toJson(userdata);
 			// return json;
+		} catch (Exception ex) {
+			System.out.println("Error is :" + ex.getMessage());
+			throw ex;
+		}
+	}
+
+	public String getUserDataUniqueRow(int userId, String columnName) {
+		try {
+			System.out.println("{ userId : '" + userId + "'}");
+			System.out.println("{ Mongooperation: '" + mongoOperation + "'}");
+			Query query = new Query();
+			query.addCriteria(Criteria.where("userId").is(userId));
+			System.out.println("ff");
+			List<UserData> userdata = mongoOperation.findDistinct(query, columnName, "userData", UserData.class);
+			Gson gson = new Gson();
+			return gson.toJson(userdata);
+
 		} catch (Exception ex) {
 			System.out.println("Error is :" + ex.getMessage());
 			throw ex;
@@ -118,6 +140,23 @@ public class DataHelper {
 			return companyData;
 			// String json = gson.toJson(userdata);
 			// return json;
+		} catch (Exception ex) {
+			System.out.println("Error is :" + ex.getMessage());
+			throw ex;
+		}
+	}
+
+	public String getCompanyDataUniqueRow(int companyId, String columnName) {
+		try {
+			System.out.println("{ companyId : '" + companyId + "'}");
+			System.out.println("{ Mongooperation: '" + mongoOperation + "'}");
+			Query query = new Query();
+			query.addCriteria(Criteria.where("companyId").is(companyId));
+			System.out.println("ff");
+			List<UserData> userdata = mongoOperation.findDistinct(query, columnName, "userData", UserData.class);
+			Gson gson = new Gson();
+			return gson.toJson(userdata);
+
 		} catch (Exception ex) {
 			System.out.println("Error is :" + ex.getMessage());
 			throw ex;
@@ -230,3 +269,11 @@ public class DataHelper {
 	}
 
 }
+// anaother code for distinct values get
+/*
+ * List<String> categoryList = new ArrayList<>(); MongoCollection
+ * mongoCollection = mongoTemplate.getCollection("userData"); DistinctIterable
+ * distinctIterable = mongoCollection.dis.distinct(columnName, String.class);
+ * MongoCursor cursor = distinctIterable.iterator(); while (cursor.hasNext()) {
+ * String category = (String) cursor.next(); categoryList.add(category); }
+ */
