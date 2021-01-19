@@ -120,4 +120,28 @@ public class UserController {
 		return user.activateUser(userId);
 	}
 
+	@PostMapping("/activateCompany")
+	public String activateCompany(@RequestParam int companyId) throws Exception {
+		return user.activateCompany(companyId);
+	}
+
+	@GetMapping("/resetPasswordEmail")
+	public String resetPasswordEmail(@RequestParam String email) throws Exception {
+		return user.sendResetPasswordEmail(email);
+	}
+
+	@PostMapping("/resetPassword")
+	public String resetPassword(@RequestBody User userEntity) throws Exception {
+		// return user.activateUser(userId);
+		String s;
+		return user.resetPasswordUser(userEntity.getUserId(), userEntity.getPassword());
+	}
+
+	@PostMapping("/resetPasswordCompany")
+	public String resetPasswordCompany(@RequestBody Company companyEntity) throws Exception {
+		// return user.activateUser(userId);
+		String s;
+		return user.resetPasswordCompany(companyEntity.getCompanyId(), companyEntity.getPassword());
+	}
+
 }

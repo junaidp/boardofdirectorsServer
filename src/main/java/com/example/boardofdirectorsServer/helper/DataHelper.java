@@ -1,13 +1,26 @@
 package com.example.boardofdirectorsServer.helper;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FilenameFilter;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.Resource;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.example.boardofdirectorsServer.model.ClassOfAsset;
 import com.example.boardofdirectorsServer.model.Company;
@@ -41,7 +54,10 @@ public class DataHelper {
 			if (allow) {
 				data.setId(getAvaiablaeDataId());
 				userDataRepository.save(data);
-				return "Success :user's data saved";
+
+				Gson gson = new Gson();
+				return gson.toJson(data);
+				// return "Success :user's data saved";
 			} else {
 				return " Failure: Lease limit exceed.Please change the payment schedule to Add more Leases.";
 			}
@@ -53,6 +69,21 @@ public class DataHelper {
 	public String deleteAllData() {
 		try {
 			userDataRepository.deleteAll();
+			return "user's data deleted";
+		} catch (Exception ex) {
+			throw ex;
+		}
+	}
+
+	public String deleteSelectedUserData(int dataId) {
+		try {
+			Query query = new Query();
+			query.addCriteria(Criteria.where("id").is(dataId));
+
+			UserData userdata = mongoOperation.findOne(query, UserData.class);
+			mongoOperation.remove(userdata);
+			// mongoOperation.remove(query, UserData.class);
+			// userDataRepository.deleteAll();
 			return "user's data deleted";
 		} catch (Exception ex) {
 			throw ex;
@@ -122,6 +153,79 @@ public class DataHelper {
 			System.out.println("Error is :" + ex.getMessage());
 			throw ex;
 		}
+	}
+
+	public ResponseEntity<Resource> getUserFileByDataId(Integer dataId) throws Exception {
+		try {
+			System.out.println("{ dataId : '" + dataId + "'}");
+			System.out.println("{ Mongooperation: '" + mongoOperation + "'}");
+			Query query = new Query();
+			query.addCriteria(Criteria.where("id").is(dataId));
+			System.out.println("ff");
+			UserData userdata = mongoOperation.findOne(query, UserData.class);
+			System.out.println(userdata);
+
+			String UPLOADED_FOLDER = "C:/Users/Joni/git/boardofdirectorsServer/src/uploads/";
+
+			File directoryPath = new File(UPLOADED_FOLDER);
+			String fileName = userdata.getFileName();
+			FilenameFilter textFilefilter = new FilenameFilter() {
+				public boolean accept(File dir, String name) {
+					String lowercaseName = name.toLowerCase();
+					if (lowercaseName.startsWith(fileName)) {
+						return true;
+					} else {
+						return false;
+					}
+				}
+			};
+			// List of all the text files
+			// File filesList[] = directoryPath.listFiles(textFilefilter);
+			File filesList[] = directoryPath.listFiles();
+			System.out.println("List of the text files in the specified directory:");
+			File userFile = null;
+			for (File file : filesList) {
+				if (file.getName().equalsIgnoreCase(fileName)) {
+					userFile = file;
+				}
+				System.out.println("File name: " + file.getName());
+				System.out.println("File path: " + file.getAbsolutePath());
+				System.out.println("Size :" + file.getTotalSpace());
+				System.out.println(" ");
+			}
+
+			return downloadFile(userFile);
+		}
+		// // return json;
+		catch (
+
+		Exception ex) {
+			System.out.println("Error is :" + ex.getMessage());
+			throw ex;
+		}
+	}
+
+	private ResponseEntity<Resource> downloadFile(File userFile) throws FileNotFoundException {
+		HttpHeaders headers = new HttpHeaders();
+		headers.add("Cache-Control", "no-cache, no-store, must-revalidate");
+		headers.add("Pragma", "no-cache");
+		headers.add("Expires", "0");
+		// InputStreamResource resource = new InputStreamResource(new
+		// FileInputStream(userFile));
+
+		Path path = Paths.get(userFile.getAbsolutePath());
+		ByteArrayResource resource = null;
+		try {
+			resource = new ByteArrayResource(Files.readAllBytes(path));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		return ResponseEntity.ok()
+				.header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + userFile.getName() + "\"")
+				.contentLength(userFile.length()).contentType(MediaType.APPLICATION_OCTET_STREAM).body(resource);
+
 	}
 
 	public List<UserData> getCompanyData(int companyId) {
@@ -266,6 +370,35 @@ public class DataHelper {
 		int count = total.intValue();
 		return count + 1;
 
+	}
+
+	public String saveFileToSystem(MultipartFile file, String UPLOADED_FOLDER, String id) {
+		// TODO Auto-generated method stub
+		if (file.isEmpty()) {
+
+			return "failure: please select a file";
+		}
+
+		try {
+			Integer dataId = Integer.parseInt(id);
+			// Get the file and save it somewhere
+			byte[] bytes = file.getBytes();
+			Path path = Paths.get(UPLOADED_FOLDER + "leaseId" + id + file.getOriginalFilename());
+			Files.write(path, bytes);
+
+			Query query = new Query();
+			query.addCriteria(Criteria.where("id").is(dataId));
+
+			UserData userdata = mongoOperation.findOne(query, UserData.class);
+			userdata.setFileName("leaseId" + id + file.getOriginalFilename());
+			userDataRepository.save(userdata);
+			return ("success: You successfully uploaded '" + file.getOriginalFilename() + "'");
+
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		return "redirect:/uploadStatus";
 	}
 
 }

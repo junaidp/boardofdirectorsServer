@@ -22,6 +22,7 @@ public class Company {
 	private String paymentSchedule;
 	private Date creationDate = new Date();
 	private int companyId;
+	private boolean active;
 
 	public String getId() {
 		return id;
@@ -117,6 +118,14 @@ public class Company {
 
 	public void setCreationDate(Date creationDate) {
 		this.creationDate = creationDate;
+	}
+
+	public boolean isActive() {
+		return active;
+	}
+
+	public void setActive(boolean active) {
+		this.active = active;
 	}
 
 }

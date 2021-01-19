@@ -42,6 +42,7 @@ public class UserData {
 	private String answer6;
 	private String answer7;
 	private String conclusion;
+	private String fileName;
 
 	public String getLeaseContractNo() {
 		return leaseContractNo;
@@ -305,6 +306,14 @@ public class UserData {
 
 	public void setContractCurrency(String contractCurrency) {
 		this.contractCurrency = contractCurrency;
+	}
+
+	public String getFileName() {
+		return fileName;
+	}
+
+	public void setFileName(String fileName) {
+		this.fileName = fileName;
 	}
 
 }

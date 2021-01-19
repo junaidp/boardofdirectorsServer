@@ -34,13 +34,22 @@ public class UserHelper {
 		try {
 			// setPaymentSchedule(user);
 			System.out.println("Saving user" + user);
-			if (checkUserEmailAlreadyExists(user)) {
+			if (!checkUserEmailAlreadyExists(user)) {
 				// Account will be always InActive , Unless verified by Admin
 				user.setActive(false);
+				if (user.getCompanyId() != 0) {
+					user.setActive(true);
+				}
 				userRepository.save(user);
 				// Send Verification Email to Admin
-				sendVerificationEmailToAdmin(user.getUserId());
-				saveResponce = "Success:Please wait for the approval of account by admin:You will receive email once your account is activated.";
+				if (user.getCompanyId() != 0) {
+					saveResponce = "Success:User created successfully.";
+
+				} else {
+					// in this we will user email of main admin
+					sendVerificationEmailToAdmin(user.getUserId());
+					saveResponce = "Success:Please wait for the approval of account by admin:You will receive email once your account is activated.";
+				}
 			} else {
 				saveResponce = "Failure: Sorry User with this email Already Exists!";
 
@@ -56,10 +65,13 @@ public class UserHelper {
 		try {
 			// setPaymentSchedule(user);
 			System.out.println(company);
-			if (checkCompanyEmailAlreadyExists(company)) {
+			if (!checkCompanyEmailAlreadyExists(company)) {
+				// by default active set to false unless verified by admin
+				company.setActive(false);
 				companyRepository.save(company);
 
-				saveResponce = "Success: Company Saved Successfully";
+				saveResponce = "Success:Please wait for the approval of account by admin:You will receive email once your account is activated.";
+				sendVerificationEmailToAdminForCompany(company.getCompanyId());
 			} else {
 				saveResponce = "Failure: Sorry Company with this email Already Exists!";
 
@@ -218,7 +230,7 @@ public class UserHelper {
 
 	public Boolean checkUserEmailAlreadyExists(User user) {
 		System.out.println("in Checkuseremailexist");
-		Boolean emailExists = true;
+		Boolean emailExists = false;
 		try {
 
 			List<User> users = userRepository.findAll();
@@ -226,10 +238,10 @@ public class UserHelper {
 			for (User userEntity : users) {
 				if (userEntity.getEmail() != null) {
 					if (userEntity.getEmail().equals(user.getEmail())) {
-						emailExists = false;
+						emailExists = true;
 						break;
 					} else {
-						emailExists = true;
+						emailExists = false;
 					}
 				}
 			}
@@ -249,9 +261,9 @@ public class UserHelper {
 			for (Company companyEntity : companies) {
 				if (companyEntity.getEmail() != null) {
 					if (companyEntity.getEmail().equals(company.getEmail())) {
-						emailExists = false;
-					} else {
 						emailExists = true;
+					} else {
+						emailExists = false;
 					}
 				}
 			}
@@ -264,30 +276,55 @@ public class UserHelper {
 	public String sendVerificationEmailToAdmin(int userId) {
 		Query query = new Query();
 		Query queryCompany = new Query();
-
 		query.addCriteria(Criteria.where("userId").is(userId));
 		User user = mongoOperation.findOne(query, User.class);
-
-		// queryCompany.addCriteria(Criteria.where("companyId").is(user.getCompanyId()));
-		// Company company = mongoOperation.findOne(queryCompany,
-		// Company.class);
-		// company.getEmail()
-		// System.out.println("Sending Verification Email to: " +
-		// company.getEmail() + "For User : " + user.getName());
-
-		// String url = utility.mainUrl + "/users/activateUser?userId=" + userId
-		// + "";
 		String url = utility.approveRequestUrl + userId + "";
 
-		String content = "<a href='" + url + "'> Activate Account </a>";
-		String message = "Please click the link to activate the Account for user: " + user.getName() + "<br>";
+		int companyId = user.getCompanyId();
+		if (user.getCompanyId() == 0) {
 
-		utility.sendEmail(message + content, "adnankhokhar451@gmail.com", "junaidp@gmail.com",
-				"Account Verificationf or E2L");
+			String content = "<a href='" + url + "'> Activate Account </a>";
+			String message = "Please click the link to activate the Account for user: " + user.getName() + "<br>";
+			// willl send verification email to main admin
+			utility.sendEmail(message + content, "hassanarif.isb@gmail.com", "hamzariaz1994@gmail.com",
+					"Account Verification for E2L");
+		} else {
+			queryCompany.addCriteria(Criteria.where("companyId").is(companyId));
+			Company company = mongoOperation.findOne(queryCompany, Company.class);
+			String content = "<a href='" + url + "'> Activate Account </a>";
+			String message = "Please click the link to activate the Account for company: " + company.getName() + "<br>";
+
+			utility.sendEmail(message + content, "hassanarif.isb@gmail.com", "hamzariaz1994@gmail.com",
+					"Account Verificationf or E2L");
+		}
+
 		// utility.sendEmail(message + content, company.getEmail(),
 		// "junaidp@gmail.com", "Account Verificationf or E2L");
 
 		String json = gson.toJson(user);
+
+		return json;
+
+	}
+
+	public String sendVerificationEmailToAdminForCompany(int companyId) {
+		Query query = new Query();
+		Query queryCompany = new Query();
+
+		query.addCriteria(Criteria.where("companyId").is(companyId));
+		Company company = mongoOperation.findOne(query, Company.class);
+
+		String url = utility.approveRequestUrlCompany + companyId + "";
+
+		String content = "<a href='" + url + "'> Activate Account </a>";
+		String message = "Please click the link to activate the Account for company: " + company.getName() + "<br>";
+		// will use email here for main admin forverification
+		utility.sendEmail(message + content, "hassanarif.isb@gmail.com", "junaidp@gmail.com",
+				"Account Verificationf or E2L");
+		// utility.sendEmail(message + content, company.getEmail(),
+		// "junaidp@gmail.com", "Account Verificationf or E2L");
+
+		String json = gson.toJson(company);
 
 		return json;
 
@@ -301,10 +338,126 @@ public class UserHelper {
 			User user = mongoOperation.findOne(query, User.class);
 			user.setActive(true);
 			userRepository.save(user);
+
+			String message = "Your email  (" + user.getEmail()
+					+ " ) has been successfully verified by the admin :You may log in now ";
+			// will user email of user for sending him verification message
+			utility.sendEmail(message, user.getEmail(), "hassanarif.isb@gmail.com", "Account Successfully Verified");
+
 		} catch (Exception ex) {
 			return "Failed to activate account: " + ex;
 		}
 		return "Account activated";
+	}
+
+	public String activateCompany(int companyId) {
+		try {
+			Query query = new Query();
+
+			query.addCriteria(Criteria.where("companyId").is(companyId));
+			Company company = mongoOperation.findOne(query, Company.class);
+			company.setActive(true);
+			companyRepository.save(company);
+
+			String message = "Your email  (" + company.getEmail()
+					+ " ) has been successfully verified by the admin :You may log in now ";
+
+			utility.sendEmail(message, company.getEmail(), "hassanarif.isb@gmail.com", "Account Successfully Verified");
+
+		} catch (Exception ex) {
+			return "Failed to activate account: " + ex;
+		}
+		return "Account activated";
+	}
+
+	public String resetPasswordUser(int userId, String password) {
+		try {
+			Query query = new Query();
+
+			query.addCriteria(Criteria.where("userId").is(userId));
+			User user = mongoOperation.findOne(query, User.class);
+			user.setPassword(password);
+			userRepository.save(user);
+
+			// String message = "Your email (" + company.getEmail()
+			// + " ) has been successfully verified by the admin :You may log in
+			// now ";
+			//
+			// utility.sendEmail(message, "adnankhokhar451@gmail.com",
+			// "hamzariaz1994@gmail.com",
+			// "Account Successfully Verified");
+
+		} catch (Exception ex) {
+			return "Failure: Failed to activate account: " + ex;
+		}
+		return "Success: Password updated successfully. Please log in in again";
+	}
+
+	public String resetPasswordCompany(int companyId, String password) {
+		try {
+			Query query = new Query();
+
+			query.addCriteria(Criteria.where("companyId").is(companyId));
+			Company company = mongoOperation.findOne(query, Company.class);
+			company.setPassword(password);
+			companyRepository.save(company);
+
+			// String message = "Your email (" + company.getEmail()
+			// + " ) has been successfully verified by the admin :You may log in
+			// now ";
+			//
+			// utility.sendEmail(message, "adnankhokhar451@gmail.com",
+			// "hamzariaz1994@gmail.com",
+			// "Account Successfully Verified");
+
+		} catch (Exception ex) {
+			return "Failure: failed to reset Company,s Password: " + ex;
+		}
+		return "Success: Password updated successfully. Please log in in again";
+	}
+
+	public String sendResetPasswordEmail(String email) {
+
+		boolean emailExist = false;
+		String response;
+
+		User userObj = new User();
+		userObj.setEmail(email);
+		emailExist = checkUserEmailAlreadyExists(userObj);
+		if (emailExist) {
+			Query query = new Query();
+
+			query.addCriteria(Criteria.where("email").is(email));
+			User user = mongoOperation.findOne(query, User.class);
+
+			String url = utility.resetPassword + user.getUserId() + "";
+			String content = "<a href='" + url + "'> Reset Password </a>";
+			String message = "Please click the link to reset your password: " + user.getName() + "<br>";
+
+			utility.sendEmail(message + content, user.getEmail(), "hassanarif.isb@gmail.com", "Reset Account Password");
+		} else {
+			Company companyObj = new Company();
+			companyObj.setEmail(email);
+			emailExist = checkCompanyEmailAlreadyExists(companyObj);
+			if (emailExist) {
+				Query query = new Query();
+
+				query.addCriteria(Criteria.where("email").is(email));
+				Company company = mongoOperation.findOne(query, Company.class);
+
+				// String url = utility.resetPassword + user.getUserId() + "";
+				String url = utility.resetPasswordCompany + company.getCompanyId() + "";
+				String content = "<a href='" + url + "'> Reset  Password </a>";
+				String message = "Please click the link to reset your password: " + company.getName() + "<br>";
+
+				utility.sendEmail(message + content, company.getEmail(), "hassanarif.isb@gmail.com",
+						"Reset Account Password");
+
+			}
+		}
+
+		return "Success: A link is sent to your email address for reset password.Please log in to email address ";
+
 	}
 
 }
