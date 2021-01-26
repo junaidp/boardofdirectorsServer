@@ -61,8 +61,8 @@ public class CalculationController {
 	@GetMapping("/lease/yearlyByDataId")
 	public String calculateLeaseYearlyByDataId(@RequestParam String dataId) throws Exception {
 		try {
-			int dataIdInt = Integer.parseInt(dataId);
-			UserData userData = dataHelper.getUserDataByDataId(dataIdInt);
+			// int dataIdInt = Integer.parseInt(dataId);
+			UserData userData = dataHelper.getUserDataByDataId(dataId);
 			// if (userData == null) {
 			Entry e = new Entry();
 			setEntryObject(userData, e);

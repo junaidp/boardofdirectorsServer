@@ -99,9 +99,9 @@ public class DataController {
 
 	@GetMapping("/getUserDataByDataId")
 	public String getUserDataByDataId(@RequestParam String dataId) throws Exception {
-		int dataIdInt = Integer.parseInt(dataId);
-		System.out.println(dataIdInt);
-		UserData userDataObject = userData.getUserDataByDataId(dataIdInt);
+		// int dataIdInt = Integer.parseInt(dataId);
+		// System.out.println(dataIdInt);
+		UserData userDataObject = userData.getUserDataByDataId(dataId);
 		Gson gson = new Gson();
 		return gson.toJson(userDataObject);
 
@@ -110,19 +110,19 @@ public class DataController {
 	@RequestMapping(path = "/getUserFileByDataId", method = RequestMethod.GET)
 	// @GetMapping("/getUserFileByDataId")
 	public ResponseEntity<Resource> getUserFileByDataId(@RequestParam String dataId) throws Exception {
-		int dataIdInt = Integer.parseInt(dataId);
-		System.out.println(dataIdInt);
+		// int dataIdInt = Integer.parseInt(dataId);
+		// System.out.println(dataIdInt);
 
 		// Gson gson = new Gson();
 		// return gson.toJson(userDataObject);
-		return userData.getUserFileByDataId(dataIdInt);
+		return userData.getUserFileByDataId(dataId);
 
 	}
 
-	@GetMapping("/getClassOfAsset")
-	public String getClassOfAsset() throws Exception {
+	@PostMapping("/getClassOfAsset")
+	public String getClassOfAsset(@RequestBody ClassOfAsset classAssetEntity) throws Exception {
 		System.out.println("getting class of assets");
-		String classOfAssets = userData.getClassOfAsset();
+		String classOfAssets = userData.getClassOfAsset(classAssetEntity);
 		Gson gson = new Gson();
 		return classOfAssets;
 
@@ -143,8 +143,8 @@ public class DataController {
 
 	@GetMapping("/deleteSelectedLease")
 	public String deleteSelectedLease(@RequestParam String leaseId) throws Exception {
-		int leaseIdInt = Integer.parseInt(leaseId);
-		String msg = userData.deleteSelectedUserData(leaseIdInt);
+		// int leaseIdInt = Integer.parseInt(leaseId);
+		String msg = userData.deleteSelectedUserData(leaseId);
 		String data = null;
 
 		return msg;
@@ -171,52 +171,9 @@ public class DataController {
 
 		Path path = Paths.get(UPLOADED_FOLDER + "leaseId" + id + file.getOriginalFilename());
 		userData.saveFileToSystem(file, UPLOADED_FOLDER, id);
-		/*
-		 * String fileDownloadUri1 =
-		 * ServletUriComponentsBuilder.fromCurrentContextPath()
-		 * .path("C:/Users/Joni/git/boardofdirectorsServer/src/uploads/")
-		 * .path("leaseId" + id + file.getOriginalFilename()).toUriString();
-		 * String fileDownloadUri =
-		 * ServletUriComponentsBuilder.fromCurrentContextPath().path(
-		 * UPLOADED_FOLDER) .path(path + "").toUriString() + ""; /// return
-		 * fileDownloadUri; Gson gson = new Gson();
-		 */
-		// return gson.toJson(fileDownloadUri1);
 
 		return "leaseId" + id + file.getOriginalFilename();
 		// return ResponseEntity.ok(fileDownloadUri1);
 	}
-
-	/*
-	 * @GetMapping(value = "/projects/file/download/{filename}/{projectId}")
-	 * public void getResource(@PathVariable String filename, @PathVariable Long
-	 * projectId,HttpServletResponse response) throws IOException {
-	 * 
-	 * String fileLocation=//a location that I set, removed logic to make this
-	 * shorter
-	 * 
-	 * File downloadFile= new File(fileLocation);
-	 * 
-	 * byte[] isr = Files.readAllBytes(downloadFile.toPath());
-	 * ByteArrayOutputStream out = new ByteArrayOutputStream(isr.length);
-	 * out.write(isr, 0, isr.length);
-	 * 
-	 * response.setContentType("application/pdf"); // Use 'inline' for preview
-	 * and 'attachement' for download in browser.
-	 * response.addHeader("Content-Disposition", "inline; filename=" +
-	 * fileName);
-	 * 
-	 * OutputStream os; try { os = httpServletResponse.getOutputStream();
-	 * out.writeTo(os); os.flush(); os.close(); } catch (IOException e) {
-	 * e.printStackTrace(); }
-	 * 
-	 * HttpHeaders respHeaders = new HttpHeaders();
-	 * respHeaders.setContentLength(isr.length); respHeaders.setContentType(new
-	 * MediaType("text", "json"));
-	 * respHeaders.setCacheControl("must-revalidate, post-check=0, pre-check=0"
-	 * ); respHeaders.set(HttpHeaders.CONTENT_DISPOSITION,
-	 * "attachment; filename=" + fileName); return new
-	 * ResponseEntity<byte[]>(isr, respHeaders, HttpStatus.OK); }
-	 */
 
 }

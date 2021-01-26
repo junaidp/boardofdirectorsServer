@@ -8,6 +8,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
@@ -75,10 +76,10 @@ public class DataHelper {
 		}
 	}
 
-	public String deleteSelectedUserData(int dataId) {
+	public String deleteSelectedUserData(String leaseId) {
 		try {
 			Query query = new Query();
-			query.addCriteria(Criteria.where("id").is(dataId));
+			query.addCriteria(Criteria.where("id").is(leaseId));
 
 			UserData userdata = mongoOperation.findOne(query, UserData.class);
 			mongoOperation.remove(userdata);
@@ -131,7 +132,7 @@ public class DataHelper {
 		}
 	}
 
-	public UserData getUserDataByDataId(Integer dataId) {
+	public UserData getUserDataByDataId(String dataId) {
 		try {
 			System.out.println("{ dataId : '" + dataId + "'}");
 			System.out.println("{ Mongooperation: '" + mongoOperation + "'}");
@@ -155,7 +156,7 @@ public class DataHelper {
 		}
 	}
 
-	public ResponseEntity<Resource> getUserFileByDataId(Integer dataId) throws Exception {
+	public ResponseEntity<Resource> getUserFileByDataId(String dataId) throws Exception {
 		try {
 			System.out.println("{ dataId : '" + dataId + "'}");
 			System.out.println("{ Mongooperation: '" + mongoOperation + "'}");
@@ -168,7 +169,7 @@ public class DataHelper {
 			String UPLOADED_FOLDER = "C:/Users/Joni/git/boardofdirectorsServer/src/uploads/";
 
 			File directoryPath = new File(UPLOADED_FOLDER);
-			String fileName = userdata.getFileName();
+			String fileName = "leaseId" + dataId + userdata.getFileName();
 			FilenameFilter textFilefilter = new FilenameFilter() {
 				public boolean accept(File dir, String name) {
 					String lowercaseName = name.toLowerCase();
@@ -242,6 +243,50 @@ public class DataHelper {
 			if (companyData == null)
 				return null;
 			return companyData;
+			// String json = gson.toJson(userdata);
+			// return json;
+		} catch (Exception ex) {
+			System.out.println("Error is :" + ex.getMessage());
+			throw ex;
+		}
+	}
+
+	public List<ClassOfAsset> getUserClassOfAssets(int userId) {
+		try {
+			System.out.println("{ userId : '" + userId + "'}");
+			System.out.println("{ Mongooperation: '" + mongoOperation + "'}");
+			Query query = new Query();
+			query.addCriteria(Criteria.where("userId").is(userId));
+			// BasicQuery query1 = new BasicQuery("{ name : '"+name+"'} , {
+			// password: '"+password+"'}");
+			System.out.println("ff");
+			List<ClassOfAsset> userClassOfAsset = mongoOperation.find(query, ClassOfAsset.class);
+			System.out.println(userClassOfAsset);
+			if (userClassOfAsset == null)
+				return null;
+			return userClassOfAsset;
+			// String json = gson.toJson(userdata);
+			// return json;
+		} catch (Exception ex) {
+			System.out.println("Error is :" + ex.getMessage());
+			throw ex;
+		}
+	}
+
+	public List<ClassOfAsset> getCompanyClassOfAsset(int companyId) {
+		try {
+			System.out.println("{  inside getCompanyClassOfASeet companyId : '" + companyId + "'}");
+			System.out.println("{ Mongooperation: '" + mongoOperation + "'}");
+			Query query = new Query();
+			query.addCriteria(Criteria.where("companyId").is(companyId));
+			// BasicQuery query1 = new BasicQuery("{ name : '"+name+"'} , {
+			// password: '"+password+"'}");
+			System.out.println("ff");
+			List<ClassOfAsset> companyClassOfAssets = mongoOperation.find(query, ClassOfAsset.class);
+			System.out.println(companyClassOfAssets);
+			if (companyClassOfAssets == null)
+				return null;
+			return companyClassOfAssets;
 			// String json = gson.toJson(userdata);
 			// return json;
 		} catch (Exception ex) {
@@ -342,15 +387,23 @@ public class DataHelper {
 		return false;
 	}
 
-	public String getClassOfAsset() {
+	public String getClassOfAsset(ClassOfAsset classAssetEntity) {
 		System.out.println("in get all users");
 		String jsonAssets = null;
-		try {
-			List<ClassOfAsset> classOfAssets = classOfAssetRepository.findAll();
-			jsonAssets = gson.toJson(classOfAssets);
-		} catch (Exception ex) {
-			System.out.println(ex);
+		List<ClassOfAsset> listClassOfAsset = null;
+
+		if (classAssetEntity.getCompanyId() == 0) {
+			listClassOfAsset = getUserClassOfAssets(classAssetEntity.getUserId());
+		} else {
+			listClassOfAsset = getCompanyClassOfAsset(classAssetEntity.getCompanyId());
 		}
+		// try {
+		// List<ClassOfAsset> classOfAssets = classOfAssetRepository.findAll();
+		// jsonAssets = gson.toJson(classOfAssets);
+		// } catch (Exception ex) {
+		// System.out.println(ex);
+		// }
+		jsonAssets = gson.toJson(listClassOfAsset);
 		return jsonAssets;
 	}
 
@@ -365,10 +418,11 @@ public class DataHelper {
 		}
 	}
 
-	public int getAvaiablaeDataId() {
+	public String getAvaiablaeDataId() {
 		Long total = userDataRepository.count();
 		int count = total.intValue();
-		return count + 1;
+		// return count + 1;
+		return UUID.randomUUID() + "";
 
 	}
 
@@ -380,17 +434,17 @@ public class DataHelper {
 		}
 
 		try {
-			Integer dataId = Integer.parseInt(id);
+			// Integer dataId = Integer.parseInt(id);
 			// Get the file and save it somewhere
 			byte[] bytes = file.getBytes();
 			Path path = Paths.get(UPLOADED_FOLDER + "leaseId" + id + file.getOriginalFilename());
 			Files.write(path, bytes);
 
 			Query query = new Query();
-			query.addCriteria(Criteria.where("id").is(dataId));
+			query.addCriteria(Criteria.where("id").is(id));
 
 			UserData userdata = mongoOperation.findOne(query, UserData.class);
-			userdata.setFileName("leaseId" + id + file.getOriginalFilename());
+			userdata.setFileName(file.getOriginalFilename());
 			userDataRepository.save(userdata);
 			return ("success: You successfully uploaded '" + file.getOriginalFilename() + "'");
 

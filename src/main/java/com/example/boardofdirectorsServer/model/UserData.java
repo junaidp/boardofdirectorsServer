@@ -33,7 +33,7 @@ public class UserData {
 	private int month;
 	private int userId;
 	private int companyId;
-	private int id;
+	private String id;
 	private String answer1;
 	private String answer2;
 	private String answer3;
@@ -228,11 +228,11 @@ public class UserData {
 		this.classOfAsset = classOfAsset;
 	}
 
-	public int getId() {
+	public String getId() {
 		return id;
 	}
 
-	public void setId(int id) {
+	public void setId(String id) {
 		this.id = id;
 	}
 

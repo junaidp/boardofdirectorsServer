@@ -319,7 +319,7 @@ public class UserHelper {
 		String content = "<a href='" + url + "'> Activate Account </a>";
 		String message = "Please click the link to activate the Account for company: " + company.getName() + "<br>";
 		// will use email here for main admin forverification
-		utility.sendEmail(message + content, "hassanarif.isb@gmail.com", "junaidp@gmail.com",
+		utility.sendEmail(message + content, "hassanarif.isb@gmail.com", "hamzariaz1994@gmail.com",
 				"Account Verificationf or E2L");
 		// utility.sendEmail(message + content, company.getEmail(),
 		// "junaidp@gmail.com", "Account Verificationf or E2L");
