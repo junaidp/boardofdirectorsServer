@@ -144,4 +144,14 @@ public class UserController {
 		return user.resetPasswordCompany(companyEntity.getCompanyId(), companyEntity.getPassword());
 	}
 
+	@GetMapping("/deleteSelectedUser")
+	public String deleteSelectedLease(@RequestParam String userId) throws Exception {
+		// int leaseIdInt = Integer.parseInt(leaseId);
+		String msg = user.deleteSelectedUser(userId);
+		String data = null;
+
+		return msg;
+
+	}
+
 }

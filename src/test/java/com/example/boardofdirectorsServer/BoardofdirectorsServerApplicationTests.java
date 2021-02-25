@@ -37,7 +37,7 @@ class BoardofdirectorsServerApplicationTests {
 
 	// @Test
 	void testGetUser() {
-		String j = user.getUser("shehryar", "password1");
+		User j = user.getUser("shehryar", "password1");
 		System.out.println(j);
 	}
 

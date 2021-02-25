@@ -43,6 +43,7 @@ public class UserData {
 	private String answer7;
 	private String conclusion;
 	private String fileName;
+	private String assetDescription;
 
 	public String getLeaseContractNo() {
 		return leaseContractNo;
@@ -314,6 +315,14 @@ public class UserData {
 
 	public void setFileName(String fileName) {
 		this.fileName = fileName;
+	}
+
+	public String getAssetDescription() {
+		return assetDescription;
+	}
+
+	public void setAssetDescription(String assetDescription) {
+		this.assetDescription = assetDescription;
 	}
 
 }

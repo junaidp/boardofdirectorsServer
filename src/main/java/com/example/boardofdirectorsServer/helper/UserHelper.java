@@ -26,6 +26,8 @@ public class UserHelper {
 	MongoOperations mongoOperation;
 	@Autowired
 	Utility utility;
+	@Autowired
+	DataHelper userData;
 
 	Gson gson = new Gson();
 
@@ -458,6 +460,25 @@ public class UserHelper {
 
 		return "Success: A link is sent to your email address for reset password.Please log in to email address ";
 
+	}
+
+	public String deleteSelectedUser(String userId) {
+		try {
+			int userIdInt = Integer.parseInt(userId);
+
+			// userData.deleteUserLeases(userId);
+
+			Query query = new Query();
+			query.addCriteria(Criteria.where("userId").is(userIdInt));
+
+			User user = mongoOperation.findOne(query, User.class);
+			mongoOperation.remove(user);
+			// mongoOperation.remove(query, UserData.class);
+			// userDataRepository.deleteAll();
+			return "user's data deleted";
+		} catch (Exception ex) {
+			throw ex;
+		}
 	}
 
 }

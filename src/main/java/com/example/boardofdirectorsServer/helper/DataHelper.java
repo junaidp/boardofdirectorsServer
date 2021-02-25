@@ -7,9 +7,18 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Random;
 import java.util.UUID;
 
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.apache.poi.ss.usermodel.CellType;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.xssf.usermodel.XSSFCell;
+import org.apache.poi.xssf.usermodel.XSSFRow;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
@@ -60,7 +69,7 @@ public class DataHelper {
 				return gson.toJson(data);
 				// return "Success :user's data saved";
 			} else {
-				return " Failure: Lease limit exceed.Please change the payment schedule to Add more Leases.";
+				return "Failure: Lease limit exceed.Please change the payment schedule to Add more Leases.";
 			}
 		} catch (Exception ex) {
 			throw ex;
@@ -367,10 +376,10 @@ public class DataHelper {
 
 		// String user = getUserWithId(data.getUserId() + "");
 		int userCounts = userdata.size();
-		int trialAllowed = 1;
-		int bronzeAllowed = 10;
-		int silverAllowed = 30;
-		int goldAllowed = 100;
+		int trialAllowed = 10000;
+		int bronzeAllowed = 1000;
+		int silverAllowed = 1000;
+		int goldAllowed = 10000;
 
 		if (user.getPaymentSchedule().equals("trial") && userCounts < trialAllowed) {
 			return true;
@@ -453,6 +462,219 @@ public class DataHelper {
 		}
 
 		return "redirect:/uploadStatus";
+	}
+
+	public String saveBulkLease(MultipartFile file, String userIdString) throws InvalidFormatException {
+		// TODO Auto-generated method stub
+		if (file.isEmpty()) {
+
+			return "failure: please select a file";
+		}
+		String returnResult = "";
+		Integer userId = 0;
+		Integer companyId = 0;
+		ArrayList<UserData> listUserData = null;
+		User user = getUserWithId(userIdString);
+		if (user != null) {
+			userId = user.getUserId();
+			companyId = user.getCompanyId();
+		}
+
+		try {
+			listUserData = new ArrayList<UserData>();
+			XSSFWorkbook workbook = new XSSFWorkbook(file.getInputStream());
+			Sheet sheet = workbook.getSheetAt(0);
+
+			XSSFRow row;
+			XSSFCell cell;
+
+			Iterator rows = sheet.rowIterator();
+
+			while (rows.hasNext()) {
+				UserData userData = new UserData();
+
+				row = (XSSFRow) rows.next();
+				if (row.getRowNum() > 0) {
+					System.out.println(row.getRowNum());
+					Iterator cells = row.cellIterator();
+
+					Random rd = new Random(); // creating Random object
+												// samplingData.setId(rd.nextInt());
+
+					XSSFCell leaseContractNo = row.getCell((short) 1);
+
+					if (leaseContractNo.getCellType() == CellType.NUMERIC) {
+						userData.setLeaseContractNo(leaseContractNo.getNumericCellValue() + "");
+					} else if (leaseContractNo.getCellType() == CellType.STRING) {
+						userData.setLeaseContractNo(leaseContractNo.getStringCellValue() + "");
+					}
+
+					XSSFCell lessorName = row.getCell((short) 2);
+
+					if (lessorName.getCellType() == CellType.NUMERIC) {
+						userData.setLessorName(lessorName.getNumericCellValue() + "");
+					} else if (lessorName.getCellType() == CellType.STRING) {
+						userData.setLessorName(lessorName.getStringCellValue() + "");
+					}
+
+					XSSFCell classOfAsset = row.getCell((short) 3);
+
+					if (classOfAsset.getCellType() == CellType.NUMERIC) {
+						userData.setClassOfAsset(classOfAsset.getNumericCellValue() + "");
+					} else if (lessorName.getCellType() == CellType.STRING) {
+						userData.setClassOfAsset(classOfAsset.getStringCellValue() + "");
+					}
+
+					XSSFCell assetDescription = row.getCell((short) 4);
+
+					if (assetDescription.getCellType() == CellType.NUMERIC) {
+						userData.setAssetDescription(assetDescription.getNumericCellValue() + "");
+					} else if (assetDescription.getCellType() == CellType.STRING) {
+						userData.setAssetDescription(assetDescription.getStringCellValue() + "");
+					}
+
+					XSSFCell locaton = row.getCell((short) 5);
+
+					if (locaton.getCellType() == CellType.NUMERIC) {
+						userData.setLocation(locaton.getNumericCellValue() + "");
+					} else if (locaton.getCellType() == CellType.STRING) {
+						userData.setLocation(locaton.getStringCellValue() + "");
+					}
+
+					XSSFCell commencementDate = row.getCell((short) 6);
+
+					if (commencementDate.getCellType() == CellType.NUMERIC) {
+						userData.setCommencementDate(commencementDate.getDateCellValue());
+					} else if (commencementDate.getCellType() == CellType.STRING) {
+						// userData.setCommencementDate(commencementDate.getStringCellValue()
+						// + "");
+					}
+
+					XSSFCell paymentsAt = row.getCell((short) 7);
+
+					if (paymentsAt.getCellType() == CellType.NUMERIC) {
+						userData.setPaymentsAt(paymentsAt.getNumericCellValue() + "");
+					} else if (paymentsAt.getCellType() == CellType.STRING) {
+						userData.setPaymentsAt(paymentsAt.getStringCellValue() + "");
+					}
+
+					XSSFCell annualDiscountRate = row.getCell((short) 8);
+
+					if (annualDiscountRate.getCellType() == CellType.NUMERIC) {
+						userData.setAnnualDiscountRate((float) annualDiscountRate.getNumericCellValue());
+					} else if (annualDiscountRate.getCellType() == CellType.STRING) {
+						// userData.setAnnualDiscountRate(annualDiscountRate.getStringCellValue()
+						// + "");
+					}
+
+					XSSFCell leaseTermPerod = row.getCell((short) 9);
+
+					if (leaseTermPerod.getCellType() == CellType.NUMERIC) {
+						userData.setLeaseTerm((int) leaseTermPerod.getNumericCellValue());
+					} else if (annualDiscountRate.getCellType() == CellType.STRING) {
+						// userData.setLeaseTerm(leaseTermPerod.getStringCellValue()
+						// + "");
+					}
+
+					XSSFCell leasePayment = row.getCell((short) 10);
+
+					if (leasePayment.getCellType() == CellType.NUMERIC) {
+						userData.setLeasePayment(leasePayment.getNumericCellValue());
+					} else if (annualDiscountRate.getCellType() == CellType.STRING) {
+						// userData.setLeasePayment(leasePayment.getStringCellValue()
+						// + "");
+					}
+
+					XSSFCell paymentInterval = row.getCell((short) 11);
+
+					if (paymentInterval.getCellType() == CellType.NUMERIC) {
+						userData.setPaymentIntervals(paymentInterval.getNumericCellValue() + "");
+					} else if (paymentInterval.getCellType() == CellType.STRING) {
+						userData.setPaymentIntervals(paymentInterval.getStringCellValue() + "");
+					}
+
+					XSSFCell initilDirectCost = row.getCell((short) 12);
+
+					if (initilDirectCost.getCellType() == CellType.NUMERIC) {
+						userData.setInitialDirectCost((int) initilDirectCost.getNumericCellValue());
+					} else if (annualDiscountRate.getCellType() == CellType.STRING) {
+						// userData.setInitialDirectCost(initilDirectCost.getStringCellValue()
+						// + "");
+					}
+
+					XSSFCell guarenteResidual = row.getCell((short) 13);
+
+					if (guarenteResidual.getCellType() == CellType.NUMERIC) {
+						userData.setGuaranteedResidualValue(guarenteResidual.getNumericCellValue());
+					} else if (annualDiscountRate.getCellType() == CellType.STRING) {
+						// userData.setGuaranteedResidualValue(guarenteResidual.getStringCellValue()
+						// + "");
+					}
+
+					XSSFCell useFullLifeAsset = row.getCell((short) 14);
+
+					if (useFullLifeAsset.getCellType() == CellType.NUMERIC) {
+						userData.setUsefulLifeOfTheAsset((int) useFullLifeAsset.getNumericCellValue());
+					} else if (annualDiscountRate.getCellType() == CellType.STRING) {
+						// userData.setUsefulLifeOfTheAsset(useFullLifeAsset.getStringCellValue()
+						// + "");
+					}
+
+					XSSFCell escalatonPercentage = row.getCell((short) 15);
+
+					if (escalatonPercentage.getCellType() == CellType.NUMERIC) {
+						userData.setEscalation((float) escalatonPercentage.getNumericCellValue());
+					} else if (annualDiscountRate.getCellType() == CellType.STRING) {
+						// userData.setEscalation(escalatonPercentage.getStringCellValue()
+						// + "");
+					}
+
+					XSSFCell escalatonAfterYear = row.getCell((short) 16);
+
+					if (escalatonAfterYear.getCellType() == CellType.NUMERIC) {
+						userData.setEscalationAfterEvery((int) escalatonAfterYear.getNumericCellValue());
+					} else if (annualDiscountRate.getCellType() == CellType.STRING) {
+						// userData.setEscalationAfterEvery(escalatonAfterYear.getStringCellValue()
+						// + "");
+					}
+					// userData.setId(getAvaiablaeDataId());
+					userData.setUserId(userId);
+					userData.setCompanyId(companyId);
+
+					returnResult = saveData(userData);
+					// userDataRepository.save(userData);
+
+					listUserData.add(userData);
+				}
+			}
+			if (returnResult.contains("failure")) {
+				returnResult = "Failed to save Leases";
+			} else {
+				returnResult = "Success: Leases Saved Successfully";
+			}
+			return returnResult;
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return "List Saved";
+
+	}
+
+	public String deleteUserLeases(String userId) {
+		int userIdInt = Integer.parseInt(userId);
+		Query query = new Query();
+		List<UserData> userDataList;
+		query.addCriteria(Criteria.where("userId").is(userIdInt));
+		userDataList = getUserData(userIdInt);
+		if (!userDataList.isEmpty()) {
+			for (UserData userData : userDataList) {
+				mongoOperation.remove(userData);
+			}
+
+		}
+		return "user,s Data Removed";
+
 	}
 
 }

@@ -176,4 +176,15 @@ public class DataController {
 		// return ResponseEntity.ok(fileDownloadUri1);
 	}
 
+	@RequestMapping(value = "/bulkUploadLease", method = RequestMethod.POST)
+	// @ResponseBody
+	public String bulkUploadLease(@RequestParam("file") MultipartFile file, @RequestParam("id") String id)
+			throws Exception {
+
+		String returnResponse = userData.saveBulkLease(file, id);
+		Gson gson = new Gson();
+		return gson.toJson(returnResponse);
+		// return "something ";
+	}
+
 }
