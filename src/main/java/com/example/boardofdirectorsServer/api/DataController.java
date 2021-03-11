@@ -4,10 +4,13 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 
+import javax.servlet.annotation.MultipartConfig;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -29,6 +32,8 @@ import com.google.gson.Gson;
 @RequestMapping("/data")
 @RestController
 @CrossOrigin(origins = "*", maxAge = 3600)
+@MultipartConfig(maxFileSize = 1024 * 1024 * 1024, maxRequestSize = 1024 * 1024 * 1024)
+
 public class DataController {
 
 	@Autowired
@@ -178,12 +183,20 @@ public class DataController {
 
 	@RequestMapping(value = "/bulkUploadLease", method = RequestMethod.POST)
 	// @ResponseBody
+	@ExceptionHandler(Exception.class)
 	public String bulkUploadLease(@RequestParam("file") MultipartFile file, @RequestParam("id") String id)
 			throws Exception {
-
-		String returnResponse = userData.saveBulkLease(file, id);
 		Gson gson = new Gson();
-		return gson.toJson(returnResponse);
+		try {
+			String returnResponse = userData.saveBulkLease(file, id);
+
+			// return gson.toJson(returnResponse);
+			return returnResponse;
+		} catch (Exception x) {
+			// throw x;
+			return gson.toJson("failure   :" + x.getLocalizedMessage());
+
+		}
 		// return "something ";
 	}
 

@@ -8,12 +8,11 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Random;
 import java.util.UUID;
 
-import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xssf.usermodel.XSSFCell;
@@ -464,29 +463,30 @@ public class DataHelper {
 		return "redirect:/uploadStatus";
 	}
 
-	public String saveBulkLease(MultipartFile file, String userIdString) throws InvalidFormatException {
+	public String saveBulkLease(MultipartFile file, String userIdString) throws IOException {
 		// TODO Auto-generated method stub
-		if (file.isEmpty()) {
-
-			return "failure: please select a file";
-		}
-		String returnResult = "";
-		Integer userId = 0;
-		Integer companyId = 0;
-		ArrayList<UserData> listUserData = null;
-		User user = getUserWithId(userIdString);
-		if (user != null) {
-			userId = user.getUserId();
-			companyId = user.getCompanyId();
-		}
-
 		try {
+			if (file.isEmpty()) {
+
+				return "failure: please select a file";
+			}
+			String returnResult = "";
+			Integer userId = 0;
+			Integer companyId = 0;
+			ArrayList<UserData> listUserData = null;
+			User user = getUserWithId(userIdString);
+			if (user != null) {
+				userId = user.getUserId();
+				companyId = user.getCompanyId();
+			}
+
 			listUserData = new ArrayList<UserData>();
 			XSSFWorkbook workbook = new XSSFWorkbook(file.getInputStream());
 			Sheet sheet = workbook.getSheetAt(0);
 
 			XSSFRow row;
 			XSSFCell cell;
+			HashMap<String, String> mapError = new HashMap<String, String>();
 
 			Iterator rows = sheet.rowIterator();
 
@@ -494,170 +494,223 @@ public class DataHelper {
 				UserData userData = new UserData();
 
 				row = (XSSFRow) rows.next();
+				// XSSFCell srNo = row.getCell((short) 0);
+				XSSFCell leaseContractNo = row.getCell((short) 0);
+				/*
+				 * if (row.getRowNum() > 0 && (commencementDate == null ||
+				 * commencementDate.getCellType() == CellType.BLANK)) {
+				 * mapError.put(row.getRowNum() + "",
+				 * "commencement date column must not be  null"); }
+				 */
+
+				if (row.getRowNum() > 0 && (leaseContractNo == null || leaseContractNo.getCellType() == CellType.BLANK))
+					break;
+
 				if (row.getRowNum() > 0) {
 					System.out.println(row.getRowNum());
 					Iterator cells = row.cellIterator();
-
-					Random rd = new Random(); // creating Random object
-												// samplingData.setId(rd.nextInt());
-
-					XSSFCell leaseContractNo = row.getCell((short) 1);
 
 					if (leaseContractNo.getCellType() == CellType.NUMERIC) {
 						userData.setLeaseContractNo(leaseContractNo.getNumericCellValue() + "");
 					} else if (leaseContractNo.getCellType() == CellType.STRING) {
 						userData.setLeaseContractNo(leaseContractNo.getStringCellValue() + "");
+					} else {
+						mapError.put("Row No#  " + row.getRowNum() + "Column No#  " + leaseContractNo.getColumnIndex(),
+								" leaseContractNo Must be Numeric");
 					}
 
-					XSSFCell lessorName = row.getCell((short) 2);
+					XSSFCell lessorName = row.getCell((short) 1);
 
-					if (lessorName.getCellType() == CellType.NUMERIC) {
-						userData.setLessorName(lessorName.getNumericCellValue() + "");
-					} else if (lessorName.getCellType() == CellType.STRING) {
+					/*
+					 * if (lessorName.getCellType() == CellType.NUMERIC) {
+					 * userData.setLessorName(lessorName.getNumericCellValue() +
+					 * ""); } else
+					 */
+					if (lessorName.getCellType() == CellType.STRING) {
 						userData.setLessorName(lessorName.getStringCellValue() + "");
+					} else {
+						mapError.put("Row No#  " + row.getRowNum() + "Column No#  " + lessorName.getColumnIndex(),
+								"lessorName Must be String");
 					}
 
-					XSSFCell classOfAsset = row.getCell((short) 3);
+					XSSFCell classOfAsset = row.getCell((short) 2);
 
-					if (classOfAsset.getCellType() == CellType.NUMERIC) {
-						userData.setClassOfAsset(classOfAsset.getNumericCellValue() + "");
-					} else if (lessorName.getCellType() == CellType.STRING) {
+					/*
+					 * if (classOfAsset.getCellType() == CellType.NUMERIC) {
+					 * userData.setClassOfAsset(classOfAsset.getNumericCellValue
+					 * () + ""); } else
+					 */
+					if (classOfAsset.getCellType() == CellType.STRING) {
 						userData.setClassOfAsset(classOfAsset.getStringCellValue() + "");
+					} else {
+						mapError.put("Row No#  " + row.getRowNum() + "Column No#  " + classOfAsset.getColumnIndex(),
+								"classOfAsset Must be String");
 					}
 
-					XSSFCell assetDescription = row.getCell((short) 4);
+					XSSFCell assetDescription = row.getCell((short) 3);
 
-					if (assetDescription.getCellType() == CellType.NUMERIC) {
-						userData.setAssetDescription(assetDescription.getNumericCellValue() + "");
-					} else if (assetDescription.getCellType() == CellType.STRING) {
+					/*
+					 * if (assetDescription.getCellType() == CellType.NUMERIC) {
+					 * userData.setAssetDescription(assetDescription.
+					 * getNumericCellValue() + ""); } else
+					 */
+
+					if (assetDescription.getCellType() == CellType.STRING) {
 						userData.setAssetDescription(assetDescription.getStringCellValue() + "");
+					} else {
+						mapError.put("Row No#  " + row.getRowNum() + "Column No#  " + assetDescription.getColumnIndex(),
+								"assetDescription Must be String");
 					}
 
-					XSSFCell locaton = row.getCell((short) 5);
+					XSSFCell location = row.getCell((short) 4);
 
-					if (locaton.getCellType() == CellType.NUMERIC) {
-						userData.setLocation(locaton.getNumericCellValue() + "");
-					} else if (locaton.getCellType() == CellType.STRING) {
-						userData.setLocation(locaton.getStringCellValue() + "");
+					/*
+					 * if (locaton.getCellType() == CellType.NUMERIC) {
+					 * userData.setLocation(locaton.getNumericCellValue() + "");
+					 * } else
+					 */
+					if (location.getCellType() == CellType.STRING) {
+						userData.setLocation(location.getStringCellValue() + "");
+					} else {
+						mapError.put("Row No#  " + row.getRowNum() + "Column No#  " + location.getColumnIndex(),
+								"Location Must be String");
 					}
 
-					XSSFCell commencementDate = row.getCell((short) 6);
-
+					XSSFCell commencementDate = row.getCell((short) 5);
 					if (commencementDate.getCellType() == CellType.NUMERIC) {
 						userData.setCommencementDate(commencementDate.getDateCellValue());
-					} else if (commencementDate.getCellType() == CellType.STRING) {
-						// userData.setCommencementDate(commencementDate.getStringCellValue()
-						// + "");
+					} else {
+						mapError.put("Row No#  " + row.getRowNum() + "Column No#  " + commencementDate.getColumnIndex(),
+								"CommencementDate Must be in a valid format");
+
 					}
 
-					XSSFCell paymentsAt = row.getCell((short) 7);
+					XSSFCell paymentsAt = row.getCell((short) 6);
 
-					if (paymentsAt.getCellType() == CellType.NUMERIC) {
-						userData.setPaymentsAt(paymentsAt.getNumericCellValue() + "");
-					} else if (paymentsAt.getCellType() == CellType.STRING) {
+					if (paymentsAt.getCellType() == CellType.STRING) {
 						userData.setPaymentsAt(paymentsAt.getStringCellValue() + "");
+					} else {
+						mapError.put("Row No#  " + row.getRowNum() + "Column No#  " + paymentsAt.getColumnIndex(),
+								"PaymentsAt must be String");
 					}
+					/*
+					 * else if (paymentsAt.getCellType() == CellType.STRING) {
+					 * userData.setPaymentsAt(paymentsAt.getStringCellValue() +
+					 * ""); }
+					 */
 
-					XSSFCell annualDiscountRate = row.getCell((short) 8);
+					XSSFCell annualDiscountRate = row.getCell((short) 7);
 
 					if (annualDiscountRate.getCellType() == CellType.NUMERIC) {
 						userData.setAnnualDiscountRate((float) annualDiscountRate.getNumericCellValue());
-					} else if (annualDiscountRate.getCellType() == CellType.STRING) {
-						// userData.setAnnualDiscountRate(annualDiscountRate.getStringCellValue()
-						// + "");
+					} else {
+						mapError.put(
+								"Row No#  " + row.getRowNum() + "Column No#  " + annualDiscountRate.getColumnIndex(),
+								"annualDiscountRate must be Numeric");
 					}
 
-					XSSFCell leaseTermPerod = row.getCell((short) 9);
+					XSSFCell leaseTermPerod = row.getCell((short) 8);
 
 					if (leaseTermPerod.getCellType() == CellType.NUMERIC) {
 						userData.setLeaseTerm((int) leaseTermPerod.getNumericCellValue());
-					} else if (annualDiscountRate.getCellType() == CellType.STRING) {
-						// userData.setLeaseTerm(leaseTermPerod.getStringCellValue()
-						// + "");
+					} else {
+						mapError.put("Row No#  " + row.getRowNum() + "Column No#  " + leaseTermPerod.getColumnIndex(),
+								"leaseTermPeriod must be Numeric");
 					}
 
-					XSSFCell leasePayment = row.getCell((short) 10);
+					XSSFCell leasePayment = row.getCell((short) 9);
 
 					if (leasePayment.getCellType() == CellType.NUMERIC) {
 						userData.setLeasePayment(leasePayment.getNumericCellValue());
-					} else if (annualDiscountRate.getCellType() == CellType.STRING) {
-						// userData.setLeasePayment(leasePayment.getStringCellValue()
-						// + "");
+					} else {
+						mapError.put("Row No#  " + row.getRowNum() + "Column No#  " + leasePayment.getColumnIndex(),
+								"LeasePayment must be Numeric");
 					}
 
-					XSSFCell paymentInterval = row.getCell((short) 11);
+					XSSFCell paymentInterval = row.getCell((short) 10);
 
-					if (paymentInterval.getCellType() == CellType.NUMERIC) {
-						userData.setPaymentIntervals(paymentInterval.getNumericCellValue() + "");
-					} else if (paymentInterval.getCellType() == CellType.STRING) {
+					if (paymentInterval.getCellType() == CellType.STRING) {
 						userData.setPaymentIntervals(paymentInterval.getStringCellValue() + "");
 					}
+					/*
+					 * else if (paymentInterval.getCellType() ==
+					 * CellType.STRING) {
+					 * userData.setPaymentIntervals(paymentInterval.
+					 * getStringCellValue() + ""); }
+					 */
+					else {
+						mapError.put("Row No#  " + row.getRowNum() + "Column No#  " + paymentInterval.getColumnIndex(),
+								"paymentInterval must be String");
+					}
 
-					XSSFCell initilDirectCost = row.getCell((short) 12);
+					XSSFCell initilDirectCost = row.getCell((short) 11);
 
 					if (initilDirectCost.getCellType() == CellType.NUMERIC) {
 						userData.setInitialDirectCost((int) initilDirectCost.getNumericCellValue());
-					} else if (annualDiscountRate.getCellType() == CellType.STRING) {
-						// userData.setInitialDirectCost(initilDirectCost.getStringCellValue()
-						// + "");
+					} else {
+						mapError.put("Row No#  " + row.getRowNum() + "Column No#  " + initilDirectCost.getColumnIndex(),
+								"InitialDirectCost must be Numeric");
 					}
 
-					XSSFCell guarenteResidual = row.getCell((short) 13);
+					XSSFCell guarenteResidual = row.getCell((short) 12);
 
 					if (guarenteResidual.getCellType() == CellType.NUMERIC) {
 						userData.setGuaranteedResidualValue(guarenteResidual.getNumericCellValue());
-					} else if (annualDiscountRate.getCellType() == CellType.STRING) {
-						// userData.setGuaranteedResidualValue(guarenteResidual.getStringCellValue()
-						// + "");
+					} else {
+						mapError.put("Row No#  " + row.getRowNum() + "Column No#  " + guarenteResidual.getColumnIndex(),
+								"Residual Value must be Numeric");
 					}
 
-					XSSFCell useFullLifeAsset = row.getCell((short) 14);
+					XSSFCell useFullLifeAsset = row.getCell((short) 13);
 
 					if (useFullLifeAsset.getCellType() == CellType.NUMERIC) {
 						userData.setUsefulLifeOfTheAsset((int) useFullLifeAsset.getNumericCellValue());
-					} else if (annualDiscountRate.getCellType() == CellType.STRING) {
-						// userData.setUsefulLifeOfTheAsset(useFullLifeAsset.getStringCellValue()
-						// + "");
+					} else {
+						mapError.put("Row No#  " + row.getRowNum() + "Column No#  " + useFullLifeAsset.getColumnIndex(),
+								"UsefullAsset must be Numeric");
 					}
 
-					XSSFCell escalatonPercentage = row.getCell((short) 15);
+					XSSFCell escalatonPercentage = row.getCell((short) 14);
 
 					if (escalatonPercentage.getCellType() == CellType.NUMERIC) {
 						userData.setEscalation((float) escalatonPercentage.getNumericCellValue());
-					} else if (annualDiscountRate.getCellType() == CellType.STRING) {
-						// userData.setEscalation(escalatonPercentage.getStringCellValue()
-						// + "");
+					} else {
+						mapError.put(
+								"Row No#  " + row.getRowNum() + "Column No#  " + escalatonPercentage.getColumnIndex(),
+								"Escalation% must be Numeric");
 					}
 
-					XSSFCell escalatonAfterYear = row.getCell((short) 16);
+					XSSFCell escalatonAfterYear = row.getCell((short) 15);
 
 					if (escalatonAfterYear.getCellType() == CellType.NUMERIC) {
 						userData.setEscalationAfterEvery((int) escalatonAfterYear.getNumericCellValue());
-					} else if (annualDiscountRate.getCellType() == CellType.STRING) {
-						// userData.setEscalationAfterEvery(escalatonAfterYear.getStringCellValue()
-						// + "");
+					} else {
+						mapError.put(
+								"Row No#  " + row.getRowNum() + "Column No#  " + escalatonAfterYear.getColumnIndex(),
+								"EscalationYear must be Numeric");
 					}
-					// userData.setId(getAvaiablaeDataId());
+					userData.setId(getAvaiablaeDataId());
 					userData.setUserId(userId);
 					userData.setCompanyId(companyId);
 
-					returnResult = saveData(userData);
-					// userDataRepository.save(userData);
-
 					listUserData.add(userData);
 				}
+
 			}
-			if (returnResult.contains("failure")) {
-				returnResult = "Failed to save Leases";
-			} else {
-				returnResult = "Success: Leases Saved Successfully";
+			if (mapError.isEmpty())
+				userDataRepository.saveAll(listUserData);
+			else {
+				returnResult = gson.toJson(mapError);
+				return returnResult;
 			}
+
 			return returnResult;
-		} catch (IOException e) {
+		} catch (
+
+		IOException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw e;
 		}
-		return "List Saved";
 
 	}
 

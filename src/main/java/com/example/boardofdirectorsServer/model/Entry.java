@@ -16,6 +16,10 @@ public class Entry {
 	private int expectedPeriod;
 	private double leasePayment;
 	private String paymentIntervals;
+	private String location;
+	private String lessorName;
+	private String assetCode;
+	private String contractReferenceNo;
 	private int initialDirectCost;
 	private double guaranteedResidualValue;
 	private int usefulLifeOfTheAsset;
@@ -210,6 +214,38 @@ public class Entry {
 
 	public void setCompanyId(int companyId) {
 		this.companyId = companyId;
+	}
+
+	public String getLocation() {
+		return location;
+	}
+
+	public void setLocation(String location) {
+		this.location = location;
+	}
+
+	public String getLessorName() {
+		return lessorName;
+	}
+
+	public void setLessorName(String lessorName) {
+		this.lessorName = lessorName;
+	}
+
+	public String getAssetCode() {
+		return assetCode;
+	}
+
+	public void setAssetCode(String assetCode) {
+		this.assetCode = assetCode;
+	}
+
+	public String getContractReferenceNo() {
+		return contractReferenceNo;
+	}
+
+	public void setContractReferenceNo(String contractReferenceNo) {
+		this.contractReferenceNo = contractReferenceNo;
 	}
 
 }

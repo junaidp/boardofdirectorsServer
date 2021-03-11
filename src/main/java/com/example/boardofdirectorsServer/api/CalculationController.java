@@ -216,6 +216,68 @@ public class CalculationController {
 		}
 	}
 
+	@PostMapping("/journal/reportFtaSum")
+	public String calculateReportFtaSum(@RequestBody Entry entry) throws Exception {
+		try {
+
+			CalculationFTA c = new CalculationFTA();
+			// json = c.entryFirstTimeAdoption(entry, TYPESFTA.LEASE,
+			// TYPESFTA.LEASE);
+			// return json;
+			// Calculation c = new Calculation();
+			List<UserData> dataList;
+			///
+			Gson gson = new Gson();
+			if (entry.getCompanyId() == 0) {
+				int userId = entry.getUserId();
+				System.out.println("calling getuser data");
+				dataList = dataHelper.getUserData(userId);
+
+			} else {
+				int companyId = entry.getCompanyId();
+				dataList = dataHelper.getCompanyData(companyId);
+			}
+
+			System.out.println("back from data:" + dataList);
+			LinkedHashMap<String, LinkedHashMap<String, String>> mapFinal = new LinkedHashMap<String, LinkedHashMap<String, String>>();
+
+			///
+			double dr = 0;
+			for (UserData userData : dataList) {
+				Entry entryc = new Entry();
+				copyData(userData, entryc);
+				json = c.entryFirstTimeAdoption(entryc, TYPESFTA.LEASE, TYPESFTA.LEASE);
+				@SuppressWarnings("unchecked")
+				LinkedHashMap<String, String> map = gson.fromJson(json, LinkedHashMap.class);
+				// map.put("commencementDate", entry.getCommencementDate()+"");
+				// map.put("paymentInterval", entry.getPaymentIntervals());
+				// map.put("paymentsAt", entry.getPaymentsAt());
+				System.out.println("converted");
+				/*
+				 * map.put("commencementDate", entryc.getCommencementDate() +
+				 * ""); map.put("paymentsAt", entryc.getPaymentsAt());
+				 * map.put("paymentIntervals", entryc.getPaymentIntervals());
+				 * map.put("leaseName", userData.getLeaseName());
+				 * map.put("lessorName", userData.getLessorName());
+				 * map.put("referenceNo", userData.getLeaseContractNo());
+				 * map.put("classOfAsset", userData.getClassOfAsset());
+				 * map.put("id", userData.getId() + "");
+				 */
+
+				// map.put("payment", value)
+
+				mapFinal.put(userData.getDataId(), map);
+
+			}
+
+			System.out.println("retruning" + mapFinal);
+
+			return gson.toJson(mapFinal);
+		} catch (Exception e) {
+			throw e;
+		}
+	}
+
 	private void copyData(UserData s, Entry t) {
 
 		t.setAnnualDiscountRate(s.getAnnualDiscountRate() / 100);
@@ -232,6 +294,10 @@ public class CalculationController {
 		t.setPaymentsAt(s.getPaymentsAt());
 		t.setUsefulLifeOfTheAsset(s.getUsefulLifeOfTheAsset());
 		t.setUserId(s.getUserId());
+		t.setContractReferenceNo(s.getLeaseContractNo());
+		t.setAssetCode(s.getClassOfAsset());
+		t.setLessorName(s.getLessorName());
+		t.setLocation(s.getLocation());
 		round(t.getEscalation(), 2);
 		round(t.getAnnualDiscountRate(), 2);
 
