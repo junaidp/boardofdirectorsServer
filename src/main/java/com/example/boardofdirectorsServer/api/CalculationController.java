@@ -49,6 +49,11 @@ public class CalculationController {
 
 	@PostMapping("/lease/yearly")
 	public String calculateLeaseYearly(@RequestBody Entry entry) throws Exception {
+		if (entry.getEscalationAfterEvery() == 0 && entry.getEscalation() > 0) {
+			entry.setEscalation(0);
+			entry.setEscalationAfterEvery(1);
+		}
+
 		try {
 			Calculation c = new Calculation();
 			json = c.entryLease(entry, Constants.LEASE_YEARLY);
@@ -216,7 +221,7 @@ public class CalculationController {
 		}
 	}
 
-	@PostMapping("/journal/reportFtaSum")
+	@PostMapping("/journal/reportSchedulePerYear")
 	public String calculateReportFtaSum(@RequestBody Entry entry) throws Exception {
 		try {
 
@@ -241,37 +246,20 @@ public class CalculationController {
 			System.out.println("back from data:" + dataList);
 			LinkedHashMap<String, LinkedHashMap<String, String>> mapFinal = new LinkedHashMap<String, LinkedHashMap<String, String>>();
 
-			///
 			double dr = 0;
 			for (UserData userData : dataList) {
 				Entry entryc = new Entry();
 				copyData(userData, entryc);
-				json = c.entryFirstTimeAdoption(entryc, TYPESFTA.LEASE, TYPESFTA.LEASE);
+				entryc.setYear(entry.getYear());
+				entryc.setMonth(entry.getMonth());
+				entryc.setUsefulLifeOfTheAsset(10);
+				json = c.entryFirstTimeAdoption(entryc, TYPESFTA.SCHEDULELEASEREPORT, TYPESFTA.LEASE);
 				@SuppressWarnings("unchecked")
 				LinkedHashMap<String, String> map = gson.fromJson(json, LinkedHashMap.class);
-				// map.put("commencementDate", entry.getCommencementDate()+"");
-				// map.put("paymentInterval", entry.getPaymentIntervals());
-				// map.put("paymentsAt", entry.getPaymentsAt());
 				System.out.println("converted");
-				/*
-				 * map.put("commencementDate", entryc.getCommencementDate() +
-				 * ""); map.put("paymentsAt", entryc.getPaymentsAt());
-				 * map.put("paymentIntervals", entryc.getPaymentIntervals());
-				 * map.put("leaseName", userData.getLeaseName());
-				 * map.put("lessorName", userData.getLessorName());
-				 * map.put("referenceNo", userData.getLeaseContractNo());
-				 * map.put("classOfAsset", userData.getClassOfAsset());
-				 * map.put("id", userData.getId() + "");
-				 */
-
-				// map.put("payment", value)
-
 				mapFinal.put(userData.getDataId(), map);
-
 			}
-
 			System.out.println("retruning" + mapFinal);
-
 			return gson.toJson(mapFinal);
 		} catch (Exception e) {
 			throw e;
@@ -298,6 +286,7 @@ public class CalculationController {
 		t.setAssetCode(s.getClassOfAsset());
 		t.setLessorName(s.getLessorName());
 		t.setLocation(s.getLocation());
+		t.setDataId(s.getId());
 		round(t.getEscalation(), 2);
 		round(t.getAnnualDiscountRate(), 2);
 
@@ -350,6 +339,26 @@ public class CalculationController {
 		try {
 			CalculationFTA c = new CalculationFTA();
 			json = c.entryFirstTimeAdoption(entry, TYPESFTA.LEASE, TYPESFTA.LEASE);
+			return json;
+		} catch (Exception e) {
+			throw e;
+		}
+	}
+
+	@PostMapping("/fta/leaseByDataId")
+	public String calculateFTALeaseByDataId(@RequestBody Entry entry) throws Exception {
+		try {
+			String dataId = entry.getDataId();
+			UserData userData = dataHelper.getUserDataByDataId(dataId);
+			// if (userData == null) {
+			Entry e = new Entry();
+			setEntryObject(userData, e);
+			e.setLeaseContractNo(userData.getLeaseContractNo());
+			e.setAssetCode(userData.getClassOfAsset());
+			e.setLocation(userData.getLocation());
+			e.setUsefulLifeOfTheAsset(10);
+			CalculationFTA c = new CalculationFTA();
+			json = c.entryFirstTimeAdoption(e, TYPESFTA.LEASE, TYPESFTA.LEASE);
 			return json;
 		} catch (Exception e) {
 			throw e;

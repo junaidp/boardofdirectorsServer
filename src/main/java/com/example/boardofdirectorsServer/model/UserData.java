@@ -24,6 +24,7 @@ public class UserData {
 	private double leasePayment;
 	private String paymentIntervals;
 	private String contractCurrency;
+	private String assetCode;
 	private int initialDirectCost;
 	private double guaranteedResidualValue;
 	private int usefulLifeOfTheAsset;
@@ -323,6 +324,14 @@ public class UserData {
 
 	public void setAssetDescription(String assetDescription) {
 		this.assetDescription = assetDescription;
+	}
+
+	public String getAssetCode() {
+		return assetCode;
+	}
+
+	public void setAssetCode(String assetCode) {
+		this.assetCode = assetCode;
 	}
 
 }

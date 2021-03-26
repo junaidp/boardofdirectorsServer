@@ -17,6 +17,7 @@ public class Entry {
 	private double leasePayment;
 	private String paymentIntervals;
 	private String location;
+	private String dataId;
 	private String lessorName;
 	private String assetCode;
 	private String contractReferenceNo;
@@ -246,6 +247,14 @@ public class Entry {
 
 	public void setContractReferenceNo(String contractReferenceNo) {
 		this.contractReferenceNo = contractReferenceNo;
+	}
+
+	public String getDataId() {
+		return dataId;
+	}
+
+	public void setDataId(String dataId) {
+		this.dataId = dataId;
 	}
 
 }

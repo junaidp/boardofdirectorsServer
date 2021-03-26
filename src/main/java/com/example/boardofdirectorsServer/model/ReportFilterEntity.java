@@ -19,6 +19,7 @@ public class ReportFilterEntity {
 	private String leaseName;
 	private String lessorName;
 	private String location;
+	private String assetCode;
 	private int userId;
 	private int companyId;
 
@@ -108,6 +109,22 @@ public class ReportFilterEntity {
 
 	public void setClassOfAsset(String classOfAsset) {
 		this.classOfAsset = classOfAsset;
+	}
+
+	public String getQuickReport() {
+		return quickReport;
+	}
+
+	public void setQuickReport(String quickReport) {
+		this.quickReport = quickReport;
+	}
+
+	public String getAssetCode() {
+		return assetCode;
+	}
+
+	public void setAssetCode(String assetCode) {
+		this.assetCode = assetCode;
 	}
 
 }

@@ -52,7 +52,9 @@ public class ReportHelper {
 			// critAnd.and("userId").is(reportFilterEntity.getUserId());
 
 			if ((reportFilterEntity.getLeaseName().equals("All")) && (reportFilterEntity.getLessorName().equals("All"))
-					&& (reportFilterEntity.getClassOfAsset().equals("All"))) {
+					&& (reportFilterEntity.getClassOfAsset().equals("All"))
+					&& (reportFilterEntity.getAssetCode().equals("All"))
+					&& (reportFilterEntity.getLocation().equals("All"))) {
 
 				query.addCriteria(Criteria.where("userId").is(reportFilterEntity.getUserId()));
 
@@ -79,6 +81,12 @@ public class ReportHelper {
 				}
 				if (!reportFilterEntity.getClassOfAsset().equals("All")) {
 					criteria = criteria.and("classOfAsset").is(reportFilterEntity.getClassOfAsset());
+				}
+				if (!reportFilterEntity.getLocation().equals("All")) {
+					criteria = criteria.and("location").is(reportFilterEntity.getLocation());
+				}
+				if (!reportFilterEntity.getAssetCode().equals("All")) {
+					criteria = criteria.and("assetCode").is(reportFilterEntity.getAssetCode());
 				}
 				// else {
 				// criteria = criteria.and("expiryDateTime").lte(new Date());
@@ -118,7 +126,9 @@ public class ReportHelper {
 			// critAnd.and("userId").is(reportFilterEntity.getUserId());
 
 			if ((reportFilterEntity.getLeaseName().equals("All")) && (reportFilterEntity.getLessorName().equals("All"))
-					&& (reportFilterEntity.getClassOfAsset().equals("All"))) {
+					&& (reportFilterEntity.getClassOfAsset().equals("All"))
+					&& (reportFilterEntity.getAssetCode().equals("All"))
+					&& (reportFilterEntity.getLocation().equals("All"))) {
 
 				query.addCriteria(Criteria.where("companyId").is(reportFilterEntity.getCompanyId()));
 
@@ -134,7 +144,12 @@ public class ReportHelper {
 				if (!reportFilterEntity.getClassOfAsset().equals("All")) {
 					criteria = criteria.and("classOfAsset").is(reportFilterEntity.getClassOfAsset());
 				}
-
+				if (!reportFilterEntity.getLocation().equals("All")) {
+					criteria = criteria.and("location").is(reportFilterEntity.getLocation());
+				}
+				if (!reportFilterEntity.getAssetCode().equals("All")) {
+					criteria = criteria.and("assetCode").is(reportFilterEntity.getAssetCode());
+				}
 				query.addCriteria(criteria);
 				// critOr.orOperator(Criteria.where("classOfAsset").is(reportFilterEntity.getClassOfAsset()),
 				// Criteria.where("lessorName").is(reportFilterEntity.getLessorName()),

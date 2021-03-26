@@ -43,6 +43,10 @@ public class DataController {
 
 	@PostMapping("/saveData")
 	public String saveData(@RequestBody UserData dataEntity) {
+		if (dataEntity.getEscalationAfterEvery() == 0 && dataEntity.getEscalation() > 0) {
+			dataEntity.setEscalation(0);
+			dataEntity.setEscalationAfterEvery(1);
+		}
 		return userData.saveData(dataEntity);
 	}
 
@@ -124,6 +128,14 @@ public class DataController {
 
 	}
 
+	@RequestMapping(path = "/getFileByPath", method = RequestMethod.GET)
+	// @GetMapping("/getUserFileByDataId")
+	public ResponseEntity<Resource> getUserFileByPath(@RequestParam String path) throws Exception {
+
+		return userData.getFileByPath(path);
+
+	}
+
 	@PostMapping("/getClassOfAsset")
 	public String getClassOfAsset(@RequestBody ClassOfAsset classAssetEntity) throws Exception {
 		System.out.println("getting class of assets");
@@ -176,8 +188,8 @@ public class DataController {
 
 		Path path = Paths.get(UPLOADED_FOLDER + "leaseId" + id + file.getOriginalFilename());
 		userData.saveFileToSystem(file, UPLOADED_FOLDER, id);
-
-		return "leaseId" + id + file.getOriginalFilename();
+		Gson gson = new Gson();
+		return gson.toJson("leaseId" + id + file.getOriginalFilename());
 		// return ResponseEntity.ok(fileDownloadUri1);
 	}
 

@@ -58,6 +58,7 @@ public class DataHelper {
 			if (data.getUserId() == 0) {
 				return "Failure: Only users can add Leases";
 			}
+
 			User user = getUserWithId(data.getUserId() + "");
 			Boolean allow = allowSave(user, data);
 			if (allow) {
@@ -72,6 +73,7 @@ public class DataHelper {
 			}
 		} catch (Exception ex) {
 			throw ex;
+
 		}
 	}
 
@@ -214,6 +216,24 @@ public class DataHelper {
 		}
 	}
 
+	public ResponseEntity<Resource> getFileByPath(String filePath) throws Exception {
+		try {
+
+			// String UPLOADED_FOLDER =
+			// "C:/Users/Joni/git/boardofdirectorsServer/src/bulktemplate.xlsx/";
+			String UPLOADED_FOLDER = filePath;
+			File templateExcel = new File(UPLOADED_FOLDER);
+			return downloadFile(templateExcel);
+		}
+		// // return json;
+		catch (
+
+		Exception ex) {
+			System.out.println("Error is :" + ex.getMessage());
+			throw ex;
+		}
+	}
+
 	private ResponseEntity<Resource> downloadFile(File userFile) throws FileNotFoundException {
 		HttpHeaders headers = new HttpHeaders();
 		headers.add("Cache-Control", "no-cache, no-store, must-revalidate");
@@ -265,10 +285,17 @@ public class DataHelper {
 			System.out.println("{ Mongooperation: '" + mongoOperation + "'}");
 			Query query = new Query();
 			query.addCriteria(Criteria.where("userId").is(userId));
+
+			System.out.println("ff");
+
 			// BasicQuery query1 = new BasicQuery("{ name : '"+name+"'} , {
 			// password: '"+password+"'}");
 			System.out.println("ff");
-			List<ClassOfAsset> userClassOfAsset = mongoOperation.find(query, ClassOfAsset.class);
+			// List<ClassOfAsset> userClassOfAsset = mongoOperation.find(query,
+			// ClassOfAsset.class);
+
+			List<ClassOfAsset> userClassOfAsset = mongoOperation.findDistinct(query, "classOfAsset", "classOfAsset",
+					ClassOfAsset.class);
 			System.out.println(userClassOfAsset);
 			if (userClassOfAsset == null)
 				return null;
@@ -287,10 +314,11 @@ public class DataHelper {
 			System.out.println("{ Mongooperation: '" + mongoOperation + "'}");
 			Query query = new Query();
 			query.addCriteria(Criteria.where("companyId").is(companyId));
-			// BasicQuery query1 = new BasicQuery("{ name : '"+name+"'} , {
-			// password: '"+password+"'}");
+
 			System.out.println("ff");
-			List<ClassOfAsset> companyClassOfAssets = mongoOperation.find(query, ClassOfAsset.class);
+			List<ClassOfAsset> companyClassOfAssets = mongoOperation.findDistinct(query, "classOfAsset", "classOfAsset",
+					ClassOfAsset.class);
+
 			System.out.println(companyClassOfAssets);
 			if (companyClassOfAssets == null)
 				return null;
@@ -375,10 +403,10 @@ public class DataHelper {
 
 		// String user = getUserWithId(data.getUserId() + "");
 		int userCounts = userdata.size();
-		int trialAllowed = 10000;
-		int bronzeAllowed = 1000;
-		int silverAllowed = 1000;
-		int goldAllowed = 10000;
+		int trialAllowed = 1;
+		int bronzeAllowed = 10;
+		int silverAllowed = 30;
+		int goldAllowed = 500;
 
 		if (user.getPaymentSchedule().equals("trial") && userCounts < trialAllowed) {
 			return true;
@@ -547,7 +575,20 @@ public class DataHelper {
 								"classOfAsset Must be String");
 					}
 
-					XSSFCell assetDescription = row.getCell((short) 3);
+					XSSFCell assetCode = row.getCell((short) 3);
+
+					if (assetCode.getCellType() == CellType.NUMERIC) {
+						userData.setAssetCode(assetCode.getNumericCellValue() + "");
+					} else
+
+					if (assetCode.getCellType() == CellType.STRING) {
+						userData.setAssetCode(assetCode.getStringCellValue() + "");
+					} else {
+						mapError.put("Row No#  " + row.getRowNum() + "Column No#  " + assetCode.getColumnIndex(),
+								"assetCode Must be String");
+					}
+
+					XSSFCell assetDescription = row.getCell((short) 4);
 
 					/*
 					 * if (assetDescription.getCellType() == CellType.NUMERIC) {
@@ -562,7 +603,7 @@ public class DataHelper {
 								"assetDescription Must be String");
 					}
 
-					XSSFCell location = row.getCell((short) 4);
+					XSSFCell location = row.getCell((short) 5);
 
 					/*
 					 * if (locaton.getCellType() == CellType.NUMERIC) {
@@ -576,7 +617,7 @@ public class DataHelper {
 								"Location Must be String");
 					}
 
-					XSSFCell commencementDate = row.getCell((short) 5);
+					XSSFCell commencementDate = row.getCell((short) 6);
 					if (commencementDate.getCellType() == CellType.NUMERIC) {
 						userData.setCommencementDate(commencementDate.getDateCellValue());
 					} else {
@@ -585,7 +626,7 @@ public class DataHelper {
 
 					}
 
-					XSSFCell paymentsAt = row.getCell((short) 6);
+					XSSFCell paymentsAt = row.getCell((short) 7);
 
 					if (paymentsAt.getCellType() == CellType.STRING) {
 						userData.setPaymentsAt(paymentsAt.getStringCellValue() + "");
@@ -599,7 +640,7 @@ public class DataHelper {
 					 * ""); }
 					 */
 
-					XSSFCell annualDiscountRate = row.getCell((short) 7);
+					XSSFCell annualDiscountRate = row.getCell((short) 8);
 
 					if (annualDiscountRate.getCellType() == CellType.NUMERIC) {
 						userData.setAnnualDiscountRate((float) annualDiscountRate.getNumericCellValue());
@@ -609,7 +650,7 @@ public class DataHelper {
 								"annualDiscountRate must be Numeric");
 					}
 
-					XSSFCell leaseTermPerod = row.getCell((short) 8);
+					XSSFCell leaseTermPerod = row.getCell((short) 9);
 
 					if (leaseTermPerod.getCellType() == CellType.NUMERIC) {
 						userData.setLeaseTerm((int) leaseTermPerod.getNumericCellValue());
@@ -618,7 +659,7 @@ public class DataHelper {
 								"leaseTermPeriod must be Numeric");
 					}
 
-					XSSFCell leasePayment = row.getCell((short) 9);
+					XSSFCell leasePayment = row.getCell((short) 10);
 
 					if (leasePayment.getCellType() == CellType.NUMERIC) {
 						userData.setLeasePayment(leasePayment.getNumericCellValue());
@@ -627,7 +668,7 @@ public class DataHelper {
 								"LeasePayment must be Numeric");
 					}
 
-					XSSFCell paymentInterval = row.getCell((short) 10);
+					XSSFCell paymentInterval = row.getCell((short) 11);
 
 					if (paymentInterval.getCellType() == CellType.STRING) {
 						userData.setPaymentIntervals(paymentInterval.getStringCellValue() + "");
@@ -643,7 +684,7 @@ public class DataHelper {
 								"paymentInterval must be String");
 					}
 
-					XSSFCell initilDirectCost = row.getCell((short) 11);
+					XSSFCell initilDirectCost = row.getCell((short) 12);
 
 					if (initilDirectCost.getCellType() == CellType.NUMERIC) {
 						userData.setInitialDirectCost((int) initilDirectCost.getNumericCellValue());
@@ -652,7 +693,7 @@ public class DataHelper {
 								"InitialDirectCost must be Numeric");
 					}
 
-					XSSFCell guarenteResidual = row.getCell((short) 12);
+					XSSFCell guarenteResidual = row.getCell((short) 13);
 
 					if (guarenteResidual.getCellType() == CellType.NUMERIC) {
 						userData.setGuaranteedResidualValue(guarenteResidual.getNumericCellValue());
@@ -661,7 +702,7 @@ public class DataHelper {
 								"Residual Value must be Numeric");
 					}
 
-					XSSFCell useFullLifeAsset = row.getCell((short) 13);
+					XSSFCell useFullLifeAsset = row.getCell((short) 14);
 
 					if (useFullLifeAsset.getCellType() == CellType.NUMERIC) {
 						userData.setUsefulLifeOfTheAsset((int) useFullLifeAsset.getNumericCellValue());
@@ -670,7 +711,7 @@ public class DataHelper {
 								"UsefullAsset must be Numeric");
 					}
 
-					XSSFCell escalatonPercentage = row.getCell((short) 14);
+					XSSFCell escalatonPercentage = row.getCell((short) 15);
 
 					if (escalatonPercentage.getCellType() == CellType.NUMERIC) {
 						userData.setEscalation((float) escalatonPercentage.getNumericCellValue());
@@ -680,7 +721,7 @@ public class DataHelper {
 								"Escalation% must be Numeric");
 					}
 
-					XSSFCell escalatonAfterYear = row.getCell((short) 15);
+					XSSFCell escalatonAfterYear = row.getCell((short) 16);
 
 					if (escalatonAfterYear.getCellType() == CellType.NUMERIC) {
 						userData.setEscalationAfterEvery((int) escalatonAfterYear.getNumericCellValue());

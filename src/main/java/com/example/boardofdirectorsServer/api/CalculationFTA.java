@@ -55,6 +55,10 @@ public class CalculationFTA extends Calculation {
 				json = calculateFTALease(wb, entry, outPutTab.getValue());
 				break;
 
+			case SCHEDULELEASEREPORT:
+				json = calculateScheduleLeaseReport(wb, entry, outPutTab.getValue());
+				break;
+
 			default:
 				break;
 			}
@@ -127,56 +131,63 @@ public class CalculationFTA extends Calculation {
 
 	}
 
-	public String calculateReportRightOfUse(XSSFWorkbook wb, Entry entry, int leaseType)
+	public String calculateScheduleLeaseReport(XSSFWorkbook wb, Entry entry, int leaseType)
 			throws InvalidFormatException, IOException {
 
 		System.out.println("calculating FTA Lease");
 		FormulaEvaluator evaluator = wb.getCreationHelper().createFormulaEvaluator();
 		Sheet sheet = wb.getSheetAt(leaseType);
 
-		LinkedHashMap<String, LinkedHashMap<String, String>> mapSheet = new LinkedHashMap<String, LinkedHashMap<String, String>>();
 		System.out.println("In sheet" + sheet.getSheetName());
 		int leaseTerms = entry.getLeaseTerm();
 		int count = 0;
+		LinkedHashMap<String, String> mapRow = new LinkedHashMap<String, String>();
 
 		for (Row r : sheet) {
 			/// ONLY PUT COLUMN No in map id
 			int row = r.getRowNum();
-
+			// && r.getCell(15).getDateCellValue().getYear() == entry.getYear()
 			if (r.getRowNum() >= 16 && count < leaseTerms) {
+				if (r.getCell(15).getDateCellValue().getYear() + 1900 == entry.getYear()) {
+					System.out.println(r.getCell(14).getNumericCellValue() + "numerric");
+					System.out.println(r.getCell(15).getDateCellValue() + "//DateCelValue");
+					System.out.println(r.getCell(15).getDateCellValue().getYear() + 1900 + "//DateCell  15");
+					// continue;
 
-				LinkedHashMap<String, String> mapRow = new LinkedHashMap<String, String>();
-
-				System.out.println("In Row" + r.getRowNum());
-				for (Cell c : r) {
-					CellType cellType = null;
-					if (c.getCellType() == CellType.FORMULA) {
-						try {
-							evaluator.evaluateFormulaCell(c);
-						} catch (Exception ex) {
-							System.out.println("In Exception in loop" + ex);
-							mapRow.put(c.getColumnIndex() + "", ":" + "");
-							System.out.println("In error" + ex);
+					System.out.println("In Row" + r.getRowNum());
+					for (Cell c : r) {
+						CellType cellType = null;
+						if (c.getCellType() == CellType.FORMULA) {
+							try {
+								evaluator.evaluateFormulaCell(c);
+							} catch (Exception ex) {
+								System.out.println("In Exception in loop" + ex);
+								mapRow.put(c.getColumnIndex() + "", ":" + "");
+								System.out.println("In error" + ex);
+							}
+							cellType = c.getCachedFormulaResultType();
+						} else {
+							cellType = c.getCellType();
 						}
-						cellType = c.getCachedFormulaResultType();
-					} else {
-						cellType = c.getCellType();
+						putinMap(mapRow, c, cellType);
 					}
-					putinMap(mapRow, c, cellType);
+
+					mapRow.put("lessorName", entry.getLessorName());
+					mapRow.put("location", entry.getLocation());
+					mapRow.put("leaseContractNo", entry.getLeaseContractNo());
+					mapRow.put("assetCode", entry.getAssetCode());
+					mapRow.put("dataId", entry.getDataId());
+
+					count++;
+					break;
 				}
-				mapRow.put("lessorName", entry.getLessorName());
-				mapRow.put("location", entry.getLocation());
-				mapRow.put("leaseContractNo", entry.getLeaseContractNo());
-				mapRow.put("assetCode", entry.getAssetCode());
-				mapSheet.put(row + 1 + "", mapRow);
-				count++;
 			}
 
 		}
 
 		System.out.println("returning FTA  map");
 		Gson gson = new Gson();
-		return gson.toJson(mapSheet);
+		return gson.toJson(mapRow);
 
 	}
 
