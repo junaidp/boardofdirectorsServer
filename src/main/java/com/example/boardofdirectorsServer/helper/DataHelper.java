@@ -8,6 +8,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -619,7 +621,10 @@ public class DataHelper {
 
 					XSSFCell commencementDate = row.getCell((short) 6);
 					if (commencementDate.getCellType() == CellType.NUMERIC) {
-						userData.setCommencementDate(commencementDate.getDateCellValue());
+						Date d = commencementDate.getDateCellValue();
+
+						Date newDate = addFiveHours(d);
+						userData.setCommencementDate(newDate);
 					} else {
 						mapError.put("Row No#  " + row.getRowNum() + "Column No#  " + commencementDate.getColumnIndex(),
 								"CommencementDate Must be in a valid format");
@@ -753,6 +758,21 @@ public class DataHelper {
 			throw e;
 		}
 
+	}
+
+	public static Date addDays(Date date, int days) {
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(date);
+		cal.add(Calendar.DATE, days); // minus number would decrement the days
+		return cal.getTime();
+	}
+
+	private Date addFiveHours(Date date) {
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(date);
+		cal.add(Calendar.HOUR, 5);
+		Date fiveHourAhead = cal.getTime();
+		return fiveHourAhead;
 	}
 
 	public String deleteUserLeases(String userId) {

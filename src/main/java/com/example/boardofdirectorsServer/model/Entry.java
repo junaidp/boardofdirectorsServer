@@ -21,7 +21,7 @@ public class Entry {
 	private String lessorName;
 	private String assetCode;
 	private String contractReferenceNo;
-	private int initialDirectCost;
+	private double initialDirectCost;
 	private double guaranteedResidualValue;
 	private int usefulLifeOfTheAsset;
 	private float escalation;
@@ -104,7 +104,7 @@ public class Entry {
 		return paymentIntervals;
 	}
 
-	public int getInitialDirectCost() {
+	public double getInitialDirectCost() {
 		return initialDirectCost;
 	}
 
