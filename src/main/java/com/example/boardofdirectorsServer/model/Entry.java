@@ -30,6 +30,9 @@ public class Entry {
 	private int month;
 	private int userId;
 	private int companyId;
+	private String recognitionOptions;
+	private double paymentToAdd;
+	private Date userSelectedDate;
 
 	public Entry(@JsonProperty("leaseContractNo") String leaseContractNo,
 			@JsonProperty("commencementDate") Date commencementDate, @JsonProperty("paymentsAt") String paymentsAt,
@@ -42,7 +45,9 @@ public class Entry {
 			@JsonProperty("escalation") float escalation,
 			@JsonProperty("escalationAfterEvery") int escalationAfterEvery, @JsonProperty("year") int year,
 			@JsonProperty("month") int month, @JsonProperty("userId") int userId,
-			@JsonProperty("companyId") int companyId) {
+			@JsonProperty("companyId") int companyId, @JsonProperty("recognitionOptions") String recognitionOptions,
+			@JsonProperty("paymentToAdd") double paymentToAdd,
+			@JsonProperty("userSelectedDate") Date userSelectedDate) {
 
 		this.leaseContractNo = leaseContractNo;
 		this.commencementDate = commencementDate;
@@ -65,6 +70,9 @@ public class Entry {
 
 		round(this.escalation, 2);
 		round(this.annualDiscountRate, 2);
+		this.recognitionOptions = recognitionOptions;
+		this.paymentToAdd = paymentToAdd;
+		this.userSelectedDate = userSelectedDate;
 
 	}
 
@@ -255,6 +263,30 @@ public class Entry {
 
 	public void setDataId(String dataId) {
 		this.dataId = dataId;
+	}
+
+	public String getRecognitionOptions() {
+		return recognitionOptions;
+	}
+
+	public void setRecognitionOptions(String recognitionOptions) {
+		this.recognitionOptions = recognitionOptions;
+	}
+
+	public double getPaymentToAdd() {
+		return paymentToAdd;
+	}
+
+	public void setPaymentToAdd(double paymentToAdd) {
+		this.paymentToAdd = paymentToAdd;
+	}
+
+	public Date getUserSelectedDate() {
+		return userSelectedDate;
+	}
+
+	public void setUserSelectedDate(Date userSelectedDate) {
+		this.userSelectedDate = userSelectedDate;
 	}
 
 }

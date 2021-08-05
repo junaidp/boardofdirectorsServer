@@ -2,10 +2,13 @@ package com.example.boardofdirectorsServer.api;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.InvocationTargetException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.LinkedHashMap;
 
 import org.apache.poi.hssf.usermodel.HSSFDateUtil;
@@ -211,7 +214,8 @@ public class Calculation {
 
 			OPCPackage pkg;
 			System.out.println("opening file");
-			InputStream file = getFileJournal();
+			// InputStream file = getFileJournal();
+			InputStream file = getFileJournalAssetDecomposition();
 			System.out.println("back from return");
 			pkg = OPCPackage.open(file);
 
@@ -219,6 +223,7 @@ public class Calculation {
 			Sheet sheetLease = wb.getSheetAt(typeLease.getValue());
 
 			updateValues(entry, sheetLease);
+
 			System.out.println("updating");
 
 			switch (typeJournal) {
@@ -230,6 +235,15 @@ public class Calculation {
 				break;
 			case JOURNAL_MONTHLY:
 				json = calculateJournalMonthly(wb, entry, typeJournal.getValue(), typeLease.getValue());
+				break;
+			case RECOGNITION_YEARLY:
+				json = calculateJournalYearlyDepreciation(wb, entry, typeJournal.getValue(), typeLease.getValue());
+				break;
+			case RECOGNITION_MONTHLY:
+				json = calculateJournalMonthlyDepreciation(wb, entry, typeJournal.getValue(), typeLease.getValue());
+				break;
+			case RECOGNITION_QUARTERLY:
+				json = calculateJournalQuarterlyDepreciation(wb, entry, typeJournal.getValue(), typeLease.getValue());
 				break;
 
 			default:
@@ -285,6 +299,16 @@ public class Calculation {
 
 	protected InputStream getFileJournal() throws Exception {
 		String fileName = "static/Journal.xlsx";
+		System.out.println("opening file" + fileName);
+		ClassLoader classLoader = this.getClass().getClassLoader();
+		System.out.println("here");
+		InputStream file = classLoader.getResourceAsStream(fileName);
+		System.out.println("returning file");
+		return file;
+	}
+
+	protected InputStream getFileJournalAssetDecomposition() throws Exception {
+		String fileName = "static/JournalEntriesAssetAndDerecognition.xlsx";
 		System.out.println("opening file" + fileName);
 		ClassLoader classLoader = this.getClass().getClassLoader();
 		System.out.println("here");
@@ -510,10 +534,20 @@ public class Calculation {
 
 	}
 
+	/**
+	 * @param wb
+	 * @param entry
+	 * @param journalType
+	 * @param leaseType
+	 * @return
+	 * @throws InvalidFormatException
+	 * @throws IOException
+	 */
 	@SuppressWarnings("deprecation")
 	public String calculateJournal(XSSFWorkbook wb, Entry entry, int journalType, int leaseType)
 			throws InvalidFormatException, IOException {
 
+		double rightOfUseOfAsset = 0.0;
 		System.out.println("calculating Journal Yearly");
 		FormulaEvaluator evaluator = wb.getCreationHelper().createFormulaEvaluator();
 
@@ -521,12 +555,40 @@ public class Calculation {
 		XSSFSheet sheet = wb.getSheetAt(journalType);// .getSheet("Yearly
 														// Journal entry");
 		XSSFSheet sheetLease = wb.getSheetAt(leaseType);
+		int leaseTerms = entry.getLeaseTerm();
+		for (Row r1 : sheetLease) {
+			/// ONLY PUT COLUMN No in map id
+			int row1 = r1.getRowNum();
+
+			if (r1.getRowNum() >= 16 && row1 < leaseTerms + 16) {
+
+				if (r1.getRowNum() == 16) {
+					Cell c1 = r1.getCell(16);
+					evaluateCell(evaluator, c1);
+					rightOfUseOfAsset = c1.getNumericCellValue();
+					break;
+				}
+			}
+		}
+
+		// double rightOfUseOfAsset =
+		// sheetLease.getRow(3).getCell(10).getNumericCellValue();
+
+		Date startingDate = entry.getCommencementDate();
+		Date deteEnding = addYearsToDate(entry.getCommencementDate(), entry.getUsefulLifeOfTheAsset());
+
+		long totalDays = ChronoUnit.DAYS.between(startingDate.toInstant(), deteEnding.toInstant());
+		totalDays = totalDays + 1;
+		double right = rightOfUseOfAsset / totalDays;
+		int noOfDaysInMonth = getMonthDays(entry.getYear(), entry.getMonth(), 4, startingDate, deteEnding);
+
+		double finalRightOfUseAsset = right * noOfDaysInMonth;
 
 		// LinkedHashMap<String, LinkedHashMap<String, String>> mapSheet = new
 		// LinkedHashMap<String, LinkedHashMap<String, String>>();
 		System.out.println("In sheet" + sheet.getSheetName());
 		// int totalRows = sheet.getLastRowNum();
-		int leaseTerms = entry.getLeaseTerm();
+
 		int count = 0;
 		LinkedHashMap<String, String> map = new LinkedHashMap<String, String>();
 
@@ -583,12 +645,25 @@ public class Calculation {
 
 						evaluateCell(evaluator, monthCell);
 
-						if (entry.getYear() < entry.getCommencementDate().getYear() + 1900
+						/*
+						 * if (entry.getYear() <
+						 * entry.getCommencementDate().getYear() + 1900 ||
+						 * (entry.getYear() ==
+						 * entry.getCommencementDate().getYear() + 1900 &&
+						 * entry.getMonth() <
+						 * entry.getCommencementDate().getMonth() + 1)) {
+						 */
+						if ((entry.getYear() < entry.getCommencementDate().getYear() + 1900)
+								|| (entry.getYear() > deteEnding.getYear() + 1900)
 								|| (entry.getYear() == entry.getCommencementDate().getYear() + 1900
-										&& entry.getMonth() < entry.getCommencementDate().getMonth() + 1)) {
+										&& entry.getMonth() < entry.getCommencementDate().getMonth() + 1)
+								|| (entry.getYear() == deteEnding.getYear() + 1900
+										&& entry.getMonth() > entry.getCommencementDate().getMonth() + 1)) {
 							map.put("dr", "0");
+							map.put("rightOfUseOfAsset", "0");
 						} else {
 							map.put("dr", monthCell.getNumericCellValue() + "");
+							map.put("rightOfUseOfAsset", finalRightOfUseAsset + "");
 						}
 
 						evaluateCell(evaluator, selectedRow.getCell(5), selectedRow.getCell(6), selectedRow.getCell(7),
@@ -663,6 +738,7 @@ public class Calculation {
 
 				System.out.println("In Row" + r.getRowNum());
 				Cell c = r.getCell(2);
+
 				evaluateCell(evaluator, c);
 
 				if (HSSFDateUtil.isCellDateFormatted(c)) {
@@ -701,17 +777,44 @@ public class Calculation {
 
 		System.out.println("calculating Journal");
 		FormulaEvaluator evaluator = wb.getCreationHelper().createFormulaEvaluator();
-
+		double rightOfUseOfAsset = 0.0;
 		System.out.println("starting loop");
 		XSSFSheet sheet = wb.getSheetAt(journalType);// .getSheet("Yearly
 														// Journal entry");
 		XSSFSheet sheetLease = wb.getSheetAt(leaseType);
+		int leaseTerms = entry.getLeaseTerm();
+		for (Row r1 : sheetLease) {
+			/// ONLY PUT COLUMN No in map id
+			int row1 = r1.getRowNum();
+
+			if (r1.getRowNum() >= 16 && row1 < leaseTerms + 16) {
+
+				if (r1.getRowNum() == 16) {
+					Cell c1 = r1.getCell(16);
+					evaluateCell(evaluator, c1);
+					rightOfUseOfAsset = c1.getNumericCellValue();
+					break;
+				}
+			}
+		}
+		// double rightOfUseOfAsset =
+		// sheetLease.getRow(3).getCell(10).getNumericCellValue();
+
+		Date startingDate = entry.getCommencementDate();
+		Date deteEnding = addYearsToDate(entry.getCommencementDate(), entry.getUsefulLifeOfTheAsset());
+
+		long totalDays = ChronoUnit.DAYS.between(startingDate.toInstant(), deteEnding.toInstant());
+		totalDays = totalDays + 1;
+		double right = rightOfUseOfAsset / totalDays;
+		int noOfDaysInMonth = getMonthDays(entry.getYear(), entry.getMonth(), 4, startingDate, deteEnding);
+
+		double finalRightOfUseAsset = right * noOfDaysInMonth;
 
 		// LinkedHashMap<String, LinkedHashMap<String, String>> mapSheet = new
 		// LinkedHashMap<String, LinkedHashMap<String, String>>();
 		System.out.println("In sheet" + sheet.getSheetName());
 		// int totalRows = sheet.getLastRowNum();
-		int leaseTerms = entry.getLeaseTerm();
+		// int leaseTerms = entry.getLeaseTerm();
 		int count = 0;
 		LinkedHashMap<String, String> map = new LinkedHashMap<String, String>();
 		int startingRow = 5;
@@ -790,7 +893,18 @@ public class Calculation {
 			}
 
 		}
+		if ((entry.getYear() < entry.getCommencementDate().getYear() + 1900)
+				|| (entry.getYear() > deteEnding.getYear() + 1900)
+				|| (entry.getYear() == entry.getCommencementDate().getYear() + 1900
+						&& entry.getMonth() < entry.getCommencementDate().getMonth() + 1)
+				|| (entry.getYear() == deteEnding.getYear() + 1900
+						&& entry.getMonth() > entry.getCommencementDate().getMonth() + 1)) {
+			map.put("rightOfUseOfAsset", "0");
 
+		} else {
+			map.put("rightOfUseOfAsset", finalRightOfUseAsset + "");
+
+		}
 		for (Row r : sheetLease) {
 			/// ONLY PUT COLUMN No in map id
 			int row = r.getRowNum();
@@ -835,16 +949,43 @@ public class Calculation {
 		System.out.println("calculating Journal");
 		FormulaEvaluator evaluator = wb.getCreationHelper().createFormulaEvaluator();
 
+		double rightOfUseOfAsset = 0.0;
 		System.out.println("starting loop");
 		XSSFSheet sheet = wb.getSheetAt(journalType);// .getSheet("Yearly
 														// Journal entry");
 		XSSFSheet sheetLease = wb.getSheetAt(leaseType);
+		int leaseTerms = entry.getLeaseTerm();
+		for (Row r1 : sheetLease) {
+			/// ONLY PUT COLUMN No in map id
+			int row1 = r1.getRowNum();
 
+			if (r1.getRowNum() >= 16 && row1 < leaseTerms + 16) {
+
+				if (r1.getRowNum() == 16) {
+					Cell c1 = r1.getCell(16);
+					evaluateCell(evaluator, c1);
+					rightOfUseOfAsset = c1.getNumericCellValue();
+					break;
+				}
+			}
+		}
+		// double rightOfUseOfAsset =
+		// sheetLease.getRow(3).getCell(10).getNumericCellValue();
+
+		Date startingDate = entry.getCommencementDate();
+		Date deteEnding = addYearsToDate(entry.getCommencementDate(), entry.getUsefulLifeOfTheAsset());
+
+		long totalDays = ChronoUnit.DAYS.between(startingDate.toInstant(), deteEnding.toInstant());
+		totalDays = totalDays + 1;
+		double right = rightOfUseOfAsset / totalDays;
+		int noOfDaysInMonth = getMonthDays(entry.getYear(), entry.getMonth(), 4, startingDate, deteEnding);
+
+		double finalRightOfUseAsset = right * noOfDaysInMonth;
 		// LinkedHashMap<String, LinkedHashMap<String, String>> mapSheet = new
 		// LinkedHashMap<String, LinkedHashMap<String, String>>();
 		System.out.println("In sheet" + sheet.getSheetName());
 		// int totalRows = sheet.getLastRowNum();
-		int leaseTerms = entry.getLeaseTerm();
+
 		int count = 0;
 		LinkedHashMap<String, String> map = new LinkedHashMap<String, String>();
 		int startingRow = 5;
@@ -990,6 +1131,18 @@ public class Calculation {
 
 		}
 
+		if ((entry.getYear() < entry.getCommencementDate().getYear() + 1900)
+				|| (entry.getYear() > deteEnding.getYear() + 1900)
+				|| (entry.getYear() == entry.getCommencementDate().getYear() + 1900
+						&& entry.getMonth() < entry.getCommencementDate().getMonth() + 1)
+				|| (entry.getYear() == deteEnding.getYear() + 1900
+						&& entry.getMonth() > entry.getCommencementDate().getMonth() + 1)) {
+			map.put("rightOfUseOfAsset", "0");
+
+		} else {
+			map.put("rightOfUseOfAsset", finalRightOfUseAsset + "");
+
+		}
 		for (Row r : sheetLease) {
 			/// ONLY PUT COLUMN No in map id
 			int row = r.getRowNum();
@@ -1031,6 +1184,777 @@ public class Calculation {
 		return gson.toJson(map);
 
 	}
+
+	@SuppressWarnings("deprecationMonthly")
+	public String calculateJournalMonthlyDepreciation(XSSFWorkbook wb, Entry entry, int depreciationType, int leaseType)
+			throws InvalidFormatException, IOException, InvocationTargetException {
+		System.out.println("calculating depreciation monthly");
+		FormulaEvaluator evaluator = wb.getCreationHelper().createFormulaEvaluator();
+		XSSFSheet sheetDerecognition = wb.getSheetAt(depreciationType);
+		XSSFSheet sheetLease = wb.getSheetAt(leaseType);
+		int leaseTerms = entry.getLeaseTerm();
+		int count = 0;
+		LinkedHashMap<String, String> map = new LinkedHashMap<String, String>();
+
+		for (Row r : sheetDerecognition) {
+			if (r.getRowNum() == 3) { //
+				r.getCell(1).setCellValue(entry.getPaymentToAdd());
+				evaluateCell(evaluator, r.getCell(1));
+
+			}
+			if (r.getRowNum() == 4) { //
+				r.getCell(1).setCellValue(entry.getUserSelectedDate());
+				evaluateCell(evaluator, r.getCell(1));
+			}
+			if (r.getRowNum() == 22) { //
+				r.getCell(1).setCellValue(entry.getUserSelectedDate());
+				evaluateCell(evaluator, r.getCell(1));
+				wb.setForceFormulaRecalculation(true);
+				break;
+			}
+		}
+
+		for (Row r : sheetDerecognition) {
+			if ((r.getRowNum() > 1) && (r.getRowNum() <= 30)) { //
+
+				evaluateCell(evaluator, r.getCell(1));
+
+			}
+
+		}
+		evaluateCell(evaluator, sheetDerecognition.getRow(7).getCell(1));
+		evaluateCell(evaluator, sheetDerecognition.getRow(1).getCell(1));
+		double b2 = sheetDerecognition.getRow(1).getCell(1).getNumericCellValue();
+		Date b3 = sheetDerecognition.getRow(2).getCell(1).getDateCellValue();
+		Date b5 = sheetDerecognition.getRow(4).getCell(1).getDateCellValue();
+		Date b6 = sheetDerecognition.getRow(5).getCell(1).getDateCellValue();
+		Date b7 = sheetDerecognition.getRow(6).getCell(1).getDateCellValue();
+
+		evaluateCell(evaluator, sheetDerecognition.getRow(7).getCell(2));
+
+		// double b81 =
+		// sheetDerecognition.getRow(7).getCell(2).getNumericCellValue();
+		double b8 = sheetDerecognition.getRow(7).getCell(1).getNumericCellValue();
+		double b9 = sheetDerecognition.getRow(8).getCell(1).getNumericCellValue();
+		double b10 = sheetDerecognition.getRow(9).getCell(1).getNumericCellValue();
+		double b11 = sheetDerecognition.getRow(10).getCell(1).getNumericCellValue();
+		double b12 = sheetDerecognition.getRow(11).getCell(1).getNumericCellValue();
+		double b13 = sheetDerecognition.getRow(12).getCell(1).getNumericCellValue();
+		double b14 = sheetDerecognition.getRow(13).getCell(1).getNumericCellValue();
+		double b15 = sheetDerecognition.getRow(14).getCell(1).getNumericCellValue();
+		double b17 = sheetDerecognition.getRow(16).getCell(1).getNumericCellValue();
+		double b16 = sheetDerecognition.getRow(15).getCell(1).getNumericCellValue();
+		double b19 = sheetDerecognition.getRow(18).getCell(1).getNumericCellValue();
+		double b20 = sheetDerecognition.getRow(19).getCell(1).getNumericCellValue();
+
+		map.put("b3", b3 + "");
+		map.put("b5", b5 + "");
+		map.put("b6", b6 + "");
+		map.put("b7", b7 + "");
+		map.put("b8", b8 + "");
+		map.put("b9", b9 + "");
+		map.put("b10", b10 + "");
+		map.put("b11", b11 + "");
+		map.put("b12", b12 + "");
+		map.put("b13", b13 + "");
+		map.put("b14", b14 + "");
+		map.put("b15", b15 + "");
+		map.put("b19", b19 + "");
+
+		double fcdr = 0;
+		double accrued = 0;
+		double ll = 0;
+		double bank = 0;
+		double fcdrTermination = 0;
+		double accruedTermination = 0;
+		double prepaidTermination = 0;
+		double expenseTermination = 0;
+		double llTermination = 0;
+		double rouTermination = 0;
+		double gainTermination = 0;
+		double fbankTermination = 0;
+		double prepaid = 0;
+
+		if (entry.getPaymentIntervals().equalsIgnoreCase("Monthly")) {
+
+			if (entry.getRecognitionOptions().equalsIgnoreCase("Apportioned")) {
+
+				// for the final right side column
+				evaluateCell(evaluator, sheetDerecognition.getRow(4).getCell(4));
+				evaluateCell(evaluator, sheetDerecognition.getRow(5).getCell(4));
+				evaluateCell(evaluator, sheetDerecognition.getRow(6).getCell(4));
+				evaluateCell(evaluator, sheetDerecognition.getRow(7).getCell(5));
+				// for final right column for termination
+
+				evaluateCell(evaluator, sheetDerecognition.getRow(10).getCell(4));
+				evaluateCell(evaluator, sheetDerecognition.getRow(11).getCell(4));
+				evaluateCell(evaluator, sheetDerecognition.getRow(12).getCell(5));
+				evaluateCell(evaluator, sheetDerecognition.getRow(13).getCell(5));
+				evaluateCell(evaluator, sheetDerecognition.getRow(14).getCell(5));
+
+				if (entry.getPaymentsAt().equalsIgnoreCase("Ending")) {
+
+					fcdr = sheetDerecognition.getRow(4).getCell(4).getNumericCellValue();
+					// fcdrTermination =
+					// sheetDerecognition.getRow(4).getCell(4).getNumericCellValue();
+
+					accrued = sheetDerecognition.getRow(5).getCell(4).getNumericCellValue();
+					// accruedTermination =
+					// sheetDerecognition.getRow(5).getCell(4).getNumericCellValue();
+
+					ll = sheetDerecognition.getRow(6).getCell(4).getNumericCellValue();
+					bank = sheetDerecognition.getRow(7).getCell(5).getNumericCellValue();
+
+					expenseTermination = sheetDerecognition.getRow(10).getCell(4).getNumericCellValue();
+					llTermination = sheetDerecognition.getRow(11).getCell(4).getNumericCellValue();
+					rouTermination = sheetDerecognition.getRow(12).getCell(5).getNumericCellValue();
+					gainTermination = sheetDerecognition.getRow(13).getCell(5).getNumericCellValue();
+					fbankTermination = sheetDerecognition.getRow(14).getCell(5).getNumericCellValue();
+
+				} else if (entry.getPaymentsAt().equalsIgnoreCase("Beginning")) {
+
+					evaluateCell(evaluator, sheetDerecognition.getRow(20).getCell(4));
+					evaluateCell(evaluator, sheetDerecognition.getRow(21).getCell(5));
+					evaluateCell(evaluator, sheetDerecognition.getRow(2).getCell(4));
+					// for final right column for termination
+
+					evaluateCell(evaluator, sheetDerecognition.getRow(26).getCell(4));
+					evaluateCell(evaluator, sheetDerecognition.getRow(27).getCell(4));
+					evaluateCell(evaluator, sheetDerecognition.getRow(28).getCell(5));
+					evaluateCell(evaluator, sheetDerecognition.getRow(29).getCell(5));
+					evaluateCell(evaluator, sheetDerecognition.getRow(30).getCell(5));
+
+					fcdr = sheetDerecognition.getRow(20).getCell(4).getNumericCellValue();
+					prepaid = sheetDerecognition.getRow(21).getCell(5).getNumericCellValue();
+					ll = sheetDerecognition.getRow(22).getCell(4).getNumericCellValue();
+
+					expenseTermination = sheetDerecognition.getRow(26).getCell(4).getNumericCellValue();
+					llTermination = sheetDerecognition.getRow(27).getCell(4).getNumericCellValue();
+					rouTermination = sheetDerecognition.getRow(28).getCell(5).getNumericCellValue();
+					gainTermination = sheetDerecognition.getRow(29).getCell(5).getNumericCellValue();
+					fbankTermination = sheetDerecognition.getRow(30).getCell(5).getNumericCellValue();
+
+				}
+
+			} else if (entry.getRecognitionOptions().equalsIgnoreCase("No Payment")) {
+
+				evaluateCell(evaluator, sheetDerecognition.getRow(4).getCell(4));
+				evaluateCell(evaluator, sheetDerecognition.getRow(5).getCell(4));
+				evaluateCell(evaluator, sheetDerecognition.getRow(10).getCell(8));
+				evaluateCell(evaluator, sheetDerecognition.getRow(11).getCell(8));
+				evaluateCell(evaluator, sheetDerecognition.getRow(12).getCell(8));
+				evaluateCell(evaluator, sheetDerecognition.getRow(13).getCell(8));
+				// for final right column for termination
+
+				evaluateCell(evaluator, sheetDerecognition.getRow(14).getCell(9));
+				evaluateCell(evaluator, sheetDerecognition.getRow(15).getCell(9));
+				evaluateCell(evaluator, sheetDerecognition.getRow(16).getCell(9));
+
+				if (entry.getPaymentsAt().equalsIgnoreCase("Ending")) {
+					expenseTermination = sheetDerecognition.getRow(10).getCell(8).getNumericCellValue();
+
+					// fcdr =
+					// sheetDerecognition.getRow(11).getCell(8).getNumericCellValue();
+					// accrued =
+					// sheetDerecognition.getRow(12).getCell(8).getNumericCellValue();
+					fcdrTermination = sheetDerecognition.getRow(4).getCell(4).getNumericCellValue();
+					accruedTermination = sheetDerecognition.getRow(5).getCell(4).getNumericCellValue();
+					llTermination = sheetDerecognition.getRow(13).getCell(8).getNumericCellValue();
+					rouTermination = sheetDerecognition.getRow(14).getCell(9).getNumericCellValue();
+					gainTermination = sheetDerecognition.getRow(15).getCell(9).getNumericCellValue();
+					fbankTermination = sheetDerecognition.getRow(16).getCell(9).getNumericCellValue();
+
+				} else if (entry.getPaymentsAt().equalsIgnoreCase("Beginning")) {
+
+					evaluateCell(evaluator, sheetDerecognition.getRow(20).getCell(4));
+					evaluateCell(evaluator, sheetDerecognition.getRow(21).getCell(5));
+					evaluateCell(evaluator, sheetDerecognition.getRow(22).getCell(4));
+					// for final right column for termination
+
+					evaluateCell(evaluator, sheetDerecognition.getRow(26).getCell(4));
+					evaluateCell(evaluator, sheetDerecognition.getRow(27).getCell(4));
+					evaluateCell(evaluator, sheetDerecognition.getRow(28).getCell(5));
+					evaluateCell(evaluator, sheetDerecognition.getRow(29).getCell(5));
+					evaluateCell(evaluator, sheetDerecognition.getRow(30).getCell(5));
+
+					fcdr = sheetDerecognition.getRow(20).getCell(4).getNumericCellValue();
+					prepaid = sheetDerecognition.getRow(21).getCell(5).getNumericCellValue();
+					ll = sheetDerecognition.getRow(22).getCell(4).getNumericCellValue();
+
+					expenseTermination = sheetDerecognition.getRow(26).getCell(4).getNumericCellValue();
+					llTermination = sheetDerecognition.getRow(27).getCell(4).getNumericCellValue();
+					rouTermination = sheetDerecognition.getRow(28).getCell(5).getNumericCellValue();
+					gainTermination = sheetDerecognition.getRow(29).getCell(5).getNumericCellValue();
+					fbankTermination = sheetDerecognition.getRow(30).getCell(5).getNumericCellValue();
+
+				}
+			}
+		}
+
+		map.put("financeCostDr", fcdr + "");
+		map.put("financeCostDrTer", fcdrTermination + "");
+		map.put("AccruedDr", accrued + "");
+		map.put("AccruedDrTer", accruedTermination + "");
+		map.put("LeaseLiabilityDr", ll + "");
+		map.put("BankCr", bank + "");
+
+		map.put("expenseTermination", expenseTermination + "");
+		map.put("llTermination", llTermination + "");
+		map.put("rouTermination", rouTermination + "");
+		map.put("gainTermination", gainTermination + "");
+		map.put("bankTermination", fbankTermination + "");
+		map.put("prepaid", prepaid + "");
+		map.put("prepaidTer", prepaidTermination + "");
+
+		Gson gson = new Gson();
+		return gson.toJson(map);
+	}
+
+	@SuppressWarnings("deprecationQuarterly")
+	public String calculateJournalQuarterlyDepreciation(XSSFWorkbook wb, Entry entry, int depreciationType,
+			int leaseType) throws InvalidFormatException, IOException, InvocationTargetException {
+
+		System.out.println("calculating depreciation monthly");
+		FormulaEvaluator evaluator = wb.getCreationHelper().createFormulaEvaluator();
+		XSSFSheet sheetDerecognition = wb.getSheetAt(depreciationType);
+		XSSFSheet sheetLease = wb.getSheetAt(leaseType);
+		int leaseTerms = entry.getLeaseTerm();
+		int count = 0;
+		LinkedHashMap<String, String> map = new LinkedHashMap<String, String>();
+
+		for (Row r : sheetDerecognition) {
+			if (r.getRowNum() == 3) { //
+				r.getCell(1).setCellValue(entry.getPaymentToAdd());
+				evaluateCell(evaluator, r.getCell(1));
+
+			}
+			if (r.getRowNum() == 4) { //
+				r.getCell(1).setCellValue(entry.getUserSelectedDate());
+				evaluateCell(evaluator, r.getCell(1));
+			}
+			if (r.getRowNum() == 22) { //
+				r.getCell(1).setCellValue(entry.getUserSelectedDate());
+				evaluateCell(evaluator, r.getCell(1));
+				wb.setForceFormulaRecalculation(true);
+				break;
+			}
+		}
+
+		for (Row r : sheetDerecognition) {
+			if ((r.getRowNum() > 1) && (r.getRowNum() <= 30)) { //
+
+				evaluateCell(evaluator, r.getCell(1));
+
+			}
+
+		}
+		evaluateCell(evaluator, sheetDerecognition.getRow(7).getCell(1));
+		evaluateCell(evaluator, sheetDerecognition.getRow(1).getCell(1));
+		// double b2 =
+		// sheetDerecognition.getRow(1).getCell(1).getNumericCellValue();
+		Date b3 = sheetDerecognition.getRow(2).getCell(1).getDateCellValue();
+		Date b5 = sheetDerecognition.getRow(4).getCell(1).getDateCellValue();
+		Date b6 = sheetDerecognition.getRow(5).getCell(1).getDateCellValue();
+		Date b7 = sheetDerecognition.getRow(6).getCell(1).getDateCellValue();
+
+		evaluateCell(evaluator, sheetDerecognition.getRow(7).getCell(1));
+
+		// sheetDerecognition.getRow(7).getCell(1).getErrorCellValue();
+		// sheetDerecognition.getRow(7).getCell(1).getNumericCellValue();
+		// double b81 =
+		// sheetDerecognition.getRow(7).getCell(2).getErrorCellValue();
+		double b8 = sheetDerecognition.getRow(7).getCell(1).getNumericCellValue();
+		double b9 = sheetDerecognition.getRow(8).getCell(1).getNumericCellValue();
+		double b10 = sheetDerecognition.getRow(9).getCell(1).getNumericCellValue();
+		double b11 = sheetDerecognition.getRow(10).getCell(1).getNumericCellValue();
+		double b12 = sheetDerecognition.getRow(11).getCell(1).getNumericCellValue();
+		double b13 = sheetDerecognition.getRow(12).getCell(1).getNumericCellValue();
+		double b14 = sheetDerecognition.getRow(13).getCell(1).getNumericCellValue();
+		double b15 = sheetDerecognition.getRow(14).getCell(1).getNumericCellValue();
+		double b17 = sheetDerecognition.getRow(16).getCell(1).getNumericCellValue();
+		double b16 = sheetDerecognition.getRow(15).getCell(1).getNumericCellValue();
+		double b19 = sheetDerecognition.getRow(18).getCell(1).getNumericCellValue();
+		double b20 = sheetDerecognition.getRow(19).getCell(1).getNumericCellValue();
+
+		map.put("b3", b3 + "");
+		map.put("b5", b5 + "");
+		map.put("b6", b6 + "");
+		map.put("b7", b7 + "");
+		map.put("b8", b8 + "");
+		map.put("b9", b9 + "");
+		map.put("b10", b10 + "");
+		map.put("b11", b11 + "");
+		map.put("b12", b12 + "");
+		map.put("b13", b13 + "");
+		map.put("b14", b14 + "");
+		map.put("b15", b15 + "");
+		map.put("b19", b19 + "");
+
+		double fcdr = 0;
+		double accrued = 0;
+		double ll = 0;
+		double bank = 0;
+		double fcdrTermination = 0;
+		double accruedTermination = 0;
+		double prepaidTermination = 0;
+		double expenseTermination = 0;
+		double llTermination = 0;
+		double rouTermination = 0;
+		double gainTermination = 0;
+		double fbankTermination = 0;
+		double prepaid = 0;
+
+		if (entry.getPaymentIntervals().equalsIgnoreCase("Quarterly")) {
+
+			if (entry.getRecognitionOptions().equalsIgnoreCase("Apportioned")) {
+
+				// for the final right side column
+				evaluateCell(evaluator, sheetDerecognition.getRow(4).getCell(4));
+				evaluateCell(evaluator, sheetDerecognition.getRow(5).getCell(4));
+				evaluateCell(evaluator, sheetDerecognition.getRow(6).getCell(4));
+				evaluateCell(evaluator, sheetDerecognition.getRow(7).getCell(5));
+				// for final right column for termination
+
+				evaluateCell(evaluator, sheetDerecognition.getRow(10).getCell(4));
+				evaluateCell(evaluator, sheetDerecognition.getRow(11).getCell(4));
+				evaluateCell(evaluator, sheetDerecognition.getRow(12).getCell(5));
+				evaluateCell(evaluator, sheetDerecognition.getRow(13).getCell(5));
+				evaluateCell(evaluator, sheetDerecognition.getRow(14).getCell(5));
+
+				if (entry.getPaymentsAt().equalsIgnoreCase("Ending")) {
+
+					fcdr = sheetDerecognition.getRow(4).getCell(4).getNumericCellValue();
+					// fcdrTermination =
+					// sheetDerecognition.getRow(4).getCell(4).getNumericCellValue();
+
+					accrued = sheetDerecognition.getRow(5).getCell(4).getNumericCellValue();
+					// accruedTermination =
+					// sheetDerecognition.getRow(5).getCell(4).getNumericCellValue();
+
+					ll = sheetDerecognition.getRow(6).getCell(4).getNumericCellValue();
+					bank = sheetDerecognition.getRow(7).getCell(5).getNumericCellValue();
+
+					expenseTermination = sheetDerecognition.getRow(10).getCell(4).getNumericCellValue();
+					llTermination = sheetDerecognition.getRow(11).getCell(4).getNumericCellValue();
+					rouTermination = sheetDerecognition.getRow(12).getCell(5).getNumericCellValue();
+					gainTermination = sheetDerecognition.getRow(13).getCell(5).getNumericCellValue();
+					fbankTermination = sheetDerecognition.getRow(14).getCell(5).getNumericCellValue();
+
+				} else if (entry.getPaymentsAt().equalsIgnoreCase("Beginning")) {
+
+					evaluateCell(evaluator, sheetDerecognition.getRow(20).getCell(4));
+					evaluateCell(evaluator, sheetDerecognition.getRow(21).getCell(5));
+					evaluateCell(evaluator, sheetDerecognition.getRow(2).getCell(4));
+					// for final right column for termination
+
+					evaluateCell(evaluator, sheetDerecognition.getRow(26).getCell(4));
+					evaluateCell(evaluator, sheetDerecognition.getRow(27).getCell(4));
+					evaluateCell(evaluator, sheetDerecognition.getRow(28).getCell(5));
+					evaluateCell(evaluator, sheetDerecognition.getRow(29).getCell(5));
+					evaluateCell(evaluator, sheetDerecognition.getRow(30).getCell(5));
+
+					fcdr = sheetDerecognition.getRow(20).getCell(4).getNumericCellValue();
+					prepaid = sheetDerecognition.getRow(21).getCell(5).getNumericCellValue();
+					ll = sheetDerecognition.getRow(22).getCell(4).getNumericCellValue();
+
+					expenseTermination = sheetDerecognition.getRow(26).getCell(4).getNumericCellValue();
+					llTermination = sheetDerecognition.getRow(27).getCell(4).getNumericCellValue();
+					rouTermination = sheetDerecognition.getRow(28).getCell(5).getNumericCellValue();
+					gainTermination = sheetDerecognition.getRow(29).getCell(5).getNumericCellValue();
+					fbankTermination = sheetDerecognition.getRow(30).getCell(5).getNumericCellValue();
+
+				}
+
+			} else if (entry.getRecognitionOptions().equalsIgnoreCase("No Payment")) {
+
+				evaluateCell(evaluator, sheetDerecognition.getRow(4).getCell(4));
+				evaluateCell(evaluator, sheetDerecognition.getRow(5).getCell(4));
+				evaluateCell(evaluator, sheetDerecognition.getRow(10).getCell(8));
+				evaluateCell(evaluator, sheetDerecognition.getRow(11).getCell(8));
+				evaluateCell(evaluator, sheetDerecognition.getRow(12).getCell(8));
+				evaluateCell(evaluator, sheetDerecognition.getRow(13).getCell(8));
+				// for final right column for termination
+
+				evaluateCell(evaluator, sheetDerecognition.getRow(14).getCell(9));
+				evaluateCell(evaluator, sheetDerecognition.getRow(15).getCell(9));
+				evaluateCell(evaluator, sheetDerecognition.getRow(16).getCell(9));
+
+				if (entry.getPaymentsAt().equalsIgnoreCase("Ending")) {
+					expenseTermination = sheetDerecognition.getRow(10).getCell(8).getNumericCellValue();
+
+					// fcdr =
+					// sheetDerecognition.getRow(11).getCell(8).getNumericCellValue();
+					// accrued =
+					// sheetDerecognition.getRow(12).getCell(8).getNumericCellValue();
+					fcdrTermination = sheetDerecognition.getRow(4).getCell(4).getNumericCellValue();
+					accruedTermination = sheetDerecognition.getRow(5).getCell(4).getNumericCellValue();
+					llTermination = sheetDerecognition.getRow(13).getCell(8).getNumericCellValue();
+					rouTermination = sheetDerecognition.getRow(14).getCell(9).getNumericCellValue();
+					gainTermination = sheetDerecognition.getRow(15).getCell(9).getNumericCellValue();
+					fbankTermination = sheetDerecognition.getRow(16).getCell(9).getNumericCellValue();
+
+				} else if (entry.getPaymentsAt().equalsIgnoreCase("Beginning")) {
+
+					evaluateCell(evaluator, sheetDerecognition.getRow(20).getCell(4));
+					evaluateCell(evaluator, sheetDerecognition.getRow(21).getCell(5));
+					evaluateCell(evaluator, sheetDerecognition.getRow(22).getCell(4));
+					// for final right column for termination
+
+					evaluateCell(evaluator, sheetDerecognition.getRow(26).getCell(4));
+					evaluateCell(evaluator, sheetDerecognition.getRow(27).getCell(4));
+					evaluateCell(evaluator, sheetDerecognition.getRow(28).getCell(5));
+					evaluateCell(evaluator, sheetDerecognition.getRow(29).getCell(5));
+					evaluateCell(evaluator, sheetDerecognition.getRow(30).getCell(5));
+
+					fcdr = sheetDerecognition.getRow(20).getCell(4).getNumericCellValue();
+					prepaid = sheetDerecognition.getRow(21).getCell(5).getNumericCellValue();
+					ll = sheetDerecognition.getRow(22).getCell(4).getNumericCellValue();
+
+					expenseTermination = sheetDerecognition.getRow(26).getCell(4).getNumericCellValue();
+					llTermination = sheetDerecognition.getRow(27).getCell(4).getNumericCellValue();
+					rouTermination = sheetDerecognition.getRow(28).getCell(5).getNumericCellValue();
+					gainTermination = sheetDerecognition.getRow(29).getCell(5).getNumericCellValue();
+					fbankTermination = sheetDerecognition.getRow(30).getCell(5).getNumericCellValue();
+
+				}
+			}
+		}
+
+		map.put("financeCostDr", fcdr + "");
+		map.put("financeCostDrTer", fcdrTermination + "");
+		map.put("AccruedDr", accrued + "");
+		map.put("AccruedDrTer", accruedTermination + "");
+		map.put("LeaseLiabilityDr", ll + "");
+		map.put("BankCr", bank + "");
+
+		map.put("expenseTermination", expenseTermination + "");
+		map.put("llTermination", llTermination + "");
+		map.put("rouTermination", rouTermination + "");
+		map.put("gainTermination", gainTermination + "");
+		map.put("bankTermination", fbankTermination + "");
+		map.put("prepaid", prepaid + "");
+		map.put("prepaidTer", prepaidTermination + "");
+
+		Gson gson = new Gson();
+		return gson.toJson(map);
+	}
+
+	@SuppressWarnings("deprecation")
+	public String calculateJournalYearlyDepreciation(XSSFWorkbook wb, Entry entry, int depreciationType, int leaseType)
+			throws InvalidFormatException, IOException, InvocationTargetException {
+		System.out.println("calculating depreciation Yearly");
+		FormulaEvaluator evaluator = wb.getCreationHelper().createFormulaEvaluator();
+		XSSFSheet sheetDerecognition = wb.getSheetAt(depreciationType);
+		XSSFSheet sheetLease = wb.getSheetAt(leaseType);
+		int leaseTerms = entry.getLeaseTerm();
+		int count = 0;
+		LinkedHashMap<String, String> map = new LinkedHashMap<String, String>();
+
+		for (Row r : sheetDerecognition) {
+			if (r.getRowNum() == 3) { //
+				r.getCell(1).setCellValue(entry.getPaymentToAdd());
+				evaluateCell(evaluator, r.getCell(1));
+
+			}
+			if (r.getRowNum() == 4) { //
+				r.getCell(1).setCellValue(entry.getUserSelectedDate());
+				evaluateCell(evaluator, r.getCell(1));
+			}
+			if (r.getRowNum() == 22) { //
+				r.getCell(1).setCellValue(entry.getUserSelectedDate());
+				evaluateCell(evaluator, r.getCell(1));
+				wb.setForceFormulaRecalculation(true);
+				break;
+			}
+		}
+
+		/*
+		 * for (Row r : sheetDerecognition) { if (r.getRowNum() == 3) { //
+		 * r.getCell(1).setCellValue(entry.getPaymentToAdd());
+		 * wb.setForceFormulaRecalculation(true); Cell form = r.getCell(1); //
+		 * form.getDateCellValue(); evaluateCell(evaluator, form); break; }
+		 * 
+		 * }
+		 * 
+		 * for (Row r : sheetDerecognition) { if (r.getRowNum() == 4) { //
+		 * r.getCell(1).setCellValue(entry.getUserSelectedDate());
+		 * wb.setForceFormulaRecalculation(true); Cell form = r.getCell(1);
+		 * form.getDateCellValue(); evaluateCell(evaluator, form); break; }
+		 * 
+		 * }
+		 * 
+		 * for (Row r : sheetDerecognition) { if (r.getRowNum() == 22) { //
+		 * r.getCell(1).setCellValue(entry.getUserSelectedDate());
+		 * wb.setForceFormulaRecalculation(true); Cell form = r.getCell(1);
+		 * form.getDateCellValue(); evaluateCell(evaluator, form); break; }
+		 * 
+		 * }
+		 */
+
+		for (Row r : sheetDerecognition) {
+			if ((r.getRowNum() > 2) && (r.getRowNum() <= 30)) { //
+
+				evaluateCell(evaluator, r.getCell(1));
+
+			}
+
+		}
+
+		Date b3 = sheetDerecognition.getRow(2).getCell(1).getDateCellValue();
+		Date b5 = sheetDerecognition.getRow(4).getCell(1).getDateCellValue();
+		Date b6 = sheetDerecognition.getRow(5).getCell(1).getDateCellValue();
+		Date b7 = sheetDerecognition.getRow(6).getCell(1).getDateCellValue();
+		double b8 = sheetDerecognition.getRow(7).getCell(1).getNumericCellValue();
+		double b9 = sheetDerecognition.getRow(8).getCell(1).getNumericCellValue();
+		double b10 = sheetDerecognition.getRow(9).getCell(1).getNumericCellValue();
+		double b11 = sheetDerecognition.getRow(10).getCell(1).getNumericCellValue();
+		double b12 = sheetDerecognition.getRow(11).getCell(1).getNumericCellValue();
+		double b13 = sheetDerecognition.getRow(12).getCell(1).getNumericCellValue();
+		double b14 = sheetDerecognition.getRow(13).getCell(1).getNumericCellValue();
+		double b15 = sheetDerecognition.getRow(14).getCell(1).getNumericCellValue();
+		double b17 = sheetDerecognition.getRow(16).getCell(1).getNumericCellValue();
+		double b16 = sheetDerecognition.getRow(15).getCell(1).getNumericCellValue();
+		double b19 = sheetDerecognition.getRow(18).getCell(1).getNumericCellValue();
+		double b20 = sheetDerecognition.getRow(19).getCell(1).getNumericCellValue();
+
+		map.put("b3", b3 + "");
+		map.put("b5", b5 + "");
+		map.put("b6", b6 + "");
+		map.put("b7", b7 + "");
+		map.put("b8", b8 + "");
+		map.put("b9", b9 + "");
+		map.put("b10", b10 + "");
+		map.put("b11", b11 + "");
+		map.put("b12", b12 + "");
+		map.put("b13", b13 + "");
+		map.put("b14", b14 + "");
+		map.put("b15", b15 + "");
+		map.put("b19", b19 + "");
+
+		double fcdr = 0;
+		double accrued = 0;
+		double ll = 0;
+		double bank = 0;
+		double fcdrTermination = 0;
+		double accruedTermination = 0;
+		double prepaidTermination = 0;
+		double expenseTermination = 0;
+		double llTermination = 0;
+		double rouTermination = 0;
+		double gainTermination = 0;
+		double fbankTermination = 0;
+		double prepaid = 0;
+
+		if (entry.getPaymentIntervals().equalsIgnoreCase("Yearly")) {
+
+			if (entry.getRecognitionOptions().equalsIgnoreCase("Apportioned")) {
+
+				// for the final right side column
+				evaluateCell(evaluator, sheetDerecognition.getRow(4).getCell(4));
+				evaluateCell(evaluator, sheetDerecognition.getRow(5).getCell(4));
+				evaluateCell(evaluator, sheetDerecognition.getRow(6).getCell(4));
+				evaluateCell(evaluator, sheetDerecognition.getRow(7).getCell(5));
+				// for final right column for termination
+
+				evaluateCell(evaluator, sheetDerecognition.getRow(10).getCell(4));
+				evaluateCell(evaluator, sheetDerecognition.getRow(11).getCell(4));
+				evaluateCell(evaluator, sheetDerecognition.getRow(12).getCell(5));
+				evaluateCell(evaluator, sheetDerecognition.getRow(13).getCell(5));
+				evaluateCell(evaluator, sheetDerecognition.getRow(14).getCell(5));
+
+				if (entry.getPaymentsAt().equalsIgnoreCase("Ending")) {
+
+					fcdr = sheetDerecognition.getRow(4).getCell(4).getNumericCellValue();
+					// fcdrTermination =
+					// sheetDerecognition.getRow(4).getCell(4).getNumericCellValue();
+
+					accrued = sheetDerecognition.getRow(5).getCell(4).getNumericCellValue();
+					// accruedTermination =
+					// sheetDerecognition.getRow(5).getCell(4).getNumericCellValue();
+
+					ll = sheetDerecognition.getRow(6).getCell(4).getNumericCellValue();
+					bank = sheetDerecognition.getRow(7).getCell(5).getNumericCellValue();
+
+					expenseTermination = sheetDerecognition.getRow(10).getCell(4).getNumericCellValue();
+					llTermination = sheetDerecognition.getRow(11).getCell(4).getNumericCellValue();
+					rouTermination = sheetDerecognition.getRow(12).getCell(5).getNumericCellValue();
+					gainTermination = sheetDerecognition.getRow(13).getCell(5).getNumericCellValue();
+					fbankTermination = sheetDerecognition.getRow(14).getCell(5).getNumericCellValue();
+
+				} else if (entry.getPaymentsAt().equalsIgnoreCase("Beginning")) {
+
+					evaluateCell(evaluator, sheetDerecognition.getRow(20).getCell(4));
+					evaluateCell(evaluator, sheetDerecognition.getRow(21).getCell(5));
+					evaluateCell(evaluator, sheetDerecognition.getRow(2).getCell(4));
+					// for final right column for termination
+
+					evaluateCell(evaluator, sheetDerecognition.getRow(26).getCell(4));
+					evaluateCell(evaluator, sheetDerecognition.getRow(27).getCell(4));
+					evaluateCell(evaluator, sheetDerecognition.getRow(28).getCell(5));
+					evaluateCell(evaluator, sheetDerecognition.getRow(29).getCell(5));
+					evaluateCell(evaluator, sheetDerecognition.getRow(30).getCell(5));
+
+					fcdr = sheetDerecognition.getRow(20).getCell(4).getNumericCellValue();
+					prepaid = sheetDerecognition.getRow(21).getCell(5).getNumericCellValue();
+					ll = sheetDerecognition.getRow(22).getCell(4).getNumericCellValue();
+
+					expenseTermination = sheetDerecognition.getRow(26).getCell(4).getNumericCellValue();
+					llTermination = sheetDerecognition.getRow(27).getCell(4).getNumericCellValue();
+					rouTermination = sheetDerecognition.getRow(28).getCell(5).getNumericCellValue();
+					gainTermination = sheetDerecognition.getRow(29).getCell(5).getNumericCellValue();
+					fbankTermination = sheetDerecognition.getRow(30).getCell(5).getNumericCellValue();
+
+				}
+
+			} else if (entry.getRecognitionOptions().equalsIgnoreCase("No Payment")) {
+
+				evaluateCell(evaluator, sheetDerecognition.getRow(4).getCell(4));
+				evaluateCell(evaluator, sheetDerecognition.getRow(5).getCell(4));
+				evaluateCell(evaluator, sheetDerecognition.getRow(10).getCell(8));
+				evaluateCell(evaluator, sheetDerecognition.getRow(11).getCell(8));
+				evaluateCell(evaluator, sheetDerecognition.getRow(12).getCell(8));
+				evaluateCell(evaluator, sheetDerecognition.getRow(13).getCell(8));
+				// for final right column for termination
+
+				evaluateCell(evaluator, sheetDerecognition.getRow(14).getCell(9));
+				evaluateCell(evaluator, sheetDerecognition.getRow(15).getCell(9));
+				evaluateCell(evaluator, sheetDerecognition.getRow(16).getCell(9));
+
+				if (entry.getPaymentsAt().equalsIgnoreCase("Ending")) {
+					expenseTermination = sheetDerecognition.getRow(10).getCell(8).getNumericCellValue();
+
+					// fcdr =
+					// sheetDerecognition.getRow(11).getCell(8).getNumericCellValue();
+					// accrued =
+					// sheetDerecognition.getRow(12).getCell(8).getNumericCellValue();
+					fcdrTermination = sheetDerecognition.getRow(4).getCell(4).getNumericCellValue();
+					accruedTermination = sheetDerecognition.getRow(5).getCell(4).getNumericCellValue();
+					llTermination = sheetDerecognition.getRow(13).getCell(8).getNumericCellValue();
+					rouTermination = sheetDerecognition.getRow(14).getCell(9).getNumericCellValue();
+					gainTermination = sheetDerecognition.getRow(15).getCell(9).getNumericCellValue();
+					fbankTermination = sheetDerecognition.getRow(16).getCell(9).getNumericCellValue();
+
+				} else if (entry.getPaymentsAt().equalsIgnoreCase("Beginning")) {
+
+					evaluateCell(evaluator, sheetDerecognition.getRow(20).getCell(4));
+					evaluateCell(evaluator, sheetDerecognition.getRow(21).getCell(5));
+					evaluateCell(evaluator, sheetDerecognition.getRow(22).getCell(4));
+					// for final right column for termination
+
+					evaluateCell(evaluator, sheetDerecognition.getRow(26).getCell(4));
+					evaluateCell(evaluator, sheetDerecognition.getRow(27).getCell(4));
+					evaluateCell(evaluator, sheetDerecognition.getRow(28).getCell(5));
+					evaluateCell(evaluator, sheetDerecognition.getRow(29).getCell(5));
+					evaluateCell(evaluator, sheetDerecognition.getRow(30).getCell(5));
+
+					fcdr = sheetDerecognition.getRow(20).getCell(4).getNumericCellValue();
+					prepaid = sheetDerecognition.getRow(21).getCell(5).getNumericCellValue();
+					ll = sheetDerecognition.getRow(22).getCell(4).getNumericCellValue();
+
+					expenseTermination = sheetDerecognition.getRow(26).getCell(4).getNumericCellValue();
+					llTermination = sheetDerecognition.getRow(27).getCell(4).getNumericCellValue();
+					rouTermination = sheetDerecognition.getRow(28).getCell(5).getNumericCellValue();
+					gainTermination = sheetDerecognition.getRow(29).getCell(5).getNumericCellValue();
+					fbankTermination = sheetDerecognition.getRow(30).getCell(5).getNumericCellValue();
+
+				}
+			}
+		}
+
+		map.put("financeCostDr", fcdr + "");
+		map.put("financeCostDrTer", fcdrTermination + "");
+		map.put("AccruedDr", accrued + "");
+		map.put("AccruedDrTer", accruedTermination + "");
+		map.put("LeaseLiabilityDr", ll + "");
+		map.put("BankCr", bank + "");
+
+		map.put("expenseTermination", expenseTermination + "");
+		map.put("llTermination", llTermination + "");
+		map.put("rouTermination", rouTermination + "");
+		map.put("gainTermination", gainTermination + "");
+		map.put("bankTermination", fbankTermination + "");
+		map.put("prepaid", prepaid + "");
+		map.put("prepaidTer", prepaidTermination + "");
+
+		Gson gson = new Gson();
+		return gson.toJson(map);
+
+	}
+
+	/**
+	 * @param wb
+	 * @param entry
+	 * @param journalType
+	 * @param leaseType
+	 * @return
+	 * @throws InvalidFormatException
+	 * @throws IOException
+	 *//*
+		 * @SuppressWarnings("deprecation") public String
+		 * calculateJournalYearlyDepreciationFTA(XSSFWorkbook wb, Entry entry,
+		 * int journalType, int leaseType) throws InvalidFormatException,
+		 * IOException, InvocationTargetException {
+		 * 
+		 * double rightOfUseOfAsset = 0.0;
+		 * System.out.println("calculating Journal Yearly"); FormulaEvaluator
+		 * evaluator = wb.getCreationHelper().createFormulaEvaluator();
+		 * 
+		 * System.out.println("starting loop"); XSSFSheet sheetRecognition =
+		 * wb.getSheetAt(journalType);// .getSheet("Yearly // Journal ");entry
+		 * XSSFSheet sheetLease = wb.getSheetAt(leaseType); int leaseTerms =
+		 * entry.getLeaseTerm(); int count = 0; LinkedHashMap<String, String>
+		 * map = new LinkedHashMap<String, String>(); int startingRowLease = 16;
+		 * 
+		 * for (Row r : sheetLease) { /// ONLY PUT COLUMN No in map id int row =
+		 * r.getRowNum();
+		 * 
+		 * if (row >= startingRowLease) { evaluateCell(evaluator, r.getCell(1));
+		 * // if (r.getCell(1).getNumericCellValue() ==
+		 * sheetRetrospective.getRow(14).getCell(1) // .getNumericCellValue()) {
+		 * // Cell c = r.getCell(3); // evaluateCell(evaluator, c); if
+		 * (HSSFDateUtil.isCellDateFormatted(c)) { //LocalDateTime date =
+		 * c.getLocalDateTimeCellValue();
+		 * sheetRecognition.getRow(5).getCell(1).setCellValue(date); break; }
+		 * //} } }
+		 * 
+		 * evaluateCell(evaluator, sheetRetrospective.getRow(15).getCell(1));
+		 * map.put("leseLiabality",
+		 * sheetRetrospective.getRow(15).getCell(1).getNumericCellValue() + "");
+		 * 
+		 * evaluateCell(evaluator, sheetRetrospective.getRow(28).getCell(1));
+		 * map.put("RightToUse",
+		 * sheetRetrospective.getRow(28).getCell(1).getNumericCellValue() + "");
+		 * 
+		 * evaluateCell(evaluator, sheetRetrospective.getRow(29).getCell(1));
+		 * map.put("RetainedEarning",
+		 * sheetRetrospective.getRow(29).getCell(1).getNumericCellValue() + "");
+		 * 
+		 * // FOR GETTING COMULATIVE DATA for (Row r : sheetLease) { /// ONLY
+		 * PUT COLUMN No in map id int row = r.getRowNum();
+		 * 
+		 * if (row >= startingRowLease) { evaluateCell(evaluator, r.getCell(1));
+		 * if (r.getCell(1).getNumericCellValue() ==
+		 * sheetCumulative.getRow(14).getCell(1).getNumericCellValue()) { Cell c
+		 * = r.getCell(3); evaluateCell(evaluator, c); if
+		 * (HSSFDateUtil.isCellDateFormatted(c)) { LocalDateTime date =
+		 * c.getLocalDateTimeCellValue();
+		 * sheetCumulative.getRow(5).getCell(1).setCellValue(date); break; } } }
+		 * }
+		 * 
+		 * evaluateCell(evaluator, sheetCumulative.getRow(15).getCell(1));
+		 * map.put("leseLiabalityCumulative",
+		 * sheetCumulative.getRow(15).getCell(1).getNumericCellValue() + "");
+		 * 
+		 * evaluateCell(evaluator, sheetCumulative.getRow(33).getCell(1));
+		 * map.put("RightToUseCumulative",
+		 * sheetCumulative.getRow(33).getCell(1).getNumericCellValue() + "");
+		 * 
+		 * evaluateCell(evaluator, sheetCumulative.getRow(34).getCell(1));
+		 * map.put("RetainedEarningCumulative",
+		 * sheetCumulative.getRow(34).getCell(1).getNumericCellValue() + "");
+		 * 
+		 * Gson gson = new Gson(); return gson.toJson(map); }
+		 */
 
 	private int getCellMonth(Entry entry, Cell c) {
 		if (HSSFDateUtil.isCellDateFormatted(c)) {
@@ -1241,6 +2165,102 @@ public class Calculation {
 		return 0;
 	}
 
+	protected void putinMapDepreciation(LinkedHashMap<String, String> mapSheet, Cell c, CellType cellType, Entry entry,
+			double rightOfAsset) {
+
+		String cellLocation = c.getColumnIndex() + "";
+
+		switch (cellType) {
+
+		case NUMERIC:
+			double finalRightOfUseAsset = 0;
+			double finalClosingBalance = 0;
+			if (HSSFDateUtil.isCellDateFormatted(c)) {
+				int something = 0;
+				int y = c.getColumnIndex();
+				System.out.println(y);
+				Date d = c.getDateCellValue();
+				mapSheet.put(cellLocation, c.getColumnIndex() == 9 ? month(c.getDateCellValue().getMonth()) + ""
+						: formatDate(c.getDateCellValue()) + "");
+			} else {
+				if (c.getColumnIndex() == 16) {
+					mapSheet.put(cellLocation, rightOfAsset + "");
+
+				} else if (c.getColumnIndex() == 17 || c.getColumnIndex() == 18) {
+
+					// double rightOfAsset = c.getNumericCellValue();
+
+					Date startingDate = entry.getCommencementDate();
+					Date deteEnding = addYearsToDate(entry.getCommencementDate(), entry.getUsefulLifeOfTheAsset());
+					Calendar calStart = Calendar.getInstance();
+					calStart.setTime(startingDate);
+
+					Calendar mycal = new GregorianCalendar(entry.getYear(), entry.getMonth() - 1, 30);
+
+					int daysInMonth;
+
+					long totalDays = ChronoUnit.DAYS.between(startingDate.toInstant(), deteEnding.toInstant());
+					totalDays = totalDays + 1;
+					double right = rightOfAsset / totalDays;
+					int noOfDaysInMonth = getMonthDays(entry.getYear(), entry.getMonth(), 4, startingDate, deteEnding);
+
+					if (mycal.getTime().getMonth() == calStart.getTime().getMonth()
+							&& mycal.getTime().getYear() == calStart.getTime().getYear()) {
+						int startDay = calStart.getTime().getDate();
+						daysInMonth = mycal.getActualMaximum(Calendar.DAY_OF_MONTH);
+
+					} else {
+						daysInMonth = noOfDaysInMonth;
+					}
+
+					Date date = new GregorianCalendar(entry.getYear(), entry.getMonth() - 1, daysInMonth).getTime();
+
+					long totalDaysForDepreciation = ChronoUnit.DAYS.between(startingDate.toInstant(), date.toInstant());
+
+					totalDaysForDepreciation = totalDaysForDepreciation + 2;
+					finalRightOfUseAsset = right * totalDaysForDepreciation;
+					if (c.getColumnIndex() == 17) {
+						if (totalDaysForDepreciation < 0) {
+							mapSheet.put(cellLocation, 0 + "");
+							mapSheet.put("16", 0 + "");
+						} else {
+							mapSheet.put(cellLocation, finalRightOfUseAsset + "");
+						}
+					} else {
+						if (totalDaysForDepreciation < 0) {
+							mapSheet.put("16", 0 + "");
+							mapSheet.put(cellLocation, 0 + "");
+						} else {
+							finalClosingBalance = rightOfAsset - finalRightOfUseAsset;
+							mapSheet.put(cellLocation, finalClosingBalance + "");
+						}
+					}
+
+				}
+
+				else {
+					mapSheet.put(cellLocation, c.getNumericCellValue() + "");
+				}
+
+				if (finalClosingBalance < 0) {
+					mapSheet.put("16", 0 + "");
+					mapSheet.put("17", 0 + "");
+					mapSheet.put("18", 0 + "");
+
+				}
+			}
+			break;
+		case STRING:
+			mapSheet.put(cellLocation, c.getRichStringCellValue() + "");
+			break;
+		case BOOLEAN:
+			mapSheet.put(cellLocation, c.getBooleanCellValue() + "");
+		default:
+			mapSheet.put(cellLocation, "-" + "");
+			break;
+		}
+	}
+
 	protected void putinMap(LinkedHashMap<String, String> mapSheet, Cell c, CellType cellType) {
 
 		String cellLocation = c.getColumnIndex() + "";
@@ -1301,4 +2321,76 @@ public class Calculation {
 		return null;
 
 	}
+
+	public Date addYearsToDate(Date date, int years) {
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(date);
+		cal.add(Calendar.YEAR, years);
+		Date yearsAhead = cal.getTime();
+		return yearsAhead;
+	}
+
+	private Integer getMonthDays(int year, int month, int day, Date startingDate, Date deteEnding) {
+
+		Calendar calStart = Calendar.getInstance();
+		calStart.setTime(startingDate);
+
+		Calendar calEnd = Calendar.getInstance();
+		calEnd.setTime(deteEnding);
+
+		// Create a calendar object and set year and month
+		Calendar mycal = new GregorianCalendar(year, month - 1, 1);
+		int daysInMonth = mycal.getActualMaximum(Calendar.DAY_OF_MONTH);
+
+		if (mycal.getTime().getMonth() == calStart.getTime().getMonth()
+				&& mycal.getTime().getYear() == calStart.getTime().getYear()) {
+			int startDay = calStart.getTime().getDate();
+			startDay = startDay - 1;
+			daysInMonth = daysInMonth - startDay;
+
+		} else if (mycal.getTime().getMonth() == calEnd.getTime().getMonth()
+				&& mycal.getTime().getYear() == calEnd.getTime().getYear()) {
+			int endDay = calEnd.getTime().getDate();
+			// endDay = endDay - 1;
+			// daysInMonth = daysInMonth - endDay;
+			daysInMonth = endDay;
+
+		}
+
+		// Get the number of days in that month
+		// 28
+
+		return daysInMonth;
+	}
+
+	private Date dateCellEvaluatorWithType(FormulaEvaluator evaluator, Date sheetUpdatedDate, Cell dateCell) {
+		if (dateCell.getCellType() == CellType.FORMULA) {
+			try {
+				evaluator.evaluateFormulaCell(dateCell);
+			} catch (Exception ex) {
+				System.out.println("In Exception in loop" + ex);
+				// mapRow.put(c.getColumnIndex() + "", ":" +
+				// "");
+				System.out.println("In error" + ex);
+			}
+			CellType cType = dateCell.getCachedFormulaResultType();
+
+			switch (cType) {
+
+			case NUMERIC:
+				sheetUpdatedDate = dateCell.getDateCellValue();
+				break;
+			case STRING:
+				sheetUpdatedDate = null;
+				break;
+
+			default:
+				sheetUpdatedDate = null;
+				break;
+			}
+
+		}
+		return sheetUpdatedDate;
+	}
+
 }

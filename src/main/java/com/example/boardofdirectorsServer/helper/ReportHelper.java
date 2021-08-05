@@ -24,22 +24,25 @@ public class ReportHelper {
 
 	public String getFilteredReportData(ReportFilterEntity reportFilterEntity) {
 		String userDataJson = null;
+		List<UserData> listUserData = null;
 		User userDetails = userData.getUserWithId(reportFilterEntity.getUserId() + "");
 		try {
 			if (userDetails.getCompanyId() == 0) {
-				userDataJson = getUserDataByUser(reportFilterEntity, userDataJson);
+				listUserData = getUserDataByUser(reportFilterEntity, userDataJson);
 			} else {
-				userDataJson = getUserDataByCompany(reportFilterEntity, userDataJson);
+				listUserData = getUserDataByCompany(reportFilterEntity, userDataJson);
 			}
 
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		userDataJson = gson.toJson(listUserData);
 		return userDataJson;
 	}
 
-	private String getUserDataByUser(ReportFilterEntity reportFilterEntity, String userDataJson) throws Exception {
+	public List<UserData> getUserDataByUser(ReportFilterEntity reportFilterEntity, String userDataJson)
+			throws Exception {
 		try {
 
 			System.out.println("Getting report for  : userId:" + reportFilterEntity.getUserId() + ", companyid:"
@@ -59,17 +62,6 @@ public class ReportHelper {
 				query.addCriteria(Criteria.where("userId").is(reportFilterEntity.getUserId()));
 
 			} else {
-				// critOr.orOperator(Criteria.where("classOfAsset").is(reportFilterEntity.getClassOfAsset()),
-				// Criteria.where("lessorName").is(reportFilterEntity.getLessorName()),
-				// //
-				// Criteria.where("location").is(reportFilterEntity.getLocation()),
-				// //
-				// Criteria.where("commencementDate").is(reportFilterEntity.getDate()),
-				// //
-				// Criteria.where("companyId").is(reportFilterEntity.getCompanyId()),
-				// Criteria.where("leaseName").is(reportFilterEntity.getLeaseName()));
-				// critOr.andOperator(Criteria.where("lessorName").is(reportFilterEntity.getLessorName()));
-				// critOr.andOperator(Criteria.where("leaseName").is(reportFilterEntity.getLeaseName()));
 
 				Criteria criteria = new Criteria();
 				criteria = criteria.and("userId").is(reportFilterEntity.getUserId());
@@ -104,8 +96,8 @@ public class ReportHelper {
 			System.out.println(userdata);
 			if (userdata == null)
 				return null;
-			userDataJson = gson.toJson(userdata);
-			return userDataJson;
+			// userDataJson = gson.toJson(userdata);
+			return userdata;
 
 		} catch (Exception ex) {
 			System.out.println("Error is :" + ex.getMessage());
@@ -113,7 +105,8 @@ public class ReportHelper {
 		}
 	}
 
-	private String getUserDataByCompany(ReportFilterEntity reportFilterEntity, String userDataJson) throws Exception {
+	public List<UserData> getUserDataByCompany(ReportFilterEntity reportFilterEntity, String userDataJson)
+			throws Exception {
 		try {
 
 			System.out.println("Getting report for  : companyId:" + reportFilterEntity.getCompanyId() + ", userId:"
@@ -151,28 +144,15 @@ public class ReportHelper {
 					criteria = criteria.and("assetCode").is(reportFilterEntity.getAssetCode());
 				}
 				query.addCriteria(criteria);
-				// critOr.orOperator(Criteria.where("classOfAsset").is(reportFilterEntity.getClassOfAsset()),
-				// Criteria.where("lessorName").is(reportFilterEntity.getLessorName()),
-				// Criteria.where("location").is(reportFilterEntity.getLocation()),
-				// Criteria.where("commencementDate").is(reportFilterEntity.getDate()),
-				// //
-				// Criteria.where("companyId").is(reportFilterEntity.getCompanyId()),
-				// Criteria.where("leaseName").is(reportFilterEntity.getLeaseName()));
-				// critOr.andOperator(Criteria.where("companyId").is(reportFilterEntity.getCompanyId()));
-				// //
-				// critOr.andOperator(Criteria.where("userId").is(reportFilterEntity.getUserId()));
-				//
-				// query.addCriteria(critOr);
+
 			}
-			// critAnd.orOperator(critOr);
-			// query.addCriteria(critAnd);
 
 			List<UserData> userdata = mongoOperation.find(query, UserData.class);
 			System.out.println(userdata);
 			if (userdata == null)
 				return null;
 			userDataJson = gson.toJson(userdata);
-			return userDataJson;
+			return userdata;
 
 		} catch (Exception ex) {
 			System.out.println("Error is :" + ex.getMessage());

@@ -541,7 +541,7 @@ public class DataHelper {
 					Iterator cells = row.cellIterator();
 
 					if (leaseContractNo.getCellType() == CellType.NUMERIC) {
-						userData.setLeaseContractNo(leaseContractNo.getNumericCellValue() + "");
+						userData.setLeaseContractNo((int) leaseContractNo.getNumericCellValue() + "");
 					} else if (leaseContractNo.getCellType() == CellType.STRING) {
 						userData.setLeaseContractNo(leaseContractNo.getStringCellValue() + "");
 					} else {

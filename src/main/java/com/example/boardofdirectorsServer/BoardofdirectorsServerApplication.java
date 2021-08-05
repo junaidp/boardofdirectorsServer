@@ -26,7 +26,7 @@ public class BoardofdirectorsServerApplication {
 	private static void callFTA() throws IOException, InvalidFormatException, Exception {
 		// Calculation c = new Calculation();
 		Entry entry = new Entry("Lease No. 1", new Date("03/15/2016"), "Beginning", 5, 20, 20, 100000, "Yearly", 0, 0,
-				25, 10, 2, 2020, 04, 1, 0);
+				25, 10, 2, 2020, 04, 1, 0, null, 0, null);
 		// c.entry(entry);
 
 		CalculationFTA c = new CalculationFTA();

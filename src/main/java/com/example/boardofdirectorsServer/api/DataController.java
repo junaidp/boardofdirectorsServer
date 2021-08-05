@@ -43,7 +43,7 @@ public class DataController {
 
 	@PostMapping("/saveData")
 	public String saveData(@RequestBody UserData dataEntity) {
-		if (dataEntity.getEscalationAfterEvery() == 0 && dataEntity.getEscalation() > 0) {
+		if (dataEntity.getEscalationAfterEvery() == 0 && dataEntity.getEscalation() >= 0) {
 			dataEntity.setEscalation(0);
 			dataEntity.setEscalationAfterEvery(1);
 		}

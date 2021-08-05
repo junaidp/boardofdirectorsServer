@@ -3,6 +3,9 @@ package com.example.boardofdirectorsServer.api;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.LinkedHashMap;
 import java.util.List;
 
@@ -17,7 +20,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.boardofdirectorsServer.helper.DataHelper;
+import com.example.boardofdirectorsServer.helper.ReportHelper;
 import com.example.boardofdirectorsServer.model.Entry;
+import com.example.boardofdirectorsServer.model.ReportFilterEntity;
+import com.example.boardofdirectorsServer.model.User;
 import com.example.boardofdirectorsServer.model.UserData;
 import com.google.gson.Gson;
 
@@ -28,6 +34,9 @@ public class CalculationController {
 
 	@Autowired
 	DataHelper dataHelper;
+	@Autowired
+	ReportHelper reportHelper;
+
 	String json;
 
 	@PostMapping
@@ -49,7 +58,7 @@ public class CalculationController {
 
 	@PostMapping("/lease/yearly")
 	public String calculateLeaseYearly(@RequestBody Entry entry) throws Exception {
-		if (entry.getEscalationAfterEvery() == 0 && entry.getEscalation() > 0) {
+		if (entry.getEscalationAfterEvery() == 0 && entry.getEscalation() >= 0) {
 			entry.setEscalation(0);
 			entry.setEscalationAfterEvery(1);
 		}
@@ -101,6 +110,8 @@ public class CalculationController {
 		e.setLeaseTerm(userData.getLeaseTerm());
 		e.setPaymentIntervals(userData.getPaymentIntervals());
 		e.setPaymentsAt(userData.getPaymentsAt());
+		e.setAssetCode(userData.getAssetCode());
+		e.setUsefulLifeOfTheAsset(userData.getUsefulLifeOfTheAsset());
 
 	}
 
@@ -138,6 +149,35 @@ public class CalculationController {
 					+ entryc.getEscalation() + "::" + entryc.getEscalationAfterEvery() + "::");
 
 			json = c.entryJournal(entryc, TYPES.JOURNAL_YEARLY, TYPES.LEASE_YEARLY);
+			return json;
+		} catch (Exception e) {
+			throw e;
+		}
+	}
+
+	@PostMapping("/yearlyDepreciationjournal")
+	public String calculateJournalYearlyDepreciation(@RequestBody Entry entryc) throws Exception {
+		try {
+			Calculation c = new Calculation();
+
+			UserData userDataObject = dataHelper.getUserDataByDataId(entryc.getDataId());
+
+			copyData(userDataObject, entryc);
+
+			System.out.println("Values going For SUM  are:" + entryc.getCommencementDate() + "::"
+					+ entryc.getPaymentsAt() + "::" + entryc.getAnnualDiscountRate() + "::" + entryc.getLeaseTerm()
+					+ "::" + entryc.getExpectedPeriod() + "::" + entryc.getLeasePayment() + "::"
+					+ entryc.getPaymentIntervals() + "::" + entryc.getInitialDirectCost() + "::"
+					+ entryc.getGuaranteedResidualValue() + "::" + entryc.getUsefulLifeOfTheAsset() + "::"
+					+ entryc.getEscalation() + "::" + entryc.getEscalationAfterEvery() + "::");
+
+			if (entryc.getPaymentIntervals().equalsIgnoreCase("Yearly")) {
+				json = c.entryJournal(entryc, TYPES.RECOGNITION_YEARLY, TYPES.LEASE_YEARLY);
+			} else if (entryc.getPaymentIntervals().equalsIgnoreCase("Monthly")) {
+				json = c.entryJournal(entryc, TYPES.RECOGNITION_MONTHLY, TYPES.LEASE_MONTHLY);
+			} else if (entryc.getPaymentIntervals().equalsIgnoreCase("Quarterly")) {
+				json = c.entryJournal(entryc, TYPES.RECOGNITION_QUARTERLY, TYPES.LEASE_QUARTERLY);
+			}
 			return json;
 		} catch (Exception e) {
 			throw e;
@@ -188,6 +228,9 @@ public class CalculationController {
 					json = c.entryJournal(entryc, TYPES.JOURNAL_MONTHLY, TYPES.LEASE_MONTHLY);
 				} else if (entryc.getPaymentIntervals().equalsIgnoreCase("Quarterly")) {
 					json = c.entryJournal(entryc, TYPES.JOURNAL_QUARTERLY, TYPES.LEASE_QUARTERLY);
+				} else if (entryc.getPaymentIntervals().equalsIgnoreCase("Yearlysad")
+						&& entryc.getPaymentIntervals().equalsIgnoreCase("sadas")) {
+					json = c.entryJournal(entryc, TYPES.RECOGNITION_YEARLY, TYPES.LEASE_YEARLY);
 				}
 
 				System.out.println("result is +" + json);
@@ -222,26 +265,24 @@ public class CalculationController {
 	}
 
 	@PostMapping("/journal/reportSchedulePerYear")
-	public String calculateReportFtaSum(@RequestBody Entry entry) throws Exception {
+	public String calculateReportFtaSum(@RequestBody ReportFilterEntity reportFilterEntity) throws Exception {
 		try {
-
+			String userDataJson = null;
 			CalculationFTA c = new CalculationFTA();
-			// json = c.entryFirstTimeAdoption(entry, TYPESFTA.LEASE,
-			// TYPESFTA.LEASE);
-			// return json;
-			// Calculation c = new Calculation();
-			List<UserData> dataList;
-			///
-			Gson gson = new Gson();
-			if (entry.getCompanyId() == 0) {
-				int userId = entry.getUserId();
-				System.out.println("calling getuser data");
-				dataList = dataHelper.getUserData(userId);
+			List<UserData> dataList = null;
+			User userDetails = dataHelper.getUserWithId(reportFilterEntity.getUserId() + "");
+			try {
+				if (userDetails.getCompanyId() == 0) {
+					dataList = reportHelper.getUserDataByUser(reportFilterEntity, userDataJson);
+				} else {
+					dataList = reportHelper.getUserDataByCompany(reportFilterEntity, userDataJson);
+				}
 
-			} else {
-				int companyId = entry.getCompanyId();
-				dataList = dataHelper.getCompanyData(companyId);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
+			Gson gson = new Gson();
 
 			System.out.println("back from data:" + dataList);
 			LinkedHashMap<String, LinkedHashMap<String, String>> mapFinal = new LinkedHashMap<String, LinkedHashMap<String, String>>();
@@ -250,14 +291,96 @@ public class CalculationController {
 			for (UserData userData : dataList) {
 				Entry entryc = new Entry();
 				copyData(userData, entryc);
-				entryc.setYear(entry.getYear());
-				entryc.setMonth(entry.getMonth());
-				entryc.setUsefulLifeOfTheAsset(10);
-				json = c.entryFirstTimeAdoption(entryc, TYPESFTA.SCHEDULELEASEREPORT, TYPESFTA.LEASE);
-				@SuppressWarnings("unchecked")
-				LinkedHashMap<String, String> map = gson.fromJson(json, LinkedHashMap.class);
-				System.out.println("converted");
-				mapFinal.put(userData.getDataId(), map);
+				entryc.setYear(reportFilterEntity.getYear());
+				entryc.setMonth(reportFilterEntity.getMonth());
+
+				Date startingDate = entryc.getCommencementDate();
+				Date deteEnding = addYearsToDate(entryc.getCommencementDate(), entryc.getUsefulLifeOfTheAsset());
+				Calendar calStart = Calendar.getInstance();
+				calStart.setTime(startingDate);
+				Calendar calEnd = Calendar.getInstance();
+				calEnd.setTime(deteEnding);
+
+				Calendar userSelectedDate = new GregorianCalendar(entryc.getYear(), entryc.getMonth() - 1, 30);
+
+				if ((userSelectedDate.getTime().getYear() < calStart.getTime().getYear())
+						|| (userSelectedDate.getTime().getYear() > calEnd.getTime().getYear())
+						|| (userSelectedDate.getTime().getMonth() < calStart.getTime().getMonth()
+								&& userSelectedDate.getTime().getYear() == calStart.getTime().getYear())
+						|| (userSelectedDate.getTime().getMonth() > calEnd.getTime().getMonth()
+								&& userSelectedDate.getTime().getYear() == calEnd.getTime().getYear())) {
+
+				} else {
+					// entryc.setUsefulLifeOfTheAsset(10);
+					json = c.entryFirstTimeAdoption(entryc, TYPESFTA.SCHEDULELEASEREPORT, TYPESFTA.LEASE);
+					@SuppressWarnings("unchecked")
+					LinkedHashMap<String, String> map = gson.fromJson(json, LinkedHashMap.class);
+					System.out.println("converted");
+					mapFinal.put(userData.getDataId(), map);
+
+				}
+			}
+			System.out.println("retruning" + mapFinal);
+			return gson.toJson(mapFinal);
+		} catch (Exception e) {
+			throw e;
+		}
+	}
+
+	@PostMapping("/journal/reportLeaseLiability")
+	public String calculateReportLeaseLiability(@RequestBody ReportFilterEntity reportFilterEntity) throws Exception {
+		try {
+			String userDataJson = null;
+			CalculationFTA c = new CalculationFTA();
+			List<UserData> dataList = null;
+			User userDetails = dataHelper.getUserWithId(reportFilterEntity.getUserId() + "");
+			try {
+				if (userDetails.getCompanyId() == 0) {
+					dataList = reportHelper.getUserDataByUser(reportFilterEntity, userDataJson);
+				} else {
+					dataList = reportHelper.getUserDataByCompany(reportFilterEntity, userDataJson);
+				}
+
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			Gson gson = new Gson();
+
+			System.out.println("back from data:" + dataList);
+			LinkedHashMap<String, LinkedHashMap<String, String>> mapFinal = new LinkedHashMap<String, LinkedHashMap<String, String>>();
+
+			double dr = 0;
+			for (UserData userData : dataList) {
+				Entry entryc = new Entry();
+				copyData(userData, entryc);
+				entryc.setYear(reportFilterEntity.getYear());
+				entryc.setMonth(reportFilterEntity.getMonth());
+				// entryc.setUsefulLifeOfTheAsset(10);
+
+				Date startingDate = entryc.getCommencementDate();
+				Date deteEnding = addYearsToDate(entryc.getCommencementDate(), entryc.getUsefulLifeOfTheAsset());
+				Calendar calStart = Calendar.getInstance();
+				calStart.setTime(startingDate);
+				Calendar calEnd = Calendar.getInstance();
+				calEnd.setTime(deteEnding);
+
+				Calendar userSelectedDate = new GregorianCalendar(entryc.getYear(), entryc.getMonth() - 1, 30);
+
+				if ((userSelectedDate.getTime().getYear() < calStart.getTime().getYear())
+						|| (userSelectedDate.getTime().getYear() > calEnd.getTime().getYear())
+						|| (userSelectedDate.getTime().getMonth() < calStart.getTime().getMonth()
+								&& userSelectedDate.getTime().getYear() == calStart.getTime().getYear())
+						|| (userSelectedDate.getTime().getMonth() > calEnd.getTime().getMonth()
+								&& userSelectedDate.getTime().getYear() == calEnd.getTime().getYear())) {
+
+				} else {
+					json = c.entryFirstTimeAdoption(entryc, TYPESFTA.LEASELIABILITYREPORT, TYPESFTA.LEASE);
+					@SuppressWarnings("unchecked")
+					LinkedHashMap<String, String> map = gson.fromJson(json, LinkedHashMap.class);
+					System.out.println("converted");
+					mapFinal.put(userData.getDataId(), map);
+				}
 			}
 			System.out.println("retruning" + mapFinal);
 			return gson.toJson(mapFinal);
@@ -283,7 +406,7 @@ public class CalculationController {
 		t.setUsefulLifeOfTheAsset(s.getUsefulLifeOfTheAsset());
 		t.setUserId(s.getUserId());
 		t.setContractReferenceNo(s.getLeaseContractNo());
-		t.setAssetCode(s.getClassOfAsset());
+		t.setAssetCode(s.getAssetCode());
 		t.setLessorName(s.getLessorName());
 		t.setLocation(s.getLocation());
 		t.setDataId(s.getId());
@@ -354,9 +477,9 @@ public class CalculationController {
 			Entry e = new Entry();
 			setEntryObject(userData, e);
 			e.setLeaseContractNo(userData.getLeaseContractNo());
-			e.setAssetCode(userData.getClassOfAsset());
+			e.setAssetCode(userData.getAssetCode());
 			e.setLocation(userData.getLocation());
-			e.setUsefulLifeOfTheAsset(10);
+			// e.setUsefulLifeOfTheAsset(10);
 			CalculationFTA c = new CalculationFTA();
 			json = c.entryFirstTimeAdoption(e, TYPESFTA.LEASE, TYPESFTA.LEASE);
 			return json;
@@ -387,6 +510,14 @@ public class CalculationController {
 		} catch (Exception e) {
 			throw e;
 		}
+	}
+
+	public Date addYearsToDate(Date date, int years) {
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(date);
+		cal.add(Calendar.YEAR, years);
+		Date yearsAhead = cal.getTime();
+		return yearsAhead;
 	}
 
 }
