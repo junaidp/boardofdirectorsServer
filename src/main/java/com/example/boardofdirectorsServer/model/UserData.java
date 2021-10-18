@@ -45,6 +45,7 @@ public class UserData {
 	private String conclusion;
 	private String fileName;
 	private String assetDescription;
+	private Boolean isModified;
 
 	public String getLeaseContractNo() {
 		return leaseContractNo;
@@ -332,6 +333,14 @@ public class UserData {
 
 	public void setAssetCode(String assetCode) {
 		this.assetCode = assetCode;
+	}
+
+	public Boolean getIsModified() {
+		return isModified;
+	}
+
+	public void setIsModified(Boolean isModified) {
+		this.isModified = isModified;
 	}
 
 }

@@ -33,6 +33,7 @@ public class Entry {
 	private String recognitionOptions;
 	private double paymentToAdd;
 	private Date userSelectedDate;
+	// private Boolean isModified;
 
 	public Entry(@JsonProperty("leaseContractNo") String leaseContractNo,
 			@JsonProperty("commencementDate") Date commencementDate, @JsonProperty("paymentsAt") String paymentsAt,
@@ -287,6 +288,17 @@ public class Entry {
 
 	public void setUserSelectedDate(Date userSelectedDate) {
 		this.userSelectedDate = userSelectedDate;
+	}
+
+	/*
+	 * public Boolean getIsModified() { return isModified; }
+	 * 
+	 * public void setIsModified(Boolean isModified) { this.isModified =
+	 * isModified; }
+	 */
+
+	public void setInitialDirectCost(double initialDirectCost) {
+		this.initialDirectCost = initialDirectCost;
 	}
 
 }

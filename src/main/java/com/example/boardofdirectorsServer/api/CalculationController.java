@@ -9,6 +9,8 @@ import java.util.GregorianCalendar;
 import java.util.LinkedHashMap;
 import java.util.List;
 
+import javax.mail.internet.ContentType;
+
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -29,6 +31,7 @@ import com.google.gson.Gson;
 
 @RequestMapping("calculation")
 @RestController
+
 @CrossOrigin(origins = "*", maxAge = 3600)
 public class CalculationController {
 
@@ -56,8 +59,8 @@ public class CalculationController {
 
 	}
 
-	@PostMapping("/lease/yearly")
-	public String calculateLeaseYearly(@RequestBody Entry entry) throws Exception {
+	@PostMapping(value = "/lease/yearly", consumes = "application/json")
+	public String calculateLeaseYearly(@RequestBody Entry entry, ContentType type) throws Exception {
 		if (entry.getEscalationAfterEvery() == 0 && entry.getEscalation() >= 0) {
 			entry.setEscalation(0);
 			entry.setEscalationAfterEvery(1);
@@ -112,6 +115,7 @@ public class CalculationController {
 		e.setPaymentsAt(userData.getPaymentsAt());
 		e.setAssetCode(userData.getAssetCode());
 		e.setUsefulLifeOfTheAsset(userData.getUsefulLifeOfTheAsset());
+		// e.setIsModified(userData.getIsModified());
 
 	}
 
@@ -183,6 +187,10 @@ public class CalculationController {
 			throw e;
 		}
 	}
+
+	// @PostMapping(path = "/journal/yearlySum", consumes =
+	// MediaType.APPLICATION_JSON_VALUE, produces =
+	// MediaType.APPLICATION_JSON_VALUE)
 
 	@PostMapping("/journal/yearlySum")
 	public String calculateJournalYearlySum(@RequestBody Entry entry) throws Exception {
