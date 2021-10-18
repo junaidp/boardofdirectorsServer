@@ -297,8 +297,4 @@ public class Entry {
 	 * isModified; }
 	 */
 
-	public void setInitialDirectCost(double initialDirectCost) {
-		this.initialDirectCost = initialDirectCost;
-	}
-
 }
